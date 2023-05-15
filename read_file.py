@@ -1,9 +1,8 @@
-import pandas as pd
-#bruh
-df = pd.read_csv('Course Information.csv')
-
-for line in df:
-    print(line)
+import csv
+with open('Course Sequencing Rules.csv', newline='') as csvfile:
+    spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+    for row in spamreader:
+        print(', '.join(row))
 '''
 {
     'course1': {
