@@ -6,7 +6,7 @@ for line in df:
     print(line)
 '''
 {
-    'course1': {
+    'course1': {GAVINNNNN
         'Base Terms/Year': 0,
         'Covered Terms/Year': 0,
         'Max Enrollment': 30,
