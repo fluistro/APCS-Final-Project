@@ -1,5 +1,5 @@
 import pandas as pd
-
+#bruh
 df = pd.read_csv('Course Information.csv')
 
 for line in df:
