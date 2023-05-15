@@ -27,6 +27,10 @@ with open('Course Sequencing Rules.csv', newline='') as csvfile:
 # dictionary
 course_info = {}
 
+# read Course Information
+
+
+
 # read Cleaned Student Requests
 
 
@@ -35,19 +39,4 @@ course_info = {}
 
 
 
-# read Course Information
-
-
-
 # read Course Sequencing Rules
-
-# hello
-# testing again
-# sam
-#test
-#kylie
-
-
-
-#testing again
-# hello world
