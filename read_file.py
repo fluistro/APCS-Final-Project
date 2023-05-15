@@ -28,7 +28,44 @@ with open('Course Sequencing Rules.csv', newline='') as csvfile:
 course_info = {}
 
 # read Course Information
+f = open("Course Information.csv", "r")
 
+while True:
+
+    # check if end of file reached
+    line = f.readline()
+    if (line == ""):
+        break
+
+    # skip past page headers
+    if (line == "Greater Victoria,,,,,,,,,,,,,Mount Douglas Secondary,,,,,\n"):
+        f.readline()
+        f.readline()
+        f.readline()
+        continue
+
+    line = line.split(",")
+
+    id = line[0]
+    name = line[2]
+    base_terms = line[7]
+    covered_terms = line[8]
+    max_enrollment = line[9]
+    ppc = line[10]
+    priority = line[12]
+    sections = line[14]
+
+    course_info[id] = {
+        'course name': name,
+        'Base Terms/Year': base_terms,
+        'Covered Terms/Year': covered_terms,
+        'Max Enrollment': max_enrollment,
+        'PPC': ppc,
+        'Priority': priority,
+        'Sections': sections
+    }
+
+print(course_info)
 
 
 # read Cleaned Student Requests
