@@ -9,7 +9,7 @@
         'Sections': 0,
         'Prereqs': 0,
         'Postreqs': 0,
-        'Sim With this course': 0,
+        'Sim With this course': 0, bruh
         'no sim With this course': 0,
         'Selected by students': 0,
     },
