@@ -91,6 +91,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                 continue
 
             skip_header_line = False
+            course_info[current_line_splitted[0]]['Students'].append(current_student_id)
+
 
 
 
