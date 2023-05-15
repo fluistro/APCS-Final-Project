@@ -5,7 +5,8 @@ with open('Course Sequencing Rules.csv', newline='') as csvfile:
         print(', '.join(row))
 '''
 {
-    'course1': {
+    'course code 1': {
+        'course name': "",
         'Base Terms/Year': 0,
         'Covered Terms/Year': 0,
         'Max Enrollment': 0,
