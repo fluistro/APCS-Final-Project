@@ -64,10 +64,9 @@ while True:
         'Max Enrollment': max_enrollment,
         'PPC': ppc,
         'Priority': priority,
-        'Sections': sections
+        'Sections': sections,
+        'Students': []
     }
-
-print(course_info)
 
 
 # read Cleaned Student Requests
@@ -75,23 +74,59 @@ current_student_id = 0
 skip_header_line = False
 current_line_splitted = ""
 with open('Cleaned Student Requests.csv', newline='') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+    spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+
     for row in spamreader:
-        current_line_splitted = row.split(",")
         
         # if current line is the start of a new student
-        if (len(current_line_splitted) == 2):
+        if (len(row) == 2):
             skip_header_line = True
-            current_student_id = current_line_splitted[1]
+            current_student_id = row[1]
 
         # if current line is not the start of a new student
         else:
+
             # if its the header line
             if (skip_header_line == True):
+                skip_header_line = False
                 continue
 
-            skip_header_line = False
-            course_info[current_line_splitted[0]]['Students'].append(current_student_id)
+            # if the course requested is NOT THERE!!!!
+            if (row[0] == 'XLEAD09---'):
+                continue
+
+            if (row[0] == 'MEFWR10---'):
+                continue
+
+            if (row[0] == 'MGE--12' or row[0] == 'MGE--11'):
+                continue
+
+            if (row[0] == 'MKOR-10---'):
+                continue
+
+            if (row[0] == 'MKOR-11---'):
+                continue
+
+            if (row[0] == 'MKOR-12---'):
+                continue     
+
+            if (row[0] == 'MIT--12---'):
+                row[0] = 'MIT--11---'            
+
+            if (row[0] == 'YESFL1AX--'):
+                continue         
+
+            if (row[0] == 'MSPLG11---'):
+                continue    
+
+            if (row[0] == 'MJA--10---' or row[0] == 'MJA--11---' or row[0] == 'MJA--12---'):
+                continue   
+            
+            
+            course_info[row[0]]['Students'].append(current_student_id)
+            print(course_info[row[0]])
+
+
 
 
 
@@ -101,8 +136,6 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
 # read Course Blocking Rules
 
 
-        
-       
 # read Course Sequencing Rules
 
 with open('Course Sequencing Rules.csv', 'r') as file:
@@ -153,5 +186,3 @@ with open('Course Sequencing Rules.csv', 'r') as file:
                 course_info[id]["Pre Req"] = pre_req
         
 print(course_info)
-                
-
