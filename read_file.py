@@ -1,4 +1,6 @@
 import csv
+import json
+
 '''
 
 with open('Course Sequencing Rules.csv', newline='') as csvfile:
@@ -67,7 +69,7 @@ while True:
         'Sections': sections
     }
 
-print(course_info)
+
 
 
 # read Cleaned Student Requests
@@ -154,4 +156,8 @@ with open('Course Sequencing Rules.csv', 'r') as file:
         
 print(course_info)
                 
-
+# write course_info to txt file
+'''
+with open('courses.txt', 'w') as convert_file:
+     convert_file.write(json.dumps(course_info))
+'''
