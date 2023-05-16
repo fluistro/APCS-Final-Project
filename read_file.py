@@ -105,17 +105,11 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
             if (row[0] == 'MGE--12' or row[0] == 'MGE--11'):
                 continue
 
-            if (row[0] == 'MKOR-10---'):
-                continue
-
-            if (row[0] == 'MKOR-11---'):
-                continue
-
-            if (row[0] == 'MKOR-12---'):
-                continue     
+            if (row[0] == 'MKOR-10---' or row[0] == 'MKOR-11---' or row[0] == 'MKOR-12---'):
+                continue 
 
             if (row[0] == 'MIT--12---'):
-                row[0] = 'MIT--11---'            
+                continue           
 
             if (row[0] == 'YESFL1AX--'):
                 continue         
