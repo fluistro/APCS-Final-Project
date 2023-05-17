@@ -70,9 +70,6 @@ while True:
         'Students': []
     }
 
-
-
-
 # read Cleaned Student Requests
 current_student_id = 0
 skip_header_line = False
@@ -119,7 +116,6 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
 
             if (row[0] == 'MJA--10---' or row[0] == 'MJA--11---' or row[0] == 'MJA--12---'):
                 continue   
-            
             
             course_info[row[0]]['Students'].append(current_student_id)
             print(course_info[row[0]])
