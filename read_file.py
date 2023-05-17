@@ -67,8 +67,7 @@ while True:
         'PPC': ppc,
         'Priority': priority,
         'Sections': sections,
-        'Simultaneous' : [],
-        'Not Simultaneous' : []
+        'Students': []
     }
 '''
 
@@ -77,23 +76,53 @@ current_student_id = 0
 skip_header_line = False
 current_line_splitted = ""
 with open('Cleaned Student Requests.csv', newline='') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+    spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+
     for row in spamreader:
-        current_line_splitted = row.split(",")
         
         # if current line is the start of a new student
-        if (len(current_line_splitted) == 2):
+        if (len(row) == 2):
             skip_header_line = True
-            current_student_id = current_line_splitted[1]
+            current_student_id = row[1]
 
         # if current line is not the start of a new student
         else:
+
             # if its the header line
             if (skip_header_line == True):
+                skip_header_line = False
                 continue
 
-            skip_header_line = False
-            course_info[current_line_splitted[0]]['Students'].append(current_student_id)
+            # if the course requested is NOT THERE!!!!
+            if (row[0] == 'XLEAD09---'):
+                continue
+
+            if (row[0] == 'MEFWR10---'):
+                continue
+
+            if (row[0] == 'MGE--12' or row[0] == 'MGE--11'):
+                continue
+
+            if (row[0] == 'MKOR-10---' or row[0] == 'MKOR-11---' or row[0] == 'MKOR-12---'):
+                continue 
+
+            if (row[0] == 'MIT--12---'):
+                continue           
+
+            if (row[0] == 'YESFL1AX--'):
+                continue         
+
+            if (row[0] == 'MSPLG11---'):
+                continue    
+
+            if (row[0] == 'MJA--10---' or row[0] == 'MJA--11---' or row[0] == 'MJA--12---'):
+                continue   
+            
+            
+            course_info[row[0]]['Students'].append(current_student_id)
+            print(course_info[row[0]])
+
+
 
 
 
@@ -200,109 +229,7 @@ for a in course_info:
 #print (course_info)
                  
 
-'''
-        else:
-            not_sim_courses = line [0: -30]
-            not_sim = not_sim_courses.split(", ")
-            for id in course_info:
-             
-                # remove whitespace and compare
-                if id == course:
-            
-                    # create key Post Req with value list post_req
-                    # remove from not sim if sim already exists
-                    for str in not_sim:
-                        if "Simultaneous" in course_info[id]:
-                            if course_info[id]["Simultaneous"] == course:
-                                continue
-                        course_info[id].setdefault('Not Simultaneous', not_sim)
-                        print(course_info[id])
 
-
-
-        post = course [course.index("before") + 7 :]
-        course = course[:course.index("before")]
-        post_req = post.split(", ")
-
-
-
-        # find correct course and update info
-        for id in course_info:
-             
-             # remove whitespace and compare
-             if id.strip() == course.strip():
-
-                # remove space before and after course before storing
-                for str in post_req:
-                    str.strip()
-
-                # create key Post Req with value list post_req
-                course_info[id].setdefault('Post Req', post_req)
-                #print(course_info[id])
-        
-        # update pre req
-        pre_req = []
-        for post_req_str in post_req:
-            for id in course_info:
-                if post_req_str.strip() == id.strip():
-                    if "Pre Req" in course_info[id]:
-                        if course.strip() not in course_info[id]["Pre Req"]:
-                            course_info[id]["Pre Req"].append(course.strip())
-            
-            if course.strip() not in pre_req:
-                pre_req.append(course.strip())
-                course_info[id]["Pre Req"] = pre_req
-
-        '''
-       
-# read Course Sequencing Rules
-
-with open('Course Sequencing Rules.csv', 'r') as file:
-    reader = csv.reader(file)
-    post_req = {}
-    counter = 0
-    for row in reader:
-
-        counter = counter + 1
-        # skip no info lines
-        if (counter == 1 or counter == 2 or counter == 3 or counter == 4 or counter == 5 or counter == 43 or counter == 44 or counter == 45 or counter == 46 or counter == 47):
-            continue
-
-        # getting course name
-        r = row[2]
-        course = r [8:]
-        post = course [course.index("before") + 7 :]
-        course = course[:course.index("before")]
-        post_req = post.split(", ")
-
-
-
-        # find correct course and update info
-        for id in course_info:
-             
-             # remove whitespace and compare
-             if id.strip() == course.strip():
-
-                # remove space before and after course before storing
-                for str in post_req:
-                    str.strip()
-
-                # create key Post Req with value list post_req
-                course_info[id].setdefault('Post Req', post_req)
-                #print(course_info[id])
-        
-        # update pre req
-        pre_req = []
-        for post_req_str in post_req:
-            for id in course_info:
-                if post_req_str.strip() == id.strip():
-                    if "Pre Req" in course_info[id]:
-                        if course.strip() not in course_info[id]["Pre Req"]:
-                            course_info[id]["Pre Req"].append(course.strip())
-            
-            if course.strip() not in pre_req:
-                pre_req.append(course.strip())
-                course_info[id]["Pre Req"] = pre_req
 
 # write course_info to txt file
 '''
