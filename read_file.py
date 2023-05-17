@@ -66,10 +66,10 @@ while True:
         'Max Enrollment': max_enrollment,
         'PPC': ppc,
         'Priority': priority,
-        'Sections': sections
+        'Sections': sections,
+        'Simultaneous' : [],
+        'Not Simultaneous' : []
     }
-
-
 '''
 
 # read Cleaned Student Requests
@@ -127,66 +127,79 @@ with open('Course Blocking Rules.csv', 'r') as file:
             sim = sim_courses.split(", ")
 
 
-            # strip for space
-            for str in sim:
-                str = str.strip()
+          
+            for i in range(len(sim)):
+                sim[i] = sim[i].replace(" ", "")
 
-            for id in course_info:
-             
-                # remove whitespace and compare
-                if id == course:
             
-                    # create key Post Req with value list post_req
-                    course_info[id].setdefault('Simultaneous', sim)
+                # create key Post Req with value list post_req
+                course_info[course]['Simultaneous'].extend(sim)
+
+                for i in sim:
+    
+                    i = i.strip()
+                    course_info[i]['Simultaneous'].append(course.strip())
                     
+
 with open('Course Blocking Rules.csv', 'r') as file:
     reader = csv.reader(file)
     not_sim = {}
 
+
+
+
     counter = 0
     for row in reader:
+
+
+
 
         counter = counter + 1
         # skip no info lines
         if (counter == 1 or counter == 2 or counter == 3 or counter == 4 or counter == 5 or counter == 38 or counter == 39 or counter == 40 or counter == 41 or counter == 42 or counter == 43):
             continue
 
+
+
+
         # getting course name
         r = row[2]
         course = r [9:]
         course = course[:course.index(",")]
-      
+     
         # getting sim courses
         line = r[r.index(",") + 2:]
-        
-        if line [-26:] != "in a Simultaneous blocking":   
+       
+        if line [-26:] != "in a Simultaneous blocking":  
             not_sim_courses = line [0: -30]
             not_sim = not_sim_courses.split(", ")
-            is_run = False
-            for id in course_info:
-             
-                # remove whitespace and compare
-                if id == course:
-            
-                    # create key Post Req with value list post_req
-                    # remove from not sim if sim already exists
-                    for str in not_sim:
-                        str = str.strip()
-                        if "Simultaneous" in course_info[id]:
-                            if str in course_info[id]["Simultaneous"]:
-                                continue
-                            
-                            course_info[id].setdefault('Not Simultaneous', not_sim.remove(str))
-                            is_run = True
-                          
-                        
-                   
-                    if not is_run:
-                         course_info[id].setdefault('Not Simultaneous', not_sim)
-                        # print ( course_info[id])
-                        
+        
 
-print(course_info)                       
+
+            not_sim_copy = []
+        
+            for string in not_sim:
+                if not (string.strip() in course_info[course]["Simultaneous"]):
+                    
+                    not_sim_copy.append(string)
+            
+
+
+            course_info[course]["Not Simultaneous"] = not_sim_copy
+            if not_sim_copy[0] == '': continue
+            #print(not_sim_copy)
+            for i in not_sim_copy:
+                i = i.strip()
+                course_info[i]['Not Simultaneous'].append(course.strip())
+            
+for a in course_info:
+    print(a, course_info[a]['Simultaneous'], course_info[a]['Not Simultaneous'])
+            #print(course_info)
+           
+                                            
+#print (course_info)
+                 
+
 '''
         else:
             not_sim_courses = line [0: -30]
