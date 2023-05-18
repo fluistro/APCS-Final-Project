@@ -118,13 +118,6 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                 continue   
             
             course_info[row[0]]['Students'].append(current_student_id)
-            print(course_info[row[0]])
-
-
-
-
-
-
 
 
 # read Course Blocking Rules
