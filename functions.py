@@ -1,6 +1,24 @@
 import json
 
 '''
+Requirements for a valid timetable:
+
+COURSES
+1. Covered Terms per Year
+2. Simultaneous blocking: share time slots
+3. NotSimultaneous blocking: share time slots
+4. Sequencing
+
+STUDENTS
+1. Sequencing
+2. Max enrollment not exceeded
+3. Priority
+
+'''
+
+
+
+'''
 timetable is a dictionary that represents a complete schedule that may or may not be valid:
 
 {
@@ -79,25 +97,7 @@ def is_valid(timetable):
     with open('course_info.json', 'r') as f:
         course_info = json.load(f)
 
-    # check that courses in a NotSimultaneous blocking are in the same time slot
 
-
-    # check that courses in a simultaneous blocking are in the same time slot and do not have more students than their maximum capacity
-
-
-    # check that no course is being offered too many times
-
-
-    # check that no course has more students than its maximum capacity
-
-
-    # check that students are taking courses in the correct sequencing
-
-
-    # check that students get required courses (priority <= 20)
-
-
-    
 
 
 # return the proportion of students who received all of their desired courses
