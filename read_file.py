@@ -78,7 +78,8 @@ while True:
         'Sections': sections,
         'Students': [],
         'Simultaneous' : [],
-        'Not Simultaneous': []
+        'Not Simultaneous': [],
+        'Term Blocking' : []
     }
 
 # read Cleaned Student Requests
@@ -209,7 +210,7 @@ with open('Course Blocking Rules.csv', 'r') as file:
         # getting sim courses
         line = r[r.index(",") + 2:]
        
-        if line [-26:] != "in a Simultaneous blocking":  
+        if line [-26:] != "in a Simultaneous blocking" and line[-19:] != 'in a Terms blocking':  
             not_sim_courses = line [0: -30]
             not_sim = not_sim_courses.split(", ")
         
@@ -230,12 +231,15 @@ with open('Course Blocking Rules.csv', 'r') as file:
             for i in not_sim_copy:
                 i = i.strip()
                 course_info[i]['Not Simultaneous'].append(course.strip())
+        
+    course_info['MSPLG10--L']['Term Blocking'].append('YESFL0AX-L')
+    course_info['YESFL0AX-L']['Term Blocking'].append('MSPLG10--L')
 #for a in course_info:
  #  print(a, course_info[a]['Simultaneous'], course_info[a]['Not Simultaneous'])
             #print(course_info)
-print(course_info.keys())    
-
-print (course_info)
+#print(course_info.keys())    
+#print(course_info)
+print (course_info['MSPLG10--L'])
                  
 
 
