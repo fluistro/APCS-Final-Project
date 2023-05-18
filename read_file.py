@@ -67,7 +67,9 @@ while True:
         'PPC': ppc,
         'Priority': priority,
         'Sections': sections,
-        'Students': []
+        'Students': [],
+        'Simultaneous' : [],
+        'Not Simultaneous': []
     }
 '''
 
@@ -136,6 +138,7 @@ with open('Course Blocking Rules.csv', 'r') as file:
     sim = {}
 
     counter = 0
+    sim_courses_list = []
     for row in reader:
 
         counter = counter + 1
@@ -156,20 +159,22 @@ with open('Course Blocking Rules.csv', 'r') as file:
             sim = sim_courses.split(", ")
 
 
-          
-            for i in range(len(sim)):
-                sim[i] = sim[i].replace(" ", "")
+            sim_courses_list = [value.strip() for value in sim]
+         
+            # create key Post Req with value list post_req
+            for c in set(sim_courses_list):
+                if c not in course_info[course]['Simultaneous']:
+                    course_info[course]['Simultaneous'].append(c)
+                
 
-            
-                # create key Post Req with value list post_req
-                course_info[course]['Simultaneous'].extend(sim)
+            for i in sim:
 
-                for i in sim:
-    
-                    i = i.strip()
+                i = i.strip()
+                if not(course.strip() in course_info[course]['Simultaneous']):
                     course_info[i]['Simultaneous'].append(course.strip())
-                    
 
+           
+                                   
 with open('Course Blocking Rules.csv', 'r') as file:
     reader = csv.reader(file)
     not_sim = {}
@@ -208,7 +213,7 @@ with open('Course Blocking Rules.csv', 'r') as file:
             not_sim_copy = []
         
             for string in not_sim:
-                if not (string.strip() in course_info[course]["Simultaneous"]):
+                if not (string.strip() in course_info[course]["Simultaneous"] or string.strip() in course_info[course]['Not Simultaneous']):
                     
                     not_sim_copy.append(string)
             
@@ -220,13 +225,12 @@ with open('Course Blocking Rules.csv', 'r') as file:
             for i in not_sim_copy:
                 i = i.strip()
                 course_info[i]['Not Simultaneous'].append(course.strip())
-            
-for a in course_info:
-    print(a, course_info[a]['Simultaneous'], course_info[a]['Not Simultaneous'])
+#for a in course_info:
+ #  print(a, course_info[a]['Simultaneous'], course_info[a]['Not Simultaneous'])
             #print(course_info)
-           
-                                            
-#print (course_info)
+print(course_info.keys())    
+
+print (course_info)
                  
 
 
