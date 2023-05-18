@@ -153,8 +153,32 @@ def is_valid(timetable):
 
 # return the proportion of students who received all of their desired courses
 def score(timetable):
-    pass
 
+    student_schedules = get_student_schedules(timetable)
+
+    with open('student_requests.json', 'r') as f:
+        student_requests = json.load(f)
+
+    total_students = 0
+    successful_students = 0
+    success = True
+
+    for student in student_requests:
+        requested = student_requests[student]
+        assigned = student_schedules[student]
+
+        for course in requested:
+            if course not in assigned:
+                success = False
+        
+        total_students += 1
+
+        if success:
+            successful_students += 1
+        
+        success = True
+
+    return successful_students / total_students
 
 # make a small change to the timetable by moving around students. return a new valid timetable.
 def shuffle_students(timetable):
