@@ -62,8 +62,10 @@ and outside_timetable should contain only courses outside the timetable.
 The generated timetable should satisfy the requirements listed under COURSES.
 
 '''
-def generate_course_schedule():
-    pass
+def generate_course_schedule(course_info):
+    for key in list(course_info.keys()):
+        if len(course_info[key]['Students']) <= 5:
+            print(course_info.pop(key))
 
 
 '''
