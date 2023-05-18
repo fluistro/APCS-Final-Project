@@ -8,6 +8,7 @@ COURSES
 2. Simultaneous blocking: share time slots
 3. NotSimultaneous blocking: share time slots
 4. Sequencing
+5. Sections
 
 STUDENTS
 1. Sequencing
@@ -19,7 +20,54 @@ STUDENTS
 
 
 '''
-timetable is a dictionary that represents a complete schedule that may or may not be valid:
+
+schedule: only courses
+timetable: courses and students
+
+Functions:
+
+generate_course_schedule()
+generate_timetable(schedule)
+get_student_schedules(timetable)
+is_valid(timetable)
+score(timetable)
+shuffle_students(timetable)
+shuffle_courses(timetable)
+
+'''
+
+
+
+'''
+returns a dictionary representing a schedule:
+
+{
+
+"sem1": [
+            [course1, course2, ...] # block A
+            [...] # B
+            [...] # C
+            [...] # D
+        ]
+
+"sem2": [...] same format as sem1
+
+"outside_timetable": [course1, course2, ...]
+
+}
+
+sem1 and sem2 should contain only courses in the timetable,
+and outside_timetable should contain only courses outside the timetable.
+
+The generated timetable should satisfy the requirements listed under COURSES.
+
+'''
+def generate_course_schedule():
+    pass
+
+
+'''
+timetable is a dictionary that adds students to schedule:
 
 {
 
@@ -42,12 +90,12 @@ timetable is a dictionary that represents a complete schedule that may or may no
 
 }
 
-Assume that sem1 and sem2 contain only courses in the timetable,
-and outside_timetable contains only courses outside the timetable.
-
+The timetable should meet all requirements under STUDENTS.
 '''
-def generate_timetable():
+
+def generate_timetable(schedule):
     pass
+
 
 '''
 Convenience method that returns a dictionary:
@@ -91,6 +139,7 @@ def get_student_schedules(timetable):
 
 
 # return True if the timetable meets all of the hard requirements set by the school and False otherwise
+# this method is probably inefficient and should not be used often
 def is_valid(timetable):
 
     # read course information
@@ -105,11 +154,11 @@ def score(timetable):
     pass
 
 
-# make a small change to the timetable by moving around students
+# make a small change to the timetable by moving around students. return a new valid timetable.
 def shuffle_students(timetable):
     pass
 
 
-# make a small change to the timetable by moving around courses
+# make a small change to the timetable by moving around courses. return a new valid timetable.
 def shuffle_courses(timetable):
     pass
