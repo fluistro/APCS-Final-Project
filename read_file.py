@@ -246,11 +246,11 @@ print (course_info['MSPLG10--L'])
 
 # write course_info to txt file
 
-with open('courses.txt', 'w') as convert_file:
-     convert_file.write(json.dumps(course_info))
+with open('courses.json', 'w') as convert_file:
+     json.dump(course_info, convert_file)
 
-with open('student_requests.txt', 'w') as convert_file:
-     convert_file.write(json.dumps(student_requests))
+with open('student_requests.json', 'w') as convert_file:
+     json.dump(student_requests, convert_file)
 
 
 
