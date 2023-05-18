@@ -71,7 +71,6 @@ while True:
         'Simultaneous' : [],
         'Not Simultaneous': []
     }
-'''
 
 # read Cleaned Student Requests
 current_student_id = 0
@@ -120,16 +119,7 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
             if (row[0] == 'MJA--10---' or row[0] == 'MJA--11---' or row[0] == 'MJA--12---'):
                 continue   
             
-            
             course_info[row[0]]['Students'].append(current_student_id)
-            print(course_info[row[0]])
-
-
-
-
-
-
-'''
 
 # read Course Blocking Rules
 # need to read file twice, one time for sim, one time for not sim since not sim depends on the read info of sim
@@ -236,7 +226,7 @@ print (course_info)
 
 
 # write course_info to txt file
-'''
+
 with open('courses.txt', 'w') as convert_file:
      convert_file.write(json.dumps(course_info))
-'''
+
