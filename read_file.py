@@ -31,6 +31,15 @@ with open('Course Sequencing Rules.csv', newline='') as csvfile:
 # dictionary
 course_info = {}
 
+
+student_requests = {}
+'''
+{1000: [course list]
+ 1001: []
+ ...
+ }
+'''
+
 # read Course Information
 f = open("Course Information.csv", "r")
 
@@ -120,6 +129,12 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                 continue   
             
             course_info[row[0]]['Students'].append(current_student_id)
+
+            if current_student_id in student_requests:
+                student_requests[current_student_id].append(row[0])
+            else:
+                student_requests[current_student_id] = [row[0]]
+
 
 # read Course Blocking Rules
 # need to read file twice, one time for sim, one time for not sim since not sim depends on the read info of sim
@@ -229,4 +244,9 @@ print (course_info)
 
 with open('courses.txt', 'w') as convert_file:
      convert_file.write(json.dumps(course_info))
+
+with open('student_requests.txt', 'w') as convert_file:
+     convert_file.write(json.dumps(student_requests))
+
+
 
