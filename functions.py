@@ -179,8 +179,40 @@ def score(timetable):
     return successful_students / total_students
 
 # make a small change to the timetable by moving around students. return a new valid timetable.
+# does not shuffle students in outside timetable courses.
 def shuffle_students(timetable):
-    pass
+
+    n = 50
+
+    for i in range(n):
+
+        # find some way to select students such that switching them is good
+
+        timeslot = 0
+        student1 = 1000
+        student2 = 1001
+
+
+        student_schedules = get_student_schedules(timetable)
+
+        student1_course = student_schedules[student1][timeslot]
+        student2_course = student_schedules[student2][timeslot]
+
+
+        # swap the two students in the timeslot
+        if 0 <= timeslot <= 3:
+            timetable["sem1"][timeslot][student1_course].append(student2)
+            timetable["sem1"][timeslot][student1_course].remove(student1)
+            timetable["sem1"][timeslot][student2_course].append(student1)
+            timetable["sem1"][timeslot][student2_course].remove(student2)
+        elif 4 <= timeslot <= 7:
+            timeslot -= 4
+            timetable["sem2"][timeslot][student1_course].append(student2)
+            timetable["sem2"][timeslot][student1_course].remove(student1)
+            timetable["sem2"][timeslot][student2_course].append(student1)
+            timetable["sem2"][timeslot][student2_course].remove(student2)
+    
+    return timetable
 
 
 # make a small change to the timetable by moving around courses. return a new valid timetable.
