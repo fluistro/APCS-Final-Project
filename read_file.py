@@ -30,8 +30,6 @@ with open('Course Sequencing Rules.csv', newline='') as csvfile:
 
 # dictionary
 course_info = {}
-
-
 student_requests = {}
 '''
 {1000: [course list]
@@ -185,22 +183,13 @@ with open('Course Blocking Rules.csv', 'r') as file:
     reader = csv.reader(file)
     not_sim = {}
 
-
-
-
     counter = 0
     for row in reader:
-
-
-
 
         counter = counter + 1
         # skip no info lines
         if (counter == 1 or counter == 2 or counter == 3 or counter == 4 or counter == 5 or counter == 38 or counter == 39 or counter == 40 or counter == 41 or counter == 42 or counter == 43):
             continue
-
-
-
 
         # getting course name
         r = row[2]
@@ -214,8 +203,6 @@ with open('Course Blocking Rules.csv', 'r') as file:
             not_sim_courses = line [0: -30]
             not_sim = not_sim_courses.split(", ")
         
-
-
             not_sim_copy = []
         
             for string in not_sim:
@@ -223,8 +210,6 @@ with open('Course Blocking Rules.csv', 'r') as file:
                     
                     not_sim_copy.append(string)
             
-
-
             course_info[course]["Not Simultaneous"] = not_sim_copy
             if not_sim_copy[0] == '': continue
             #print(not_sim_copy)
@@ -233,24 +218,17 @@ with open('Course Blocking Rules.csv', 'r') as file:
                 course_info[i]['Not Simultaneous'].append(course.strip())
         
     course_info['MSPLG10--L']['Term Blocking'].append('YESFL0AX-L')
-    course_info['YESFL0AX-L']['Term Blocking'].append('MSPLG10--L')
-#for a in course_info:
- #  print(a, course_info[a]['Simultaneous'], course_info[a]['Not Simultaneous'])
-            #print(course_info)
-#print(course_info.keys())    
-#print(course_info)
-print (course_info['MSPLG10--L'])
-                 
-
+    course_info['YESFL0AX-L']['Term Blocking'].append('MSPLG10--L')              
 
 
 # write course_info to txt file
 
-with open('courses.json', 'w') as convert_file:
-     json.dump(course_info, convert_file)
+with open('courses.json', 'w') as out_file:
+     json.dump(course_info, out_file)
 
-with open('student_requests.json', 'w') as convert_file:
-     json.dump(student_requests, convert_file)
-
+'''
+with open('student_requests.json', 'w') as out_file:
+     json.dump(student_requests, out_file)
+'''
 
 
