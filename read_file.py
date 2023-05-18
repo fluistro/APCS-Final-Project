@@ -239,8 +239,8 @@ with open('Course Blocking Rules.csv', 'r') as file:
             #print(course_info)
 #print(course_info.keys())    
 #print(course_info)
-print (course_info['MSPLG10--L'])
-                 
+# print (course_info['MSPLG10--L'])
+print(student_requests)               
 
 
 
