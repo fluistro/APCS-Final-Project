@@ -97,8 +97,32 @@ The timetable should meet all requirements under STUDENTS.
 '''
 
 def generate_timetable(schedule):
-    pass
+    
+  
+    with open('course.json') as f:
+        course_info = json.load(f)
+    with open('student_requests.json') as f:
+        student_info = json.load(f)
 
+    print(course_info)
+    
+    # inside timetable courses
+        # go through student info one student at a time
+            # Sort their courses by priority
+            # Start with most prioritized courses
+                # Check if student meets sequencing, and pre req if have two courses that have order
+                    # find course in schedule that does not contridict with student's current schedule and check if course is at max enrollment
+                        # add student
+                    # if there is no space in any of the schedule for this course, 
+                        # Skip this course and go onto the next prioritized one (assuming that there will always be enough space for required courses)
+                # If doesn't meet sequencing / pre req
+                    # Skip this course and go onto the next prioritized one (assuming student will always have required courses with right sequence and pre req ex. no english 9, 10, 11)
+
+
+    # outside timetable courses
+        # check sequencing and pre req
+            # add course
+        # doesn't meet just skip
 
 '''
 Convenience method that returns a dictionary:
@@ -190,3 +214,8 @@ def shuffle_students(timetable):
 def shuffle_courses(timetable):
     pass
 
+with open('course.json') as f:
+        course_info = json.load(f)
+with open('student_requests.json') as f:
+        student_info = json.load(f)
+print(course_info)
