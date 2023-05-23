@@ -1,4 +1,5 @@
 import json
+import random
 
 '''
 Requirements for a valid timetable:
@@ -62,11 +63,38 @@ and outside_timetable should contain only courses outside the timetable.
 The generated timetable should satisfy the requirements listed under COURSES.
 
 '''
-def generate_course_schedule(course_info):
+def generate_course_schedule():
+
+    # remove all courses from course_info if:
+        # there are less than 5 students requesting it
+        # but courses like learning strategies are kept
+
+    removed_courses = []
 
     for key in list(course_info.keys()):
         if len(course_info[key]['Students']) <= 5:
-            print(course_info.pop(key))
+            num_of_students = course_info[key]['Students']
+            for sim_course in course_info[key]['Simultaneous']:
+
+                # put all students signed up to each simultaeous course into num_of_students
+                for students in course_info[sim_course]['Students']:
+                    num_of_students.append(students)
+
+            if len(num_of_students) <= 7:
+                removed_courses.append(key)
+                print(course_info[key]['course name'], num_of_students)
+                num_of_students = []
+            #print(course_info, course_info[key]['Students'])
+    
+    for rem_key in removed_courses:
+        
+        if rem_key in course_info[rem_key]['Simultaneous']:
+            course_info[rem_key]['Simultaneous'].pop(rem_key)
+
+        if rem_key in course_info[rem_key]['Not Simultaneous']:
+            course_info[rem_key]['Not Simultaneous'].pop(rem_key)
+
+        course_info.pop(key)
 
 
 '''
@@ -232,14 +260,20 @@ def shuffle_students(timetable):
 
     n = 50
 
+    # swap n pairs of students
     for i in range(n):
 
         # find some way to select students such that switching them is good
+        # currently chooses randomly
+        # does not yet check for spares
 
-        timeslot = 0
-        student1 = 1000
-        student2 = 1001
+        timeslot = random.randint(0,7)
+        student1 = random.randint(1000,1837)
+        student2 = random.randint(1000,1837)
 
+        if (student1 == student2):
+            while (student1 == student2):
+                student2 = random.randint(1000,1837)
 
         student_schedules = get_student_schedules(timetable)
 
@@ -265,11 +299,80 @@ def shuffle_students(timetable):
 
 # make a small change to the timetable by moving around courses. return a new valid timetable.
 def shuffle_courses(timetable):
-    pass
+    
+    with open('course.json') as f:
+        course_info = json.load(f)
+
+    # pick course 1
+
+    # pick a random block
+    timeslot1 = random.randint(0,7)
+
+    semester1 = ""
+
+    if (timeslot1 <= 3):
+        semester1 = "sem1"
+    else:
+        semester1 = "sem2"
+        timeslot1 -= 4
+
+    while True:
+
+        # pick a random course in that block. Does not select courses with requirements for blocking and sequencing
+        course1, students1 = random.choice(list(timetable[semester1][timeslot1].items()))
+
+        # check for blocking/sequencing requirements
+        if course_info[course1]['Prereqs'] or course_info[course1]['Postreqs'] or course_info[course1]['Simultaneous'] or course_info[course1]['NotSimultaneous']:
+            continue
+
+        break
+
+
+    # pick course 2
+
+    # pick a random block
+    timeslot2 = random.randint(0,7)
+
+    semester2 = ""
+
+    if (timeslot2 <= 3):
+        semester2 = "sem1"
+    else:
+        semester2 = "sem2"
+        timeslot2 -= 4
+
+    while True:
+
+        # pick a random course in that block. Does not select courses with requirements for blocking and sequencing
+        course2, students2 = random.choice(list(timetable[semester2][timeslot2].items()))
+
+        # check for blocking/sequencing requirements, and that course2 does not already run in timeslot1, and that course1 does not already run in timeslot2
+        if course_info[course2]['Prereqs'] or course_info[course2]['Postreqs'] or course_info[course2]['Simultaneous'] or course_info[course2]['NotSimultaneous']:
+            continue
+
+        if course2 in timetable[semester1][timeslot1] or course1 in timetable[semester2][timeslot2]:
+            continue
+
+        break
+
+
+    # swap the courses (and their students)
+
+    timetable[semester1][timeslot1][course2] = students1
+    timetable[semester2][timeslot2][course1] = students2
+
+    timetable[semester1][timeslot1].pop(course1)
+    timetable[semester2][timeslot2].pop(course2)
+
+    return timetable
+
+
 
 with open('courses.json') as f:
         course_info = json.load(f)
 with open('student_requests.json') as f:
         student_info = json.load(f)
 
-generate_timetable()
+generate_course_schedule()
+
+#print(course_info['ASTA-12---']['Students'])
