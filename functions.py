@@ -62,11 +62,38 @@ and outside_timetable should contain only courses outside the timetable.
 The generated timetable should satisfy the requirements listed under COURSES.
 
 '''
-def generate_course_schedule(course_info):
+def generate_course_schedule():
+
+    # remove all courses from course_info if:
+        # there are less than 5 students requesting it
+        # but courses like learning strategies are kept
+
+    removed_courses = []
 
     for key in list(course_info.keys()):
         if len(course_info[key]['Students']) <= 5:
-            print(course_info.pop(key))
+            num_of_students = course_info[key]['Students']
+            for sim_course in course_info[key]['Simultaneous']:
+
+                # put all students signed up to each simultaeous course into num_of_students
+                for students in course_info[sim_course]['Students']:
+                    num_of_students.append(students)
+
+            if len(num_of_students) <= 7:
+                removed_courses.append(key)
+                print(course_info[key]['course name'], num_of_students)
+                num_of_students = []
+            #print(course_info, course_info[key]['Students'])
+    
+    for rem_key in removed_courses:
+        
+        if rem_key in course_info[rem_key]['Simultaneous']:
+            course_info[rem_key]['Simultaneous'].pop(rem_key)
+
+        if rem_key in course_info[rem_key]['Not Simultaneous']:
+            course_info[rem_key]['Not Simultaneous'].pop(rem_key)
+
+        course_info.pop(key)
 
 
 '''
@@ -246,8 +273,11 @@ def shuffle_students(timetable):
 def shuffle_courses(timetable):
     pass
 
-with open('course.json') as f:
+with open('courses.json') as f:
         course_info = json.load(f)
 with open('student_requests.json') as f:
         student_info = json.load(f)
-print(course_info)
+
+generate_course_schedule()
+
+#print(course_info['ASTA-12---']['Students'])
