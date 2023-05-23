@@ -96,21 +96,41 @@ timetable is a dictionary that adds students to schedule:
 The timetable should meet all requirements under STUDENTS.
 '''
 
-def generate_timetable(schedule):
+def generate_timetable():
     
   
-    with open('course.json') as f:
+    with open('courses.json') as f:
         course_info = json.load(f)
+
     with open('student_requests.json') as f:
         student_info = json.load(f)
 
-    print(course_info)
+   
+    
     
     # inside timetable courses
         # go through student info one student at a time
-            # Sort their courses by priority
-            # Start with most prioritized courses
-                # Check if student meets sequencing, and pre req if have two courses that have order
+    for student in student_info:
+
+        # create a dictionary of the courses choosen by the student, key as courses name and value as the priority of that course
+        not_sorted_courses = student_info[student]
+        course_priority = {}
+        for course in not_sorted_courses:
+            priority = course_info[course].get("Priority")
+            course_priority.setdefault(course, priority)
+
+        # Sort their courses by priority
+        sorted_courses = sorted(course_priority.items(), key=lambda item: item[1])
+        
+        # Start with most prioritized courses
+        for i in range(len(sorted_courses)):
+            course, _  = sorted_courses[i]
+            print(course)
+
+            # Check if student meets sequencing
+            if "Pre Req" in course_info[course]:
+
+            # and pre req if have two courses that have order
                     # find course in schedule that does not contridict with student's current schedule and check if course is at max enrollment
                         # add student
                     # if there is no space in any of the schedule for this course, 
@@ -123,6 +143,7 @@ def generate_timetable(schedule):
         # check sequencing and pre req
             # add course
         # doesn't meet just skip
+                return 0
 
 '''
 Convenience method that returns a dictionary:
@@ -246,8 +267,9 @@ def shuffle_students(timetable):
 def shuffle_courses(timetable):
     pass
 
-with open('course.json') as f:
+with open('courses.json') as f:
         course_info = json.load(f)
 with open('student_requests.json') as f:
         student_info = json.load(f)
-print(course_info)
+
+generate_timetable()
