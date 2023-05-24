@@ -84,7 +84,6 @@ def generate_course_schedule():
                 removed_courses.append(key)
                 print(course_info[key]['course name'], num_of_students)
                 num_of_students = []
-            #print(course_info, course_info[key]['Students'])
     
     for rem_key in removed_courses:
         
@@ -94,7 +93,7 @@ def generate_course_schedule():
         if rem_key in course_info[rem_key]['Not Simultaneous']:
             course_info[rem_key]['Not Simultaneous'].pop(rem_key)
 
-        course_info.pop(key)
+        course_info.pop(rem_key)
 
 
 '''
@@ -385,14 +384,27 @@ def shuffle_courses(timetable):
 
     return timetable
 
-
+# course_schedule only stores the courses, it doesn't give a shit about students
+course_schedule = {}
+course_schedule['sem 1'] = {
+        'A': [],
+        'B': [],
+        'C': [],
+        'D': [],
+    }
+course_schedule['sem 2'] = {
+        'A': [],
+        'B': [],
+        'C': [],
+        'D': [],
+    }
 
 with open('courses.json') as f:
         course_info = json.load(f)
 with open('student_requests.json') as f:
         student_info = json.load(f)
-
-generate_course_schedule()
+print(course_schedule)
+#generate_course_schedule()
 
 #print(course_info['ASTA-12---']['Students'])
 
