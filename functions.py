@@ -84,7 +84,6 @@ def generate_course_schedule():
                 removed_courses.append(key)
                 print(course_info[key]['course name'], num_of_students)
                 num_of_students = []
-            #print(course_info, course_info[key]['Students'])
     
     for rem_key in removed_courses:
         
@@ -94,7 +93,7 @@ def generate_course_schedule():
         if rem_key in course_info[rem_key]['Not Simultaneous']:
             course_info[rem_key]['Not Simultaneous'].pop(rem_key)
 
-        course_info.pop(key)
+        course_info.pop(rem_key)
 
 
 '''
@@ -355,14 +354,33 @@ def shuffle_students(timetable):
         # does not yet check for spares
 
         timeslot = random.randint(0,7)
-        student1 = random.randint(1000,1837)
-        student2 = random.randint(1000,1837)
+        semester = ""
+        if (0 <= timeslot <= 3):
+            semester = "sem1"
+        else:
+            semester = "sem2"
+            timeslot -= 4
 
-        if (student1 == student2):
-            while (student1 == student2):
-                student2 = random.randint(1000,1837)
+        while True:
+
+            course1 = random.choice(timetable[semester][timeslot])
+            course2 = random.choice(timetable[semester][timeslot])
+
+            if (course1 == course2):
+                continue
+
+            student1 = random.choice(timetable[semester][timeslot][course1])
+            student2 = random.choice(timetable[semester][timeslot][course2])
+
+            if (student1 == student2):
+                continue
+
+            break
 
         student_schedules = get_student_schedules(timetable)
+
+        if (semester == "sem2"):
+            timeslot += 4
 
         student1_course = student_schedules[student1][timeslot]
         student2_course = student_schedules[student2][timeslot]
@@ -453,13 +471,79 @@ def shuffle_courses(timetable):
 
     return timetable
 
-
+# course_schedule only stores the courses, it doesn't give a shit about students
+course_schedule = {}
+course_schedule['sem 1'] = {
+        'A': [],
+        'B': [],
+        'C': [],
+        'D': [],
+    }
+course_schedule['sem 2'] = {
+        'A': [],
+        'B': [],
+        'C': [],
+        'D': [],
+    }
 
 with open('courses.json') as f:
         course_info = json.load(f)
 with open('student_requests.json') as f:
         student_info = json.load(f)
-
+print(course_schedule)
+#generate_course_schedule()
 
 #print(course_info['ASTA-12---']['Students'])
-generate_timetable()
+
+
+
+
+# actual code
+
+
+
+# generate initial guess
+schedule = generate_course_schedule()
+initial_timetable = generate_timetable(schedule)
+final_timetable = initial_timetable
+current_timetable = initial_timetable
+
+# check 10 possible schedules
+for i in range(10):
+
+    # make 100 small changes to students, each of which is an improvement
+    for i in range(100):
+
+        current_score = score(current_timetable)
+        best_timetable = current_timetable
+        max_score = current_score
+
+        counter = 0
+
+        # generate 50 better timetables and choose the best one
+        while counter < 50:
+
+            new_timetable = shuffle_students(current_timetable)
+            new_score = score(new_timetable)
+
+            if new_score > current_score:
+
+                counter += 1
+
+                if max_score < new_score:
+                    max_score = new_score
+                    best_timetable = new_timetable
+
+        current_timetable = best_timetable
+
+    if score(current_timetable) > score(final_timetable):
+        final_timetable = current_timetable
+
+    # make small change to course schedule, then repeat
+    current_timetable = shuffle_courses(current_timetable)
+
+
+print(initial_timetable)
+print(score(initial_timetable))
+print(final_timetable)
+print(score(final_timetable))
