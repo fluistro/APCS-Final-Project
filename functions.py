@@ -407,3 +407,56 @@ print(course_schedule)
 #generate_course_schedule()
 
 #print(course_info['ASTA-12---']['Students'])
+
+
+
+
+# actual code
+
+
+
+# generate initial guess
+schedule = generate_course_schedule()
+initial_timetable = generate_timetable(schedule)
+final_timetable = initial_timetable
+current_timetable = initial_timetable
+
+# check 10 possible schedules
+for i in range(10):
+
+    # make 100 small changes to students, each of which is an improvement
+    for i in range(100):
+
+        current_score = score(current_timetable)
+        best_timetable = current_timetable
+        max_score = current_score
+
+        counter = 0
+
+        # generate 50 better timetables and choose the best one
+        while counter < 50:
+
+            new_timetable = shuffle_students(current_timetable)
+            new_score = score(new_timetable)
+
+            if new_score > current_score:
+
+                counter += 1
+
+                if max_score < new_score:
+                    max_score = new_score
+                    best_timetable = new_timetable
+
+        current_timetable = best_timetable
+
+    if score(current_timetable) > score(final_timetable):
+        final_timetable = current_timetable
+
+    # make small change to course schedule, then repeat
+    current_timetable = shuffle_courses(current_timetable)
+
+
+print(initial_timetable)
+print(score(initial_timetable))
+print(final_timetable)
+print(score(final_timetable))
