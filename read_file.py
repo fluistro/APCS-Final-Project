@@ -105,29 +105,225 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                 continue
 
             # if the course requested is NOT THERE!!!!
-            if (row[0] == 'XLEAD09---'):
-                continue
+            if not row[0] in course_info:
+                if (row[0] == 'XLEAD09---'):
+                        course_info['XLEAD09---'] = {
+                            'course name': 'Leadership 9',
+                            'Base Terms/Year': 1,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 200,
+                            'PPC': 2,
+                            'Priority': 50,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }
 
-            if (row[0] == 'MEFWR10---'):
-                continue
+                if (row[0] == 'MEFWR10---'):
+                        course_info['MEFWR10---'] = {
+                            'course name': 'EFP Literary Studies 10',
+                            'Base Terms/Year': 2,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 24,
+                            'PPC': 2,
+                            'Priority': 20,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }
+                
+                if (row[0] == 'MGE--12' or row[0] == 'MGE--11'):
+                        course_info['MGE--12'] = {
+                            'course name': 'German 12',
+                            'Base Terms/Year': 2,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 29,
+                            'PPC': 2,
+                            'Priority': 15,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }
+                        course_info['MGE--11'] = {
+                            'course name': 'German 11',
+                            'Base Terms/Year': 2,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 29,
+                            'PPC': 2,
+                            'Priority': 15,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }
 
-            if (row[0] == 'MGE--12' or row[0] == 'MGE--11'):
-                continue
+                if (row[0] == 'MKOR-10---' or row[0] == 'MKOR-11---' or row[0] == 'MKOR-12---'):
+                        # this course is not in the csv file
+                        # guess of the specifications of this course:
+                        course_info['MKOR-10---'] = {
+                            'course name': 'Korean 10',
+                            'Base Terms/Year': 2,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 29,
+                            'PPC': 2,
+                            'Priority': 15,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }
+                        course_info['MKOR-11---'] = {
+                            'course name': 'Korean 11',
+                            'Base Terms/Year': 2,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 29,
+                            'PPC': 2,
+                            'Priority': 15,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }
+                        course_info['MKOR-12---'] = {
+                            'course name': 'Korean 12',
+                            'Base Terms/Year': 2,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 29,
+                            'PPC': 2,
+                            'Priority': 15,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }
 
-            if (row[0] == 'MKOR-10---' or row[0] == 'MKOR-11---' or row[0] == 'MKOR-12---'):
-                continue 
+                if (row[0] == 'MIT--12---'):
+                        # this course is not in the csv file
+                        # guess of the specifications of this course: (based from website)
+                        course_info['MIT--12---'] = {
+                            'course name': 'Italian 12',
+                            'Base Terms/Year': 2,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 29,
+                            'PPC': 2,
+                            'Priority': 15,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }
+                        # https://mountdougcourses.sd61.bc.ca/courses/italian-12/      
 
-            if (row[0] == 'MIT--12---'):
-                continue           
+                if (row[0] == 'YESFL1AX--'):
+                        # this course is not in the csv file
+                        # guess of the specifications of this course: (based from website)
+                        course_info['YESFL1AX--'] = {
+                            'course name': 'ELL 11 & 12 Support',
+                            'Base Terms/Year': 2,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 24,
+                            'PPC': 2,
+                            'Priority': 10,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }
+                        # https://mountdougcourses.sd61.bc.ca/courses/ell-support-blocks-learning-strategies/       
 
-            if (row[0] == 'YESFL1AX--'):
-                continue         
+                if (row[0] == 'MSPLG11---'):
+                        course_info['MSPLG11---'] = {
+                            'course name': 'SPOKEN LANGUAGE 11',
+                            'Base Terms/Year': 2,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 24,
+                            'PPC': 2,
+                            'Priority': 10,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }  
 
-            if (row[0] == 'MSPLG11---'):
-                continue    
-
-            if (row[0] == 'MJA--10---' or row[0] == 'MJA--11---' or row[0] == 'MJA--12---'):
-                continue   
+                if (row[0] == 'MJA--10---' or row[0] == 'MJA--11---' or row[0] == 'MJA--12---'):
+                        course_info['MJA--10---'] = {
+                            'course name': 'Japanese 10',
+                            'Base Terms/Year': 2,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 29,
+                            'PPC': 2,
+                            'Priority': 15,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }
+                        course_info['MJA--11---'] = {
+                            'course name': 'Japanese 11',
+                            'Base Terms/Year': 2,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 29,
+                            'PPC': 2,
+                            'Priority': 15,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }
+                        course_info['MJA--12---'] = {
+                            'course name': 'Japanese 12',
+                            'Base Terms/Year': 2,
+                            'Covered Terms/Year': 1,
+                            'Max Enrollment': 29,
+                            'PPC': 2,
+                            'Priority': 15,
+                            'Sections': 1,
+                            'Students': [],
+                            'Pre Req' : [],
+                            'Post Req': [],
+                            'Simultaneous' : [],
+                            'Not Simultaneous': [],
+                            'Term Blocking' : []
+                        }
             
             course_info[row[0]]['Students'].append(current_student_id)
 
@@ -178,9 +374,7 @@ with open('Course Blocking Rules.csv', 'r') as file:
                 i = i.strip()
                 if not(course.strip() in course_info[course]['Simultaneous']):
                     course_info[i]['Simultaneous'].append(course.strip())
-
-           
-                                   
+                        
 with open('Course Blocking Rules.csv', 'r') as file:
     reader = csv.reader(file)
     not_sim = {}
