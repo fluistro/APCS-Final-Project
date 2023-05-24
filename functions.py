@@ -220,14 +220,33 @@ def shuffle_students(timetable):
         # does not yet check for spares
 
         timeslot = random.randint(0,7)
-        student1 = random.randint(1000,1837)
-        student2 = random.randint(1000,1837)
+        semester = ""
+        if (0 <= timeslot <= 3):
+            semester = "sem1"
+        else:
+            semester = "sem2"
+            timeslot -= 4
 
-        if (student1 == student2):
-            while (student1 == student2):
-                student2 = random.randint(1000,1837)
+        while True:
+
+            course1 = random.choice(timetable[semester][timeslot])
+            course2 = random.choice(timetable[semester][timeslot])
+
+            if (course1 == course2):
+                continue
+
+            student1 = random.choice(timetable[semester][timeslot][course1])
+            student2 = random.choice(timetable[semester][timeslot][course2])
+
+            if (student1 == student2):
+                continue
+
+            break
 
         student_schedules = get_student_schedules(timetable)
+
+        if (semester == "sem2"):
+            timeslot += 4
 
         student1_course = student_schedules[student1][timeslot]
         student2_course = student_schedules[student2][timeslot]
