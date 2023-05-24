@@ -64,7 +64,7 @@ The generated timetable should satisfy the requirements listed under COURSES.
 
 '''
 def generate_course_schedule():
-
+    '''
     # remove all courses from course_info if:
         # there are less than 5 students requesting it
         # but courses like learning strategies are kept
@@ -94,6 +94,25 @@ def generate_course_schedule():
             course_info[rem_key]['Not Simultaneous'].pop(rem_key)
 
         course_info.pop(rem_key)
+    '''
+    '''
+    prec11 (1/2)
+    prec12 (1+2)
+    calc12 (2)
+    apcalc (2)
+
+    APCS   (2)
+    CS12   (1/2)
+
+    APPHY  (1)
+    Phy12  (1/2)
+    Phy11   (1/2)
+
+    chem11 (1/2)
+    chem12 (1/2)
+
+    
+    '''
 
 
 '''
@@ -399,12 +418,12 @@ course_schedule['sem 2'] = {
         'D': [],
     }
 
-with open('courses.json') as f:
+with open('courses_trimmed.json') as f:
         course_info = json.load(f)
 with open('student_requests.json') as f:
         student_info = json.load(f)
-print(course_schedule)
-#generate_course_schedule()
+#print(course_schedule)
+generate_course_schedule()
 
 #print(course_info['ASTA-12---']['Students'])
 
@@ -414,7 +433,7 @@ print(course_schedule)
 # actual code
 
 
-
+'''
 # generate initial guess
 schedule = generate_course_schedule()
 initial_timetable = generate_timetable(schedule)
@@ -454,9 +473,10 @@ for i in range(10):
 
     # make small change to course schedule, then repeat
     current_timetable = shuffle_courses(current_timetable)
-
-
+'''
+'''
 print(initial_timetable)
 print(score(initial_timetable))
 print(final_timetable)
 print(score(final_timetable))
+'''
