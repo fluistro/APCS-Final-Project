@@ -63,11 +63,38 @@ and outside_timetable should contain only courses outside the timetable.
 The generated timetable should satisfy the requirements listed under COURSES.
 
 '''
-def generate_course_schedule(course_info):
+def generate_course_schedule():
+
+    # remove all courses from course_info if:
+        # there are less than 5 students requesting it
+        # but courses like learning strategies are kept
+
+    removed_courses = []
 
     for key in list(course_info.keys()):
         if len(course_info[key]['Students']) <= 5:
-            print(course_info.pop(key))
+            num_of_students = course_info[key]['Students']
+            for sim_course in course_info[key]['Simultaneous']:
+
+                # put all students signed up to each simultaeous course into num_of_students
+                for students in course_info[sim_course]['Students']:
+                    num_of_students.append(students)
+
+            if len(num_of_students) <= 7:
+                removed_courses.append(key)
+                print(course_info[key]['course name'], num_of_students)
+                num_of_students = []
+            #print(course_info, course_info[key]['Students'])
+    
+    for rem_key in removed_courses:
+        
+        if rem_key in course_info[rem_key]['Simultaneous']:
+            course_info[rem_key]['Simultaneous'].pop(rem_key)
+
+        if rem_key in course_info[rem_key]['Not Simultaneous']:
+            course_info[rem_key]['Not Simultaneous'].pop(rem_key)
+
+        course_info.pop(key)
 
 
 '''
@@ -97,21 +124,41 @@ timetable is a dictionary that adds students to schedule:
 The timetable should meet all requirements under STUDENTS.
 '''
 
-def generate_timetable(schedule):
+def generate_timetable():
     
   
-    with open('course.json') as f:
+    with open('courses.json') as f:
         course_info = json.load(f)
+
     with open('student_requests.json') as f:
         student_info = json.load(f)
 
-    print(course_info)
+   
+    
     
     # inside timetable courses
         # go through student info one student at a time
-            # Sort their courses by priority
-            # Start with most prioritized courses
-                # Check if student meets sequencing, and pre req if have two courses that have order
+    for student in student_info:
+
+        # create a dictionary of the courses choosen by the student, key as courses name and value as the priority of that course
+        not_sorted_courses = student_info[student]
+        course_priority = {}
+        for course in not_sorted_courses:
+            priority = course_info[course].get("Priority")
+            course_priority.setdefault(course, priority)
+
+        # Sort their courses by priority
+        sorted_courses = sorted(course_priority.items(), key=lambda item: item[1])
+        
+        # Start with most prioritized courses
+        for i in range(len(sorted_courses)):
+            course, _  = sorted_courses[i]
+            print(course)
+
+            # Check if student meets sequencing
+            if "Pre Req" in course_info[course]:
+
+            # and pre req if have two courses that have order
                     # find course in schedule that does not contridict with student's current schedule and check if course is at max enrollment
                         # add student
                     # if there is no space in any of the schedule for this course, 
@@ -124,6 +171,7 @@ def generate_timetable(schedule):
         # check sequencing and pre req
             # add course
         # doesn't meet just skip
+                return 0
 
 '''
 Convenience method that returns a dictionary:
@@ -339,8 +387,11 @@ def shuffle_courses(timetable):
 
 
 
-with open('course.json') as f:
+with open('courses.json') as f:
         course_info = json.load(f)
 with open('student_requests.json') as f:
         student_info = json.load(f)
-print(course_info)
+
+generate_course_schedule()
+
+#print(course_info['ASTA-12---']['Students'])
