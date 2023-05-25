@@ -110,7 +110,7 @@ def generate_course_schedule():
 
     chem11 (1/2)
     chem12 (1/2)
-
+    
     
     '''
 
