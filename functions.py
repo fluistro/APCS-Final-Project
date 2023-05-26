@@ -378,16 +378,6 @@ def get_student_schedules(timetable):
     return student_schedules
 
 
-# return True if the timetable meets all of the hard requirements set by the school and False otherwise
-# this method is probably inefficient and should not be used often
-def is_valid(timetable):
-
-    # read course information
-    with open('course_info.json', 'r') as f:
-        course_info = json.load(f)
-
-
-
 
 # return the proportion of students who received all of their desired courses
 def score(timetable):
@@ -441,12 +431,14 @@ def shuffle_students(timetable):
 
         while True:
 
+            # get two different random courses in that timeslot
             course1 = random.choice(timetable[semester][timeslot])
             course2 = random.choice(timetable[semester][timeslot])
 
             if (course1 == course2):
                 continue
 
+            # get one student from each course
             student1 = random.choice(timetable[semester][timeslot][course1])
             student2 = random.choice(timetable[semester][timeslot][course2])
 
@@ -455,27 +447,13 @@ def shuffle_students(timetable):
 
             break
 
-        student_schedules = get_student_schedules(timetable)
-
-        if (semester == "sem2"):
-            timeslot += 4
-
-        student1_course = student_schedules[student1][timeslot]
-        student2_course = student_schedules[student2][timeslot]
-
 
         # swap the two students in the timeslot
-        if 0 <= timeslot <= 3:
-            timetable["sem1"][timeslot][student1_course].append(student2)
-            timetable["sem1"][timeslot][student1_course].remove(student1)
-            timetable["sem1"][timeslot][student2_course].append(student1)
-            timetable["sem1"][timeslot][student2_course].remove(student2)
-        elif 4 <= timeslot <= 7:
-            timeslot -= 4
-            timetable["sem2"][timeslot][student1_course].append(student2)
-            timetable["sem2"][timeslot][student1_course].remove(student1)
-            timetable["sem2"][timeslot][student2_course].append(student1)
-            timetable["sem2"][timeslot][student2_course].remove(student2)
+
+        timetable[semester][timeslot][course1].append(student2)
+        timetable[semester][timeslot][course1].remove(student1)
+        timetable[semester][timeslot][course2].append(student1)
+        timetable[semester][timeslot][course2].remove(student2)
     
     return timetable
 
@@ -508,6 +486,10 @@ def shuffle_courses(timetable):
         if course_info[course1]['Prereqs'] or course_info[course1]['Postreqs'] or course_info[course1]['Simultaneous'] or course_info[course1]['NotSimultaneous']:
             continue
 
+        # check that course1 does not run in every block
+        if course1 in ['MCH--11---', 'MCLE-10---', 'MENST12---', 'MLTST10---', 'MLST-12---', 'MPREC11---', 'MSC--10---', 'MSS--10---', 'XLDCB09LS-', 'YED--0AX--', 'YED--1DX--', 'YED--2CX--', 'YED--2EX--']:
+            continue
+
         break
 
 
@@ -532,7 +514,6 @@ def shuffle_courses(timetable):
         # check for blocking/sequencing requirements, and that course2 does not already run in timeslot1, and that course1 does not already run in timeslot2
         if course_info[course2]['Prereqs'] or course_info[course2]['Postreqs'] or course_info[course2]['Simultaneous'] or course_info[course2]['NotSimultaneous']:
             continue
-
         if course2 in timetable[semester1][timeslot1] or course1 in timetable[semester2][timeslot2]:
             continue
 
@@ -548,6 +529,37 @@ def shuffle_courses(timetable):
     timetable[semester2][timeslot2].pop(course2)
 
     return timetable
+
+
+# prints the timetable in tabular form
+def print_timetable(timetable):
+
+    with open('courses.json') as f:
+        course_info = json.load(f)
+
+    s1A = [course_info[course_code]['course name'] for course_code in timetable["sem1"][0].keys()]
+    s1B = [course_info[course_code]['course name'] for course_code in timetable["sem1"][1].keys()]
+    s1C = [course_info[course_code]['course name'] for course_code in timetable["sem1"][2].keys()]
+    s1D = [course_info[course_code]['course name'] for course_code in timetable["sem1"][3].keys()]
+    s2A = [course_info[course_code]['course name'] for course_code in timetable["sem2"][0].keys()]
+    s2B = [course_info[course_code]['course name'] for course_code in timetable["sem2"][1].keys()]
+    s2C = [course_info[course_code]['course name'] for course_code in timetable["sem2"][2].keys()]
+    s2D = [course_info[course_code]['course name'] for course_code in timetable["sem2"][3].keys()]
+
+    print("s1A: " + (course + ", " for course in s1A))
+    print("s1B: " + (course + ", " for course in s1B))
+    print("s1C: " + (course + ", " for course in s1C))
+    print("s1D: " + (course + ", " for course in s1D))
+    print("s2A: " + (course + ", " for course in s2A))
+    print("s2B: " + (course + ", " for course in s2B))
+    print("s2C: " + (course + ", " for course in s2C))
+    print("s2D: " + (course + ", " for course in s2D))
+
+
+
+def get_student_timetable(student_id, timetable):
+
+    print(get_student_schedules(timetable)[student_id])
 
 # course_schedule only stores the courses, it doesn't give a shit about students
 course_schedule = {}
