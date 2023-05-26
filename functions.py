@@ -455,6 +455,10 @@ def shuffle_courses(timetable):
         if course_info[course1]['Prereqs'] or course_info[course1]['Postreqs'] or course_info[course1]['Simultaneous'] or course_info[course1]['NotSimultaneous']:
             continue
 
+        # check that course1 does not run in every block
+        if course1 in ['list of all courses running in every block']:
+            continue
+
         break
 
 
@@ -479,7 +483,6 @@ def shuffle_courses(timetable):
         # check for blocking/sequencing requirements, and that course2 does not already run in timeslot1, and that course1 does not already run in timeslot2
         if course_info[course2]['Prereqs'] or course_info[course2]['Postreqs'] or course_info[course2]['Simultaneous'] or course_info[course2]['NotSimultaneous']:
             continue
-
         if course2 in timetable[semester1][timeslot1] or course1 in timetable[semester2][timeslot2]:
             continue
 
