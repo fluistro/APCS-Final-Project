@@ -456,7 +456,7 @@ def shuffle_courses(timetable):
             continue
 
         # check that course1 does not run in every block
-        if course1 in ['list of all courses running in every block']:
+        if course1 in ['MCH--11---', 'MCLE-10---', 'MENST12---', 'MLTST10---', 'MLST-12---', 'MPREC11---', 'MSC--10---', 'MSS--10---', 'XLDCB09LS-', 'YED--0AX--', 'YED--1DX--', 'YED--2CX--', 'YED--2EX--']:
             continue
 
         break
