@@ -347,16 +347,6 @@ def get_student_schedules(timetable):
     return student_schedules
 
 
-# return True if the timetable meets all of the hard requirements set by the school and False otherwise
-# this method is probably inefficient and should not be used often
-def is_valid(timetable):
-
-    # read course information
-    with open('course_info.json', 'r') as f:
-        course_info = json.load(f)
-
-
-
 
 # return the proportion of students who received all of their desired courses
 def score(timetable):
