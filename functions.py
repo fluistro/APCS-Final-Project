@@ -400,12 +400,14 @@ def shuffle_students(timetable):
 
         while True:
 
+            # get two different random courses in that timeslot
             course1 = random.choice(timetable[semester][timeslot])
             course2 = random.choice(timetable[semester][timeslot])
 
             if (course1 == course2):
                 continue
 
+            # get one student from each course
             student1 = random.choice(timetable[semester][timeslot][course1])
             student2 = random.choice(timetable[semester][timeslot][course2])
 
@@ -414,27 +416,13 @@ def shuffle_students(timetable):
 
             break
 
-        student_schedules = get_student_schedules(timetable)
-
-        if (semester == "sem2"):
-            timeslot += 4
-
-        student1_course = student_schedules[student1][timeslot]
-        student2_course = student_schedules[student2][timeslot]
-
 
         # swap the two students in the timeslot
-        if 0 <= timeslot <= 3:
-            timetable["sem1"][timeslot][student1_course].append(student2)
-            timetable["sem1"][timeslot][student1_course].remove(student1)
-            timetable["sem1"][timeslot][student2_course].append(student1)
-            timetable["sem1"][timeslot][student2_course].remove(student2)
-        elif 4 <= timeslot <= 7:
-            timeslot -= 4
-            timetable["sem2"][timeslot][student1_course].append(student2)
-            timetable["sem2"][timeslot][student1_course].remove(student1)
-            timetable["sem2"][timeslot][student2_course].append(student1)
-            timetable["sem2"][timeslot][student2_course].remove(student2)
+
+        timetable[semester][timeslot][course1].append(student2)
+        timetable[semester][timeslot][course1].remove(student1)
+        timetable[semester][timeslot][course2].append(student1)
+        timetable[semester][timeslot][course2].remove(student2)
     
     return timetable
 
