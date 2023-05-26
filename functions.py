@@ -111,8 +111,24 @@ def generate_course_schedule():
     chem11 (1/2)
     chem12 (1/2)
 
-    
+    Fill 42 courses max in each block
     '''
+    all_courseblock_codes = {}
+    i = 0
+
+    # contains key as course codes, value is the corresponding number of sections left for that course / combination of courses:
+        # if this block of course is simultaneous with another, they all appear with * seperating them
+    # if 
+    for course in course_info:
+        pass
+
+    while True:
+        current_used_blocks = []                                            # to store all the blocks this course takes up
+        for j in range(all_courseblock_codes[i]):                           # goes through all sections of this course
+            rand_block = return_rando_block().split(' ')                    # [semester#, block#]
+            course_schedule['sem ' + rand_block[0]][rand_block[1]] = i      # put this course into the randomized 
+            current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
+        
 
 
 '''
@@ -141,6 +157,21 @@ timetable is a dictionary that adds students to schedule:
 
 The timetable should meet all requirements under STUDENTS.
 '''
+
+# takes in a list of unvailable blocks, and spits out a random block among the available blocks
+def return_rando_block(not_these_blocks):
+
+    current_available_blocks = available_blocks.copy()
+
+    for blocks in not_these_blocks:
+        current_available_blocks.pop(blocks)
+    
+    if len(current_available_blocks) == 0:
+        return -1
+
+    rand = random.randInt(0, len(current_available_blocks)-1)
+
+    return current_available_blocks[rand]
 
 def generate_timetable(schedule):
     with open('courses.json') as f:
@@ -532,6 +563,9 @@ course_schedule['sem 2'] = {
         'C': [],
         'D': [],
     }
+
+# initialize the blocks that have less than 42 blocks in them
+available_blocks = ['1 A', '1 B', '1 C', '1 D', '2 A', '2 B', '2 C', '2 D']
 
 with open('courses_trimmed.json') as f:
         course_info = json.load(f)
