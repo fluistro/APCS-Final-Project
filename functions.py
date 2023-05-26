@@ -499,6 +499,37 @@ def shuffle_courses(timetable):
 
     return timetable
 
+
+# prints the timetable in tabular form
+def print_timetable(timetable):
+
+    with open('courses.json') as f:
+        course_info = json.load(f)
+
+    s1A = [course_info[course_code]['course name'] for course_code in timetable["sem1"][0].keys()]
+    s1B = [course_info[course_code]['course name'] for course_code in timetable["sem1"][1].keys()]
+    s1C = [course_info[course_code]['course name'] for course_code in timetable["sem1"][2].keys()]
+    s1D = [course_info[course_code]['course name'] for course_code in timetable["sem1"][3].keys()]
+    s2A = [course_info[course_code]['course name'] for course_code in timetable["sem2"][0].keys()]
+    s2B = [course_info[course_code]['course name'] for course_code in timetable["sem2"][1].keys()]
+    s2C = [course_info[course_code]['course name'] for course_code in timetable["sem2"][2].keys()]
+    s2D = [course_info[course_code]['course name'] for course_code in timetable["sem2"][3].keys()]
+
+    print("s1A: " + (course + ", " for course in s1A))
+    print("s1B: " + (course + ", " for course in s1B))
+    print("s1C: " + (course + ", " for course in s1C))
+    print("s1D: " + (course + ", " for course in s1D))
+    print("s2A: " + (course + ", " for course in s2A))
+    print("s2B: " + (course + ", " for course in s2B))
+    print("s2C: " + (course + ", " for course in s2C))
+    print("s2D: " + (course + ", " for course in s2D))
+
+
+
+def get_student_timetable(student_id, timetable):
+
+    print(get_student_schedules(timetable)[student_id])
+
 # course_schedule only stores the courses, it doesn't give a shit about students
 course_schedule = {}
 course_schedule['sem 1'] = {
