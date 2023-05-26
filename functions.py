@@ -110,7 +110,7 @@ def generate_course_schedule():
 
     chem11 (1/2)
     chem12 (1/2)
-    
+
     
     '''
 
@@ -266,7 +266,7 @@ def generate_timetable(schedule):
             # deal with not sim courses
             if has_not_sim:
                    # not sim courses (band and pe) are linear with band in sem 1 and pe in sem 2, going to put student in both courses
-                   if course in schedule['sem1'][0]:
+                    if course in schedule['sem1'][0]:
                         if len(timetable ['sem1'][0][course]) < max_enroll:
                             timetable['sem1'][0][course].append(student)
                             if len(timetable['sem2'][0][not_sim]) < max_enroll_not_sim:
