@@ -837,12 +837,14 @@ s = generate_course_schedule()
 print (s)
 t = generate_timetable(s)
 
-print_schedule('sem 1', 'OT')
 
-print_schedule('sem 2', 'A')
-print_schedule('sem 2', 'B')
-print_schedule('sem 2', 'C')
-print_schedule('sem 2', 'D')
+
+print_schedule('sem 1', 'A')
+print_schedule('sem 1', 'B')
+print_schedule('sem 1', 'C')
+print_schedule('sem 1', 'D')
+
+print_schedule('sem 1', 'OT')
 
 print_schedule('sem2', 'A')
 print_schedule('sem2', 'B')
