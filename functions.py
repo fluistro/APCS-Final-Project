@@ -67,8 +67,7 @@ and outside_timetable should contain only courses outside the timetable.
 The generated timetable should satisfy the requirements listed under COURSES.
 
 '''
-def generate_course_schedule():
-    '''
+'''
     # remove all courses from course_info if:
         # there are less than 5 students requesting it
         # but courses like learning strategies are kept
@@ -98,39 +97,107 @@ def generate_course_schedule():
             course_info[rem_key]['Not Simultaneous'].pop(rem_key)
 
         course_info.pop(rem_key)
-    '''
-    '''
-    prec11 (1/2)
-    prec12 (1+2)
-    calc12 (2)
-    apcalc (2)
+'''
 
-    APCS   (2)
-    CS12   (1/2)
 
-    APPHY  (1)
-    Phy12  (1/2)
-    Phy11   (1/2)
 
-    chem11 (1/2)
-    chem12 (1/2)
+# modifies the course_schedule dictionary:
+# it ignores all courses with <=5 students requesting it
+# let X = the available number of section of a course, then this course code appears in the dictionary X times
+# its supposed to make sure that no 2 of the same courses appear in the same block in the same semester
+# all simultaneous courses are one element of the list, each course code in that simultaneous bunch is seperated with a '*'
+# rn as of May 26, it does not give a shit baout whether students would fill the course or not. its only going off of the available sections of each course
+# for band and PE: band 9 and band 10 are both in sem 1, and their corresponding PE class is in sem 2 of the same block
+def generate_course_schedule():
 
-    Fill 42 courses max in each block
-    '''
     all_courseblock_codes = {}
-    i = 0
+    course_info_modify = course_info.copy()
 
     # contains key as course codes, value is the corresponding number of sections left for that course / combination of courses:
-        # if this block of course is simultaneous with another, they all appear with * seperating them
-    # if 
-    for course in course_info:
-        pass
+    # if this block of course is simultaneous with another, they all appear with * seperating them
 
-    while True:
+    for course in course_info_modify:
+
+        #print('Looking at: ' + course_info_modify[course]['course name'])
+
+        # skip if we have already looked at this course
+        if course_info_modify[course]['Sections'] == 0:
+            continue
+
+        list_of_sim_courses = course_info_modify[course]['Simultaneous']
+
+        # if no course is sim with this course
+        if len(list_of_sim_courses) == 0:
+            all_courseblock_codes[course] = course_info_modify[course]['Sections']
+        
+        # if there are > 0 course sim with this one
+        else:
+
+            # count the maximum amount of simultaneous blocks that can appear
+            max_simblock_sections = course_info_modify[course]['Sections']
+
+            for sim_course in list_of_sim_courses:
+                if int(course_info_modify[sim_course]['Sections']) < int(max_simblock_sections):
+                    max_simblock_sections = course_info_modify[sim_course]['Sections']
+
+            # generate a string, which is the course code of these simultaneous courses, sperated with a *
+            cur_sim_courses_codes = course
+            for sim_course in list_of_sim_courses:
+                cur_sim_courses_codes = cur_sim_courses_codes + "*" + sim_course
+
+            # put the simultaneous blocks into all blocks
+            all_courseblock_codes[cur_sim_courses_codes] = max_simblock_sections
+
+            # minus the used up sections of these courses
+            cur_sections = course_info_modify[course]['Sections']
+            new_sections = int(cur_sections) - int(max_simblock_sections)
+            course_info_modify[course]['Sections'] = new_sections               # the course itself
+            for sim_course in list_of_sim_courses:                              # the sim courses w/ tis course
+                cur_sections = course_info_modify[sim_course]['Sections']
+                new_sections = int(cur_sections) - int(max_simblock_sections)
+                course_info_modify[sim_course]['Sections'] = new_sections
+
+            # now deal with the possible extra available sections of the sim courses
+
+            # current course
+            if course_info_modify[course]['Sections'] == 0:
+                continue
+            else:
+                all_courseblock_codes[course] = course_info_modify[course]['Sections']
+
+            # all the sim courses
+            for sim_course in list_of_sim_courses:
+                if course_info_modify[sim_course]['Sections'] == 0:
+                    continue
+                else:
+                    all_courseblock_codes[sim_course] = course_info_modify[sim_course]['Sections']
+                    course_info_modify[sim_course]['Sections'] = 0
+
+    for course_block in all_courseblock_codes:
         current_used_blocks = []                                            # to store all the blocks this course takes up
-        for j in range(all_courseblock_codes[i]):                           # goes through all sections of this course
-            rand_block = return_rando_block().split(' ')                    # [semester#, block#]
-            course_schedule['sem ' + rand_block[0]][rand_block[1]] = i      # put this course into the randomized 
+
+        if int(all_courseblock_codes[course_block]) > 8:
+            all_courseblock_codes[course_block] = 8
+
+        # take care of stupid(not) BANDDDDD and PEEEEEEE
+
+        if 'MPHED10G-L' in course_block or 'MPHED10B-L' in course_block or 'MPHE-09B-L' in  course_block or 'MPHE-09G-L' in course_block:
+            continue
+        if 'XBA--09B-L' in course_block:
+            rand_block = return_rando_block(['2 A', '2 B', '2 C', '2 D' ]).split(' ') 
+            course_schedule['sem 1'][rand_block[1]].append(course_block)    # put band 9 into a sem 1 block
+            course_schedule['sem 2'][rand_block[1]].append('MPHE-09B-L')    # put boys pe in sem 2 same block
+            course_schedule['sem 2'][rand_block[1]].append('MPHE-09G-L')    # girls ''
+        if 'MMUCB10--L' in course_block :
+            rand_block = return_rando_block(['2 A', '2 B', '2 C', '2 D' ]).split(' ') 
+            course_schedule['sem 1'][rand_block[1]].append(course_block)    # put band 10 into a sem 1 block
+            course_schedule['sem 2'][rand_block[1]].append('MPHED10B-L')
+            course_schedule['sem 2'][rand_block[1]].append('MPHED10G-L')
+            continue
+
+        for j in range(int(all_courseblock_codes[course_block])):                # goes through all available sections of this course
+            rand_block = return_rando_block(current_used_blocks).split(' ')                    # [semester#, block#]
+            course_schedule['sem ' + rand_block[0]][rand_block[1]].append(course_block)      # put this course into the randomized 
             current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
         
 
@@ -168,14 +235,15 @@ def return_rando_block(not_these_blocks):
     current_available_blocks = available_blocks.copy()
 
     for blocks in not_these_blocks:
-        current_available_blocks.pop(blocks)
+        current_available_blocks.remove(blocks)
     
     if len(current_available_blocks) == 0:
         return -1
 
-    rand = random.randInt(0, len(current_available_blocks)-1)
+    rand = random.randint(0, len(current_available_blocks)-1)
 
     return current_available_blocks[rand]
+
 
 def generate_timetable(schedule):
     with open('courses.json') as f:
@@ -701,6 +769,39 @@ available_blocks = ['1 A', '1 B', '1 C', '1 D', '2 A', '2 B', '2 C', '2 D']
 #print(course_schedule)
 with open('student_requests.json') as f:
         student_request = json.load(f)
+
+generate_course_schedule()
+
+
+def print_schedule(sem, block):
+    # print schedule
+    print(sem, block + ':' )
+    for a_class_code in course_schedule[sem][block]:
+
+        print_line = ""
+
+        if '*' in a_class_code:
+            split = a_class_code.split('*')
+            for course in split:
+                print_line = print_line + course_info[course]['course name'] + " *** "
+        
+        else:
+            print_line = course_info[a_class_code]['course name']
+
+        print(print_line)
+    print(len(course_schedule[sem][block]))
+
+
+print_schedule('sem 1', 'A')
+print_schedule('sem 1', 'B')
+print_schedule('sem 1', 'C')
+print_schedule('sem 1', 'D')
+
+print_schedule('sem 2', 'A')
+print_schedule('sem 2', 'B')
+print_schedule('sem 2', 'C')
+print_schedule('sem 2', 'D')
+
 
 
 '''
