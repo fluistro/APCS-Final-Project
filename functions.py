@@ -185,19 +185,19 @@ def generate_course_schedule():
             continue
         if 'XBA--09B-L' in course_block:
             rand_block = return_rando_block(['2 A', '2 B', '2 C', '2 D' ]).split(' ') 
-            course_schedule['sem 1'][rand_block[1]].append(course_block)    # put band 9 into a sem 1 block
-            course_schedule['sem 2'][rand_block[1]].append('MPHE-09B-L')    # put boys pe in sem 2 same block
-            course_schedule['sem 2'][rand_block[1]].append('MPHE-09G-L')    # girls ''
+            course_schedule['sem1'][rand_block[1]].append(course_block)    # put band 9 into a sem 1 block
+            course_schedule['sem2'][rand_block[1]].append('MPHE-09B-L')    # put boys pe in sem 2 same block
+            course_schedule['sem2'][rand_block[1]].append('MPHE-09G-L')    # girls ''
         if 'MMUCB10--L' in course_block :
             rand_block = return_rando_block(['2 A', '2 B', '2 C', '2 D' ]).split(' ') 
-            course_schedule['sem 1'][rand_block[1]].append(course_block)    # put band 10 into a sem 1 block
-            course_schedule['sem 2'][rand_block[1]].append('MPHED10B-L')
-            course_schedule['sem 2'][rand_block[1]].append('MPHED10G-L')
+            course_schedule['sem1'][rand_block[1]].append(course_block)    # put band 10 into a sem 1 block
+            course_schedule['sem2'][rand_block[1]].append('MPHED10B-L')
+            course_schedule['sem2'][rand_block[1]].append('MPHED10G-L')
             continue
 
         for j in range(int(all_courseblock_codes[course_block])):                # goes through all available sections of this course
             rand_block = return_rando_block(current_used_blocks).split(' ')                    # [semester#, block#]
-            course_schedule['sem ' + rand_block[0]][rand_block[1]].append(course_block)      # put this course into the randomized 
+            course_schedule['sem' + rand_block[0]][rand_block[1]].append(course_block)      # put this course into the randomized 
             current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
         
 
@@ -261,41 +261,54 @@ def generate_timetable(schedule):
 
     # create timetable with all courses
     timetable = {
-        "sem1" : {},
-        'sem2' : {},
+        "sem1" : {
+            'A':{},
+            'B':{},
+            'C':{},
+            'D':{}
+        },
+        'sem2' : {
+            'A':{},
+            'B':{},
+            'C':{},
+            'D':{}
+        },
         'outside_timetable' : {}
     }
   
   # sem 1
-    for c in schedule['sem1'][0]:
-        timetable['sem1'].setdefault(c, [])
-   
-    for c in schedule['sem1'][1]:
-        timetable['sem1'].setdefault(c, [])
-
-    for c in schedule['sem1'][2]:
-        timetable['sem1'].setdefault(c, [])
+    schedule = course_schedule
     
-    for c in schedule['sem1'][3]:
-        timetable['sem1'].setdefault(c, [])
+    for c in schedule['sem1']['A']:
+        timetable['sem1']['A'].setdefault(c, [])
+   
+    for c in schedule['sem1']['B']:
+        timetable['sem1']['B'].setdefault(c, [])
+
+    for c in schedule['sem1']['C']:
+        timetable['sem1']['C'].setdefault(c, [])
+    
+    for c in schedule['sem1']['D']:
+        timetable['sem1']['D'].setdefault(c, [])
     
     # sem 2
-    for c in schedule['sem2'][0]:
-        timetable['sem2'].setdefault(c, [])
+    for c in schedule['sem2']['A']:
+        timetable['sem2']['A'].setdefault(c, [])
    
-    for c in schedule['sem2'][1]:
-        timetable['sem2'].setdefault(c, [])
+    for c in schedule['sem2']['B']:
+        timetable['sem2']['B'].setdefault(c, [])
 
-    for c in schedule['sem2'][2]:
-        timetable['sem2'].setdefault(c, [])
+    for c in schedule['sem2']['C']:
+        timetable['sem2']['C'].setdefault(c, [])
     
-    for c in schedule['sem2'][3]:
-        timetable['sem2'].setdefault(c, [])
+    for c in schedule['sem2']['D']:
+        timetable['sem2']['D'].setdefault(c, [])
     
+    print(timetable)
     # outside time table
     
-    for c in schedule['outside_timetable']:
-        timetable['outside_timetable'].setdefault(c, [])
+    #for c in schedule['outside_timetable']:
+    #    timetable['outside_timetable'].setdefault(c, [])
 
     # inside timetable courses
         # go through student info one student at a time
@@ -314,29 +327,41 @@ def generate_timetable(schedule):
 
         # Sort their courses by priority
         sorted_courses = sorted(course_priority.items(), key=lambda item: item[1])
-        
+        sorted_courses =  [item[0] for item in sorted_courses]
+            
         # Start with most prioritized courses
         length = len(sorted_courses)
+        print('length ', length)
+        print('len sorted', len(sorted_courses))
         for i in range(length):
+            print(schedule)
+            print("")
+            print('')
+            print(timetable)
             has_not_sim = False
-           
-            course, _  = sorted_courses[i]
+
+            if len(sorted_courses) != 0:
+                course = sorted_courses[0]
+            else:
+                break
 
             if num_courses > 8:
                 break
-
+            '''
             # check if it is outside time table, if it is automatically add it and don't change the number of courses
             if (course_info[course]['Outside Timetable'] == True):
                 if add_student('outside_timetable', course, timetable, schedule, student) != -1:
                     timetable = add_student('outside_timetable', timetable, schedule, student)
-                    i = i - 1
+                    # i = i - 1
                     courses_taking.append(course)
                     sorted_courses.remove(course)
-            else: 
-                sorted_courses.remove(course)
-                i = i - 1
-                num_alt = num_alt + 1
-
+                else: 
+                    print(course)
+                    print(sorted_courses)
+                    sorted_courses.remove(course)
+                   # i = i - 1
+                    num_alt = num_alt + 1
+            '''
             # Check if student meets blocking and seq
             num_pre_req = 0
             for c in sorted_courses:
@@ -466,6 +491,8 @@ def generate_timetable(schedule):
                 continue
             else: # cannot add course
                 sorted_courses.remove(course)
+                print(course)
+                print(sorted_courses)
                 i = i - 1
                 num_alt = num_alt + 1
                 continue
@@ -493,29 +520,31 @@ def generate_timetable(schedule):
                                         num_courses = num_courses + 1
                                         courses_taking.append(course)
 
-
+    return timetable
 
 
 # finds the avaliable course in a semester and attempts to add student to the course
 # if no avaliable course, return -1
 def add_student (sem, course, timetable, schedule, student):
     isAdded = False
-    max_enroll = course_info[course]['Max Enrollment']
-    if course in schedule[sem][0]:
-        if len(timetable [sem][0][course]) < max_enroll:
-            timetable[sem][0][course].append(student)
+    max_enroll = int(course_info[course]['Max Enrollment'])
+    if course in schedule[sem]['A']:
+        print(len(timetable [sem]['A'][course]))
+        print(max_enroll)
+        if len(timetable [sem]['A'][course]) < max_enroll:
+            timetable[sem]['A'][course].append(student)
             isAdded = True    
-    elif course in schedule[sem][1]:
-        if len(timetable [sem][1][course]) < max_enroll:
-            timetable[sem][1][course].append(student)
+    elif course in schedule[sem]['B']:
+        if len(timetable [sem]['B'][course]) < max_enroll:
+            timetable[sem]['B'][course].append(student)
             isAdded = True 
-    elif course in schedule[sem][2]:
-        if len(timetable [sem][2][course]) < max_enroll:
-            timetable[sem][2][course].append(student)
+    elif course in schedule[sem]['C']:
+        if len(timetable [sem]['C'][course]) < max_enroll:
+            timetable[sem]['C'][course].append(student)
             isAdded = True
-    elif course in schedule[sem][3]:
-        if len(timetable [sem][3][course]) < max_enroll:
-            timetable[sem][3][course].append(student)
+    elif course in schedule[sem]['D']:
+        if len(timetable [sem]['D'][course]) < max_enroll:
+            timetable[sem]['D'][course].append(student)
             isAdded = True
     
     if isAdded:
@@ -749,13 +778,13 @@ def get_student_timetable(student_id, timetable):
 
 # course_schedule only stores the courses, it doesn't give a shit about students
 course_schedule = {}
-course_schedule['sem 1'] = {
+course_schedule['sem1'] = {
         'A': [],
         'B': [],
         'C': [],
         'D': [],
     }
-course_schedule['sem 2'] = {
+course_schedule['sem2'] = {
         'A': [],
         'B': [],
         'C': [],
@@ -770,10 +799,9 @@ available_blocks = ['1 A', '1 B', '1 C', '1 D', '2 A', '2 B', '2 C', '2 D']
 with open('student_requests.json') as f:
         student_request = json.load(f)
 
-generate_course_schedule()
-
 
 def print_schedule(sem, block):
+    
     # print schedule
     print(sem, block + ':' )
     for a_class_code in course_schedule[sem][block]:
@@ -792,16 +820,21 @@ def print_schedule(sem, block):
     print(len(course_schedule[sem][block]))
 
 
-print_schedule('sem 1', 'A')
-print_schedule('sem 1', 'B')
-print_schedule('sem 1', 'C')
-print_schedule('sem 1', 'D')
+s = generate_course_schedule()
+print (s)
+t = generate_timetable(s)
 
-print_schedule('sem 2', 'A')
-print_schedule('sem 2', 'B')
-print_schedule('sem 2', 'C')
-print_schedule('sem 2', 'D')
+'''
+print_schedule('sem1', 'A')
+print_schedule('sem1', 'B')
+print_schedule('sem1', 'C')
+print_schedule('sem1', 'D')
 
+print_schedule('sem2', 'A')
+print_schedule('sem2', 'B')
+print_schedule('sem2', 'C')
+print_schedule('sem2', 'D')
+'''
 
 
 '''
