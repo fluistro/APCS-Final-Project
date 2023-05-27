@@ -127,7 +127,7 @@ def generate_course_schedule():
 
         # Outside timetable (OT) courses
         if course_info_modify[course]['Outside Timetable'] == True:
-            course_schedule['sem 1']['OT'].append(course)
+            course_schedule['sem1']['OT'].append(course)
             continue
 
         list_of_sim_courses = course_info_modify[course]['Simultaneous']
@@ -201,6 +201,7 @@ def generate_course_schedule():
             course_schedule['sem2'][rand_block[1]].append('MPHED10G-L')
             continue
 
+        # the NORMAL courses
         for j in range(int(all_courseblock_codes[course_block])):                # goes through all available sections of this course
             rand_block = return_rando_block(current_used_blocks).split(' ')                    # [semester#, block#]
             course_schedule['sem' + rand_block[0]][rand_block[1]].append(course_block)      # put this course into the randomized 
