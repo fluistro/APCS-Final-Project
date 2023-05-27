@@ -1,6 +1,10 @@
 import json
 import random
 
+# make course_info json info global
+with open('courses.json') as f:
+        course_info = json.load(f)
+
 '''
 Requirements for a valid timetable:
 
@@ -178,7 +182,14 @@ def generate_timetable(schedule):
         course_info = json.load(f)
 
     with open('student_requests.json') as f:
-        student_info = json.load(f)
+        student_request = json.load(f)
+
+    # randomize student order in student info json so that each run will generate different schedules
+    keys = list(student_request.keys())
+    random.shuffle(keys)
+
+    # Create a new dictionary with shuffled keys
+    student_info = {key: student_request[key] for key in keys}
 
     # create timetable with all courses
     timetable = {
@@ -217,31 +228,48 @@ def generate_timetable(schedule):
     
     for c in schedule['outside_timetable']:
         timetable['outside_timetable'].setdefault(c, [])
+
     # inside timetable courses
         # go through student info one student at a time
     for student in student_info:
-
+        num_courses = 0
+        courses_taking = []
         # create a dictionary of the courses choosen by the student, key as courses name and value as the priority of that course
         not_sorted_courses = student_info[student]
         course_priority = {}
         num_alt = 0 # track how many alt courses needed
         for course in not_sorted_courses:
-            priority = course_info[course].get("Priority")
+            
+            priority = course_info[course].get("Priority") # not sure how to determine if course is alternate, once determined add 5 to nonalt courses to prioritze it
+            
             course_priority.setdefault(course, priority)
 
         # Sort their courses by priority
         sorted_courses = sorted(course_priority.items(), key=lambda item: item[1])
         
         # Start with most prioritized courses
-        for i in range(len(sorted_courses)):
+        length = len(sorted_courses)
+        for i in range(length):
             has_not_sim = False
            
             course, _  = sorted_courses[i]
-            max_enroll = course_info[course]['Max Enrollment']
-        
+
+            if num_courses > 8:
+                break
+
+            # check if it is outside time table, if it is automatically add it and don't change the number of courses
+            if (course_info[course]['Outside Timetable'] == True):
+                if add_student('outside_timetable', course, timetable, schedule, student) != -1:
+                    timetable = add_student('outside_timetable', timetable, schedule, student)
+                    i = i - 1
+                    courses_taking.append(course)
+                    sorted_courses.remove(course)
+            else: 
+                sorted_courses.remove(course)
+                i = i - 1
+                num_alt = num_alt + 1
 
             # Check if student meets blocking and seq
-
             num_pre_req = 0
             for c in sorted_courses:
                 if c in course_info[course]['Pre Req']:
@@ -250,12 +278,12 @@ def generate_timetable(schedule):
                 if c in course_info[course]['Not Simultaneous']:
                     has_not_sim = True
                     not_sim = c
-                    max_enroll_not_sim = course_info[c]['Max Enrollment']
-                
+                   
             if num_pre_req > 1:
 
                 # doesn't work, keep track to add an alt
                 sorted_courses.remove(course)
+                i = i - 1
                 num_alt = num_alt + 1
                 continue
            
@@ -265,77 +293,170 @@ def generate_timetable(schedule):
 
             # pre req
             if num_pre_req == 1:
-                max_enroll_pre_req = course_info[pre_req]['Max Enrollment']
-                if len(timetable['sem1'][0][pre_req]) < max_enroll_pre_req:
-                    timetable['sem1'][0][pre_req].append(student)
+                if add_student('sem1', pre_req, timetable, schedule, student) != -1:
+                    if add_student('sem2', course, timetable, schedule, student) != -1:
+                        timetable = add_student('sem1', pre_req, timetable, schedule, student)
+                        timetable = add_student('sem2', course, timetable, schedule, student)
+                        sorted_courses.remove(pre_req)
+                        sorted_courses.remove(course)
+                        courses_taking.append(course)
+                        courses_taking.append(pre_req)
+                        i = i - 2
+                        num_courses = num_courses + 2
+                        continue
+                    timetable = add_student('sem1', pre_req, timetable, schedule, student)
                     sorted_courses.remove(pre_req)
+                    courses_taking.append(pre_req)
+                    i = i - 1
+                    num_courses = num_courses + 1
+                    continue
 
-                elif len(timetable['sem1'][1][pre_req]) < max_enroll_pre_req:
-                    timetable['sem1'][1][pre_req].append(student) 
+                
+                elif add_student ('sem2', pre_req, timetable, schedule, student) != -1:
+                    timetable = add_student ('sem2', pre_req, timetable, schedule, student)
                     sorted_courses.remove(pre_req)
-
-
-                elif len(timetable['sem1'][2][pre_req]) < max_enroll_pre_req:
-                    timetable['sem1'][2][pre_req].append(student) 
-                    sorted_courses.remove(pre_req)
-
-
-                elif len(timetable['sem1'][3][pre_req]) < max_enroll_pre_req:
-                    timetable['sem1'][3][pre_req].append(student) 
-                    sorted_courses.remove(pre_req)
+                    courses_taking.append(pre_req)
+                    i = i - 1
+                    num_courses = num_courses + 1
+                    continue
 
                 else:
-                    # cannot fit student into any blocks for pre req in sem1, cannot take prereq and post req course
-
                     # add what if pre req is offered in second sem
                     sorted_courses.remove(pre_req)
                     sorted_courses.remove(course)
+                    i = i - 2
                     num_alt = num_alt + 2
                     continue # move to next course
-                
+
             
+
             # deal with not sim courses
             if has_not_sim:
-                   # not sim courses (band and pe) are linear with band in sem 1 and pe in sem 2, going to put student in both courses
-                    if course in schedule['sem1'][0]:
-                        if len(timetable ['sem1'][0][course]) < max_enroll:
-                            timetable['sem1'][0][course].append(student)
-                            if len(timetable['sem2'][0][not_sim]) < max_enroll_not_sim:
-                                timetable['sem2'][0][not_sim].append(student)
-                                continue
-                        else:
-                            sorted_courses.remove[course]
-                            sorted_courses.remove[not_sim]
-                            num_alt = num_alt + 2
-                    elif course in schedule['sem1'][0]:
-                        if len(timetable ['sem1'][0][course]) < max_enroll:
-                            timetable['sem1'][0][course].append(student)
-                            if len(timetable['sem2'][0][not_sim]) < max_enroll_not_sim:
-                                timetable['sem2'][0][not_sim].append(student)
-                                continue
-                        else:
-                            sorted_courses.remove[course]
-                            sorted_courses.remove[not_sim]
-                            num_alt = num_alt + 2
-                        
+                # not sim courses (band and pe) are linear with band in sem 1 and pe in sem 2, going to put student in both courses
+                if add_student('sem1', course, timetable, schedule, student) != -1:
+                    if add_student('sem2', not_sim, timetable, schedule, student) != -1:
+                        timetable = add_student('sem1', course, timetable, schedule, student)
+                        timetable = add_student('sem2', not_sim, timetable, schedule, student)
+                        sorted_courses.remove(not_sim)
+                        sorted_courses.remove(course)  
+                        courses_taking.append(course)
+                        courses_taking.append(not_sim)
+                        i = i - 2
+                        num_courses = num_courses + 2
+                        continue
+                elif add_student('sem2', course, timetable, schedule, student) != -1:
+                    if add_student('sem1', not_sim, timetable, schedule, student) != -1:
+                        timetable = add_student('sem2', course, timetable, schedule, student)
+                        timetable = add_student('sem1', not_sim, timetable, schedule, student)
+                        sorted_courses.remove(not_sim)
+                        sorted_courses.remove(course)
+                        courses_taking.append(course)
+                        courses_taking.append(not_sim)
+                        i = i - 2
+                        num_courses = num_courses + 2
+                        continue
+                   
+                else: # no spots in one of the sim courses
+                    sorted_courses.remove[course]
+                    sorted_courses.remove[not_sim]
+                    i = i - 2
+                    num_alt = num_alt + 2
+                    continue
 
-                # add students regularly, no sim, no prereq
-                    # if there is no space in any of the schedule for this course
-                        # Skip this course and go onto the next prioritized one (assuming that there will always be enough space for required courses)
-                # If doesn't meet sequencing / pre req
-                    # Skip this course and go onto the next prioritized one (assuming student will always have required courses with right sequence and pre req ex. no english 9, 10, 11)
+            # see if linear course, if linear add to both sem1 and sem 2 and this course takes 2 spots
+            if course_info[course]['Base Terms/Year'] == 1 and course_info[course]['Covered Terms/Year'] == 1:
+                if add_student('sem1', course, timetable, schedule, student) != -1 and add_student('sem2', course, timetable, schedule, student) != -1:
+                    timetable = add_student('sem1', course, timetable, schedule, student)
+                    timetable = add_student('sem2', course, timetable, schedule, student)
+                    i = i - 2
+                    courses_taking.append(course)
+                    sorted_courses.remove(course)
+                    num_courses = num_courses + 2
+                    continue
+                else: 
+                    i = i - 1
+                    sorted_courses.remove(course)
+                    continue
+            else:
+                i = i - 1
+                sorted_courses.remove(course)
+                continue
 
+            # add students regularly, no sim, no prereq 
+            if add_student('sem1', course, timetable, schedule, student) != -1:
+                timetable = add_student('sem1', course, timetable, schedule, student) 
+                sorted_courses.remove(course)
+                i = i - 1
+                courses_taking.append(course)
+                num_courses = num_courses + 1
+                continue
+
+            # if sem1 doesn't have space check sem 2
+            elif add_student('sem2', course, timetable, schedule, student) != -1:
+                timetable = add_student('sem2', course, timetable, schedule, student) 
+                sorted_courses.remove(course)
+                i = i - 1
+                num_courses = num_courses + 1
+                courses_taking.append(course)
+                continue
+            else: # cannot add course
+                sorted_courses.remove(course)
+                i = i - 1
+                num_alt = num_alt + 1
+                continue
+                    
+               
                 # give alts to those that have courses that did not work out
 
                 # if al alts are used, give random courses
+        # assign random course if the courses student assigned is not avaliable
+        # assigns the next course and relatively not priorizted course (p > 20)
+        while num_courses < 8:
+            num_rand_course = 8 - num_courses
+            for course in course_info:
+                if course not in courses_taking:
+                    if course_info[course]['Priority'] > 20:
+                        if course_info[course]['Outside Timetable']:
+                            if len(course_info[course]['Pre Req']) == 0:
+                                if len(course_info[course]['Not Simultaneous']) == 0:
+                                    if add_student('sem1', course, timetable, schedule, student) != -1:
+                                        timetable = add_student('sem1', course, timetable, schedule, student)
+                                        num_courses = num_courses + 1
+                                        courses_taking.append(course)
+                                    elif add_student('sem2', course, timetable, schedule, student) != -1:
+                                        timetable = add_student('sem2', course, timetable, schedule, student)
+                                        num_courses = num_courses + 1
+                                        courses_taking.append(course)
 
-                
-    # outside timetable courses
-        # check sequencing and pre req
-            # add course
-        # doesn't meet just skip
-                    return 0
 
+
+
+# finds the avaliable course in a semester and attempts to add student to the course
+# if no avaliable course, return -1
+def add_student (sem, course, timetable, schedule, student):
+    isAdded = False
+    max_enroll = course_info[course]['Max Enrollment']
+    if course in schedule[sem][0]:
+        if len(timetable [sem][0][course]) < max_enroll:
+            timetable[sem][0][course].append(student)
+            isAdded = True    
+    elif course in schedule[sem][1]:
+        if len(timetable [sem][1][course]) < max_enroll:
+            timetable[sem][1][course].append(student)
+            isAdded = True 
+    elif course in schedule[sem][2]:
+        if len(timetable [sem][2][course]) < max_enroll:
+            timetable[sem][2][course].append(student)
+            isAdded = True
+    elif course in schedule[sem][3]:
+        if len(timetable [sem][3][course]) < max_enroll:
+            timetable[sem][3][course].append(student)
+            isAdded = True
+    
+    if isAdded:
+        return timetable
+    else: 
+        return -1
 
 '''
 Convenience method that returns a dictionary:
@@ -579,19 +700,10 @@ course_schedule['sem 2'] = {
 # initialize the blocks that have less than 42 blocks in them
 available_blocks = ['1 A', '1 B', '1 C', '1 D', '2 A', '2 B', '2 C', '2 D']
 
-with open('courses_trimmed.json') as f:
-        course_info = json.load(f)
-with open('student_requests.json') as f:
-        student_info = json.load(f)
+
 #print(course_schedule)
-generate_course_schedule()
-
-#print(course_info['ASTA-12---']['Students'])
-
-
-
-
-# actual code
+with open('student_requests.json') as f:
+        student_request = json.load(f)
 
 
 '''
