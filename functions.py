@@ -377,10 +377,7 @@ def generate_timetable(schedule):
                     i = i - 1
                     sorted_courses.remove(course)
                     continue
-            else:
-                i = i - 1
-                sorted_courses.remove(course)
-                continue
+            
 
             # add students regularly, no sim, no prereq 
             if add_student('sem1', course, timetable, schedule, student) != -1:
