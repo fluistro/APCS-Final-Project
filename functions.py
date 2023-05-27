@@ -108,9 +108,10 @@ The generated timetable should satisfy the requirements listed under COURSES.
 # all simultaneous courses are one element of the list, each course code in that simultaneous bunch is seperated with a '*'
 # rn as of May 26, it does not give a shit baout whether students would fill the course or not. its only going off of the available sections of each course
 # for band and PE: band 9 and band 10 are both in sem 1, and their corresponding PE class is in sem 2 of the same block
+# for Outside timetable courses they are all in 'OT' key of sem 1
 def generate_course_schedule():
 
-    all_courseblock_codes = {}
+    all_courseblock_codes = {}      # doesn't store OT courses
     course_info_modify = course_info.copy()
 
     # contains key as course codes, value is the corresponding number of sections left for that course / combination of courses:
@@ -122,6 +123,11 @@ def generate_course_schedule():
 
         # skip if we have already looked at this course
         if course_info_modify[course]['Sections'] == 0:
+            continue
+
+        # Outside timetable (OT) courses
+        if course_info_modify[course]['Outside Timetable'] == True:
+            course_schedule['sem 1']['OT'].append(course)
             continue
 
         list_of_sim_courses = course_info_modify[course]['Simultaneous']
@@ -754,6 +760,7 @@ course_schedule['sem 1'] = {
         'B': [],
         'C': [],
         'D': [],
+        'OT': []
     }
 course_schedule['sem 2'] = {
         'A': [],
@@ -796,6 +803,8 @@ print_schedule('sem 1', 'A')
 print_schedule('sem 1', 'B')
 print_schedule('sem 1', 'C')
 print_schedule('sem 1', 'D')
+
+print_schedule('sem 1', 'OT')
 
 print_schedule('sem 2', 'A')
 print_schedule('sem 2', 'B')
