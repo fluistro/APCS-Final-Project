@@ -887,12 +887,12 @@ t = generate_timetable(s)
 
 
 
-print_schedule('sem 1', 'A')
-print_schedule('sem 1', 'B')
-print_schedule('sem 1', 'C')
-print_schedule('sem 1', 'D')
+print_schedule('sem1', 'A')
+print_schedule('sem1', 'B')
+print_schedule('sem1', 'C')
+print_schedule('sem1', 'D')
 
-print_schedule('sem 1', 'OT')
+print_schedule('sem1', 'OT')
 
 print_schedule('sem2', 'A')
 print_schedule('sem2', 'B')
