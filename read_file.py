@@ -79,7 +79,8 @@ while True:
         'Post Req': [],
         'Simultaneous' : [],
         'Not Simultaneous': [],
-        'Term Blocking' : []
+        'Term Blocking' : [],
+        'Outside Timetable' : False
     }
 
 # read Cleaned Student Requests
@@ -120,7 +121,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }
 
                 if (row[0] == 'MEFWR10---'):
@@ -137,7 +139,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }
                 
                 if (row[0] == 'MGE--12' or row[0] == 'MGE--11'):
@@ -154,7 +157,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }
                         course_info['MGE--11'] = {
                             'course name': 'German 11',
@@ -169,7 +173,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }
 
                 if (row[0] == 'MKOR-10---' or row[0] == 'MKOR-11---' or row[0] == 'MKOR-12---'):
@@ -188,7 +193,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }
                         course_info['MKOR-11---'] = {
                             'course name': 'Korean 11',
@@ -203,7 +209,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }
                         course_info['MKOR-12---'] = {
                             'course name': 'Korean 12',
@@ -218,7 +225,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }
 
                 if (row[0] == 'MIT--12---'):
@@ -237,7 +245,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }
                         # https://mountdougcourses.sd61.bc.ca/courses/italian-12/      
 
@@ -257,7 +266,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }
                         # https://mountdougcourses.sd61.bc.ca/courses/ell-support-blocks-learning-strategies/       
 
@@ -275,7 +285,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }  
 
                 if (row[0] == 'MJA--10---' or row[0] == 'MJA--11---' or row[0] == 'MJA--12---'):
@@ -292,7 +303,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }
                         course_info['MJA--11---'] = {
                             'course name': 'Japanese 11',
@@ -307,7 +319,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }
                         course_info['MJA--12---'] = {
                             'course name': 'Japanese 12',
@@ -322,7 +335,8 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Post Req': [],
                             'Simultaneous' : [],
                             'Not Simultaneous': [],
-                            'Term Blocking' : []
+                            'Term Blocking' : [],
+                            'Outside Timetable' : False
                         }
             
             course_info[row[0]]['Students'].append(current_student_id)
@@ -462,8 +476,57 @@ with open('Course Sequencing Rules.csv', 'r') as file:
             if course.strip() not in pre_req:
                 pre_req.append(course.strip())
                 course_info[id]["Pre Req"] = pre_req
+# add key to keep track of outside timetable courses
+# grade 9
+course_info['XC---09--L']['Outside Timetable'] = True
+course_info['MDNC-09C-L']['Outside Timetable'] = True
+course_info['MDNC-09M-L']['Outside Timetable'] = True
+course_info['XBA--09J-L']['Outside Timetable'] = True
+course_info['XLDCB09S-L']['Outside Timetable'] = True
+
+
+# grade 10
+course_info['YCPA-0AX-L']['Outside Timetable'] = True
+course_info['MMUCC10--L']['Outside Timetable'] = True
+course_info['MDNC-10--L']['Outside Timetable'] = True
+course_info['MDNCM10--L']['Outside Timetable'] = True
+course_info['YCPA-0AXE-']['Outside Timetable'] = True
+course_info['MIDS-0C---']['Outside Timetable'] = True
+course_info['YED--0BX-L']['Outside Timetable'] = True
+course_info['MMUOR10S-L']['Outside Timetable'] = True
+course_info['MMUJB10--L']['Outside Timetable'] = True
+
+# grade 11
+course_info['MDNC-11--L']['Outside Timetable'] = True
+course_info['MDNCM11--L']['Outside Timetable'] = True
+course_info['MGMT-12L--']['Outside Timetable'] = True
+course_info['MCMCC11--L']['Outside Timetable'] = True
+course_info['MIMJB11--L']['Outside Timetable'] = True
+course_info['MMUOR11S-L']['Outside Timetable'] = True
+course_info['YCPA-1AX-L']['Outside Timetable'] = True
+course_info['YCPA-1AXE-']['Outside Timetable'] = True
+course_info['MGRPR11--L']['Outside Timetable'] = True
+course_info['YED--1EX-L']['Outside Timetable'] = True
+course_info['MWEX-2A--L']['Outside Timetable'] = True
+course_info['MWEX-2B--L']['Outside Timetable'] = True
+
+# grade 12
+course_info['MDNC-12--L']['Outside Timetable'] = True
+course_info['MDNCM12--L']['Outside Timetable'] = True
+course_info['MGMT-12L--']['Outside Timetable'] = True
+course_info['MIMJB12--L']['Outside Timetable'] = True
+course_info['MMUOR12S-L']['Outside Timetable'] = True
+course_info['YCPA-2AXE-']['Outside Timetable'] = True
+course_info['YED--2DX-L']['Outside Timetable'] = True
+course_info['YED--2FX-L']['Outside Timetable'] = True
+course_info['MWEX-2A--L']['Outside Timetable'] = True
+course_info['MWEX-2B--L']['Outside Timetable'] = True
+course_info['MCMCC12--L']['Outside Timetable'] = True
+course_info['YCPA-2AX-L']['Outside Timetable'] = True
+course_info['MGRPR12--L']['Outside Timetable'] = True
 
 # write course_info to txt file
+
 
 with open('courses.json', 'w') as out_file:
      json.dump(course_info, out_file)
