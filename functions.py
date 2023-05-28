@@ -300,7 +300,7 @@ def generate_timetable(schedule):
     }
   
   # sem 1
-    schedule = course_schedule
+    schedule = course_schedule2
     
     for c in schedule['sem1']['A']:
         timetable['sem1']['A'].setdefault(c, [])
@@ -948,10 +948,10 @@ course_schedule2['sem2'] = {
     'D': course_schedule['sem2'][3]
 }
 
-t = generate_timetable(course_schedule)
+t = generate_timetable(course_schedule2)
 print(t)
 
-
+'''
 # generate initial guess
 schedule = generate_course_schedule()
 initial_timetable = generate_timetable(schedule)
@@ -996,3 +996,4 @@ print(initial_timetable)
 print(score(initial_timetable))
 print(final_timetable)
 print(score(final_timetable))
+'''
