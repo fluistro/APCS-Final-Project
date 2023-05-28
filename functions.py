@@ -593,8 +593,24 @@ def generate_timetable(schedule):
                                     blocks['sem2'].append(block_added) 
                                     num_courses = num_courses + 1
                                     courses_taking.append(course)
+    formatted_timetable = {
+        "sem1": [
+            timetable['sem1']['A'], # A
+            timetable['sem1']['B'], # B
+            timetable['sem1']['C'], # C
+            timetable['sem1']['D'] # D
+            
+        ],
+        "sem2" : [
+            timetable['sem2']['A'], # A
+            timetable['sem2']['B'], # B
+            timetable['sem2']['C'], # C
+            timetable['sem2']['D'] # D
+        ],
 
-    return timetable
+        "outside_timetable": timetable['outside_timetable']           
+    }
+    return formatted_timetable
 
 
 # finds the avaliable course in a semester and attempts to add student to the course
@@ -790,6 +806,8 @@ def shuffle_students(timetable):
         timetable[semester][timeslot][course2].append(student1)
         timetable[semester][timeslot][course2].remove(student2)
     
+    
+
     return timetable
 
 
