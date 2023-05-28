@@ -201,6 +201,7 @@ def generate_course_schedule():
             course_schedule['sem2'][rand_block[1]].append('MPHED10G-L')
             continue
 
+        # the NORMAL courses
         for j in range(int(all_courseblock_codes[course_block])):                # goes through all available sections of this course
             rand_block = return_rando_block(current_used_blocks).split(' ')                    # [semester#, block#]
             course_schedule['sem' + rand_block[0]][rand_block[1]].append(course_block)      # put this course into the randomized 
@@ -904,6 +905,13 @@ s = generate_course_schedule()
 t = generate_timetable(course_schedule)
 print(t)
 '''
+
+print_schedule('sem1', 'A')
+print_schedule('sem1', 'B')
+print_schedule('sem1', 'C')
+print_schedule('sem1', 'D')
+
+print_schedule('sem1', 'OT')
 
 print_schedule('sem1', 'A')
 print_schedule('sem1', 'B')
