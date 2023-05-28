@@ -185,6 +185,10 @@ def generate_course_schedule():
         if int(all_courseblock_codes[course_block]) > 8:
             all_courseblock_codes[course_block] = 8
 
+        if not '*' in course_block:
+            if course_info_modify[course_block]['Outside Timetable'] == True:
+                continue
+
         # take care of stupid(not) BANDDDDD and PEEEEEEE
 
         if 'MPHED10G-L' in course_block or 'MPHED10B-L' in course_block or 'MPHE-09B-L' in  course_block or 'MPHE-09G-L' in course_block:
