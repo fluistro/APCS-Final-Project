@@ -902,6 +902,23 @@ def print_schedule(sem, block):
     print(len(course_schedule[sem][block]))
 
 s = generate_course_schedule()
+
+# create dictionary of dictionary version of course_schedule
+course_schedule2 = {}
+course_schedule2['sem1'] = {
+    'A': course_schedule['sem1'][0],
+    'B': course_schedule['sem1'][1],
+    'C': course_schedule['sem1'][2],
+    'D': course_schedule['sem1'][3],
+    'OT': course_schedule['outside_timetable']
+}
+course_schedule2['sem2'] = {
+    'A': course_schedule['sem2'][0],
+    'B': course_schedule['sem2'][1],
+    'C': course_schedule['sem2'][2],
+    'D': course_schedule['sem2'][3]
+}
+
 t = generate_timetable(course_schedule)
 print(t)
 
