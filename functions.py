@@ -127,7 +127,7 @@ def generate_course_schedule():
 
         # Outside timetable (OT) courses
         if course_info_modify[course]['Outside Timetable'] == True:
-            course_schedule['sem1']['OT'].append(course)
+            course_schedule['outside_timetable'].append(course)
             continue
 
         list_of_sim_courses = course_info_modify[course]['Simultaneous']
@@ -185,26 +185,30 @@ def generate_course_schedule():
         if int(all_courseblock_codes[course_block]) > 8:
             all_courseblock_codes[course_block] = 8
 
+        if not '*' in course_block:
+            if course_info_modify[course_block]['Outside Timetable'] == True:
+                continue
+
         # take care of stupid(not) BANDDDDD and PEEEEEEE
 
         if 'MPHED10G-L' in course_block or 'MPHED10B-L' in course_block or 'MPHE-09B-L' in  course_block or 'MPHE-09G-L' in course_block:
             continue
         if 'XBA--09B-L' in course_block:
             rand_block = return_rando_block(['2 A', '2 B', '2 C', '2 D' ]).split(' ') 
-            course_schedule['sem1'][rand_block[1]].append(course_block)    # put band 9 into a sem 1 block
-            course_schedule['sem2'][rand_block[1]].append('MPHE-09B-L')    # put boys pe in sem 2 same block
-            course_schedule['sem2'][rand_block[1]].append('MPHE-09G-L')    # girls ''
+            course_schedule['sem1'][letter_to_num(rand_block[1])].append(course_block)    # put band 9 into a sem 1 block
+            course_schedule['sem2'][letter_to_num(rand_block[1])].append('MPHE-09B-L')    # put boys pe in sem 2 same block
+            course_schedule['sem2'][letter_to_num(rand_block[1])].append('MPHE-09G-L')    # girls ''
         if 'MMUCB10--L' in course_block :
             rand_block = return_rando_block(['2 A', '2 B', '2 C', '2 D' ]).split(' ') 
-            course_schedule['sem1'][rand_block[1]].append(course_block)    # put band 10 into a sem 1 block
-            course_schedule['sem2'][rand_block[1]].append('MPHED10B-L')
-            course_schedule['sem2'][rand_block[1]].append('MPHED10G-L')
+            course_schedule['sem1'][letter_to_num(rand_block[1])].append(course_block)    # put band 10 into a sem 1 block
+            course_schedule['sem2'][letter_to_num(rand_block[1])].append('MPHED10B-L')
+            course_schedule['sem2'][letter_to_num(rand_block[1])].append('MPHED10G-L')
             continue
 
         # the NORMAL courses
         for j in range(int(all_courseblock_codes[course_block])):                # goes through all available sections of this course
             rand_block = return_rando_block(current_used_blocks).split(' ')                    # [semester#, block#]
-            course_schedule['sem' + rand_block[0]][rand_block[1]].append(course_block)      # put this course into the randomized 
+            course_schedule['sem' + rand_block[0]][letter_to_num(rand_block[1])].append(course_block)      # put this course into the randomized 
             current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
         
 
@@ -251,6 +255,17 @@ def return_rando_block(not_these_blocks):
 
     return current_available_blocks[rand]
 
+
+def letter_to_num(letter):
+    if letter == 'A':
+        return 0
+    elif letter == 'B':
+        return 1
+    elif letter == 'C':
+        return 2
+    else:
+        return 3
+    
 
 def generate_timetable(schedule):
     with open('courses.json') as f:
@@ -883,19 +898,9 @@ def get_student_timetable(student_id, timetable):
 
 # course_schedule only stores the courses, it doesn't give a shit about students
 course_schedule = {}
-course_schedule['sem1'] = {
-        'A': [],
-        'B': [],
-        'C': [],
-        'D': [],
-        'OT': []
-    }
-course_schedule['sem2'] = {
-        'A': [],
-        'B': [],
-        'C': [],
-        'D': [],
-    }
+course_schedule['sem1'] = [[],[],[],[]]
+course_schedule['sem2'] = [[],[],[],[]]
+course_schedule['outside_timetable'] = []
 
 # initialize the blocks that have less than 42 blocks in them
 available_blocks = ['1 A', '1 B', '1 C', '1 D', '2 A', '2 B', '2 C', '2 D']
@@ -909,7 +914,7 @@ with open('student_requests.json') as f:
 def print_schedule(sem, block):
     
     # print schedule
-    print(sem, block + ':' )
+    print(sem + str(block) + ':' )
     for a_class_code in course_schedule[sem][block]:
 
         print_line = ""
@@ -917,7 +922,7 @@ def print_schedule(sem, block):
         if '*' in a_class_code:
             split = a_class_code.split('*')
             for course in split:
-                print_line = print_line + course_info[course]['course name'] + " *** "
+                print_line = print_line + course_info[course]['course name'] + " * "
         
         else:
             print_line = course_info[a_class_code]['course name']
@@ -925,40 +930,33 @@ def print_schedule(sem, block):
         print(print_line)
     print(len(course_schedule[sem][block]))
 
-
 s = generate_course_schedule()
-print(course_schedule)
+
+# create dictionary of dictionary version of course_schedule
+course_schedule2 = {}
+course_schedule2['sem1'] = {
+    'A': course_schedule['sem1'][0],
+    'B': course_schedule['sem1'][1],
+    'C': course_schedule['sem1'][2],
+    'D': course_schedule['sem1'][3],
+    'OT': course_schedule['outside_timetable']
+}
+course_schedule2['sem2'] = {
+    'A': course_schedule['sem2'][0],
+    'B': course_schedule['sem2'][1],
+    'C': course_schedule['sem2'][2],
+    'D': course_schedule['sem2'][3]
+}
+
 t = generate_timetable(course_schedule)
 print(t)
-'''
-
-print_schedule('sem1', 'A')
-print_schedule('sem1', 'B')
-print_schedule('sem1', 'C')
-print_schedule('sem1', 'D')
-
-print_schedule('sem1', 'OT')
-
-print_schedule('sem1', 'A')
-print_schedule('sem1', 'B')
-print_schedule('sem1', 'C')
-print_schedule('sem1', 'D')
-
-print_schedule('sem1', 'OT')
-
-print_schedule('sem2', 'A')
-print_schedule('sem2', 'B')
-print_schedule('sem2', 'C')
-print_schedule('sem2', 'D')
-'''
 
 
-'''
 # generate initial guess
 schedule = generate_course_schedule()
 initial_timetable = generate_timetable(schedule)
-#final_timetable = initial_timetable
-#current_timetable = initial_timetable
+final_timetable = initial_timetable
+current_timetable = initial_timetable
 
 # check 10 possible schedules
 for i in range(10):
@@ -998,5 +996,3 @@ print(initial_timetable)
 print(score(initial_timetable))
 print(final_timetable)
 print(score(final_timetable))
-
-'''
