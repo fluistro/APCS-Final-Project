@@ -350,7 +350,8 @@ def generate_timetable(schedule):
 
         # Print something once every 20 students have been added to all their courses
         if iteration_count % 20 == 0:
-            print('added courses of 20 students')  
+            #print('added courses of 20 students') 
+            pass 
         
         # keeps track of which blocks already have courses in sem 1, 2 and ot (ot not really used)
         blocks = {
@@ -809,7 +810,7 @@ def get_student_schedules(timetable):
 
     for block in timetable["sem1"]:
         for course in block:
-            for student in course:
+            for student in block[course]:
 
                 if student in student_schedules:
                     student_schedules[student].append(course)
@@ -818,7 +819,7 @@ def get_student_schedules(timetable):
     
     for block in timetable["sem2"]:
         for course in block:
-            for student in course:
+            for student in block[course]:
 
                 if student in student_schedules:
                     student_schedules[student].append(course)
@@ -826,7 +827,7 @@ def get_student_schedules(timetable):
                     student_schedules[student] = [course]
 
     for course in timetable["outside_timetable"]:
-        for student in course:
+        for student in timetable["outside_timetable"][course]:
 
             if student in student_schedules:
                 student_schedules[student].append(course)
@@ -997,23 +998,23 @@ def print_timetable(timetable):
     with open('courses.json') as f:
         course_info = json.load(f)
 
-    s1A = [course_info[course_code]['course name'] for course_code in timetable["sem1"][0].keys()]
-    s1B = [course_info[course_code]['course name'] for course_code in timetable["sem1"][1].keys()]
-    s1C = [course_info[course_code]['course name'] for course_code in timetable["sem1"][2].keys()]
-    s1D = [course_info[course_code]['course name'] for course_code in timetable["sem1"][3].keys()]
-    s2A = [course_info[course_code]['course name'] for course_code in timetable["sem2"][0].keys()]
-    s2B = [course_info[course_code]['course name'] for course_code in timetable["sem2"][1].keys()]
-    s2C = [course_info[course_code]['course name'] for course_code in timetable["sem2"][2].keys()]
-    s2D = [course_info[course_code]['course name'] for course_code in timetable["sem2"][3].keys()]
+    s1A = [course_info[course_code]['course name'] for full_code in timetable["sem1"][0].keys() for course_code in full_code.split('*')]
+    s1B = [course_info[course_code]['course name'] for full_code in timetable["sem1"][1].keys() for course_code in full_code.split('*')]
+    s1C = [course_info[course_code]['course name'] for full_code in timetable["sem1"][2].keys() for course_code in full_code.split('*')]
+    s1D = [course_info[course_code]['course name'] for full_code in timetable["sem1"][3].keys() for course_code in full_code.split('*')]
+    s2A = [course_info[course_code]['course name'] for full_code in timetable["sem2"][0].keys() for course_code in full_code.split('*')]
+    s2B = [course_info[course_code]['course name'] for full_code in timetable["sem2"][1].keys() for course_code in full_code.split('*')]
+    s2C = [course_info[course_code]['course name'] for full_code in timetable["sem2"][2].keys() for course_code in full_code.split('*')]
+    s2D = [course_info[course_code]['course name'] for full_code in timetable["sem2"][3].keys() for course_code in full_code.split('*')]
 
-    print("s1A: " + (course + ", " for course in s1A))
-    print("s1B: " + (course + ", " for course in s1B))
-    print("s1C: " + (course + ", " for course in s1C))
-    print("s1D: " + (course + ", " for course in s1D))
-    print("s2A: " + (course + ", " for course in s2A))
-    print("s2B: " + (course + ", " for course in s2B))
-    print("s2C: " + (course + ", " for course in s2C))
-    print("s2D: " + (course + ", " for course in s2D))
+    print("s1A: " + ", ".join(s1A))
+    print("s1B: " + ", ".join(s1B))
+    print("s1C: " + ", ".join(s1C))
+    print("s1D: " + ", ".join(s1D))
+    print("s2A: " + ", ".join(s2A))
+    print("s2B: " + ", ".join(s2B))
+    print("s2C: " + ", ".join(s2C))
+    print("s2D: " + ", ".join(s2D))
 
 
 
@@ -1058,6 +1059,7 @@ def print_schedule(sem, block):
 s = generate_course_schedule()
 
 # create dictionary of dictionary version of course_schedule
+# generate_timetable needs to use dis one
 course_schedule2 = {}
 course_schedule2['sem1'] = {
     'A': course_schedule['sem1'][0],
@@ -1073,15 +1075,22 @@ course_schedule2['sem2'] = {
     'D': course_schedule['sem2'][3]
 }
 
-t = generate_timetable(course_schedule2)
+timetable = generate_timetable(course_schedule2)
+#print(timetable)
 
+print_timetable(timetable)
 
+student_id = "1547"
+print(get_student_timetable(student_id, timetable))
 
+print(score(timetable))
+
+'''
 # generate initial guess
-schedule = generate_course_schedule()
 initial_timetable = generate_timetable(course_schedule2)
 final_timetable = initial_timetable
 current_timetable = initial_timetable
+
 
 # check 10 possible schedules
 for i in range(10):
@@ -1116,7 +1125,8 @@ for i in range(10):
 
     # make small change to course schedule, then repeat
     current_timetable = shuffle_courses(current_timetable)
-'''
+
+
 print(initial_timetable)
 
 
@@ -1124,4 +1134,5 @@ print(initial_timetable)
 print(score(initial_timetable))
 print(final_timetable)
 print(score(final_timetable))
+
 '''
