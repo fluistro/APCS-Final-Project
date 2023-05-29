@@ -1070,13 +1070,15 @@ course_schedule2['sem2'] = {
     'D': course_schedule['sem2'][3]
 }
 
-timetable, schedules = generate_timetable(course_schedule2)
-print(timetable)
+timetable = generate_timetable(course_schedule2)
+#print(timetable)
 
 print_timetable(timetable)
 
-student_id = 1000
-print(schedules[student_id])
+student_id = "1547"
+print(get_student_timetable(student_id, timetable))
+
+print(score(timetable))
 
 '''
 # generate initial guess
