@@ -838,9 +838,7 @@ def get_student_schedules(timetable):
 
 
 # return the proportion of students who received all of their desired courses
-def score(timetable):
-
-    student_schedules = get_student_schedules(timetable)
+def score(student_schedules):
 
     with open('student_requests.json', 'r') as f:
         student_requests = json.load(f)
@@ -1074,16 +1072,16 @@ course_schedule2['sem2'] = {
     'D': course_schedule['sem2'][3]
 }
 
-timetable = generate_timetable(course_schedule2)
+timetable, schedules = generate_timetable(course_schedule2)
 #print(timetable)
 
 print_timetable(timetable)
 
-student_id = random.randint(1000, 1837)
+student_id = str(random.randint(1000, 1837))
 print(student_id)
-print(get_student_timetable(student_id, timetable))
+print(schedules[student_id])
 
-print(score(timetable))
+print(score(schedules))
 
 '''
 # generate initial guess
