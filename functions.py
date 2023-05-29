@@ -635,7 +635,6 @@ def generate_timetable(schedule):
 
         "outside_timetable": timetable['outside_timetable']           
     }
-    print(student_courses)
     return formatted_timetable, student_courses
 
 # finds the avaliable course in a semester and attempts to add student to the course
