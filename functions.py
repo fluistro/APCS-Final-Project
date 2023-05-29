@@ -1054,6 +1054,7 @@ def print_schedule(sem, block):
 s = generate_course_schedule()
 
 # create dictionary of dictionary version of course_schedule
+# generate_timetable needs to use dis one
 course_schedule2 = {}
 course_schedule2['sem1'] = {
     'A': course_schedule['sem1'][0],
