@@ -1075,7 +1075,7 @@ print(t)
 
 # generate initial guess
 schedule = generate_course_schedule()
-initial_timetable = generate_timetable(schedule)
+initial_timetable = generate_timetable(course_schedule2)
 final_timetable = initial_timetable
 current_timetable = initial_timetable
 
