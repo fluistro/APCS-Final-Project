@@ -1072,6 +1072,9 @@ course_schedule2['sem2'] = {
     'D': course_schedule['sem2'][3]
 }
 
+with open('courses.json') as f:
+    course_info = json.load(f)
+
 timetable, schedules = generate_timetable(course_schedule2)
 #print(timetable)
 
@@ -1079,7 +1082,9 @@ print_timetable(timetable)
 
 student_id = str(random.randint(1000, 1837))
 print(student_id)
-print(schedules[student_id])
+print([course_info[course_code]["course name"] for course_code in schedules[student_id]])
+
+
 
 print(score(schedules))
 
