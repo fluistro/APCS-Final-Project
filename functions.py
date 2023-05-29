@@ -277,6 +277,7 @@ def letter_to_num(letter):
 # doesn't care about if a class has only a small amount of students
 # code will run slower towards the end since students need to test more for which course they can take
 def generate_timetable(schedule):
+    student_courses = {}
     with open('courses.json') as f:
         course_info = json.load(f)
 
@@ -597,21 +598,24 @@ def generate_timetable(schedule):
                     if course_info[course]['Outside Timetable'] == False:
                         if len(course_info[course]['Pre Req']) == 0:
                             if len(course_info[course]['Not Simultaneous']) == 0:
+                                if len(course_info[course]['Simultaneous']) == 0:
                                 
-                                if add_student('sem1', course, timetable, schedule, student, blocks, False, False) != -1:
-                                
-                                    timetable = add_student('sem1', course, timetable, schedule, student, blocks, False, True)
-                                    block_added = add_student('sem1', course, timetable, schedule, student, blocks, True, False)
-                                    blocks['sem1'].append(block_added) 
-                                    num_courses = num_courses + 1
-                                    courses_taking.append(course)
-                                elif add_student('sem2', course, timetable, schedule, student, blocks, False, False) != -1:
-                                    timetable = add_student('sem2', course, timetable, schedule, student, blocks, False, True)
-                                    block_added = add_student('sem2', course, timetable, schedule, student, blocks, True, False)
-                                    blocks['sem2'].append(block_added) 
-                                    num_courses = num_courses + 1
-                                    courses_taking.append(course)
+                                    if add_student('sem1', course, timetable, schedule, student, blocks, False, False) != -1:
+                                    
+                                        timetable = add_student('sem1', course, timetable, schedule, student, blocks, False, True)
+                                        block_added = add_student('sem1', course, timetable, schedule, student, blocks, True, False)
+                                        blocks['sem1'].append(block_added) 
+                                        num_courses = num_courses + 1
+                                        courses_taking.append(course)
+                                    elif add_student('sem2', course, timetable, schedule, student, blocks, False, False) != -1:
+                                        timetable = add_student('sem2', course, timetable, schedule, student, blocks, False, True)
+                                        block_added = add_student('sem2', course, timetable, schedule, student, blocks, True, False)
+                                        blocks['sem2'].append(block_added) 
+                                        num_courses = num_courses + 1
+                                        courses_taking.append(course)
+        student_courses.setdefault(student, courses_taking)
     
+
     # format table to correct list style
     formatted_timetable = {
         "sem1": [
@@ -630,7 +634,8 @@ def generate_timetable(schedule):
 
         "outside_timetable": timetable['outside_timetable']           
     }
-    return formatted_timetable
+    print(student_courses)
+    return formatted_timetable, student_courses
 
 # finds the avaliable course in a semester and attempts to add student to the course
 # if no avaliable course, return -1
@@ -1069,7 +1074,7 @@ course_schedule2['sem2'] = {
 }
 
 t = generate_timetable(course_schedule2)
-print(t)
+
 
 
 # generate initial guess
@@ -1111,8 +1116,12 @@ for i in range(10):
 
     # make small change to course schedule, then repeat
     current_timetable = shuffle_courses(current_timetable)
-
+'''
 print(initial_timetable)
+
+
+
 print(score(initial_timetable))
 print(final_timetable)
 print(score(final_timetable))
+'''
