@@ -411,6 +411,10 @@ def generate_timetable(schedule):
             # compares the pre req requirments with the other courses in list if more than 2, cannot do (cannot take cs 11, 12 and ap cs in a year)
             # if 1 pre req, keeps track of it
             num_pre_req = 0
+            if student == 1142:
+                if course == 'ACSC-2A---':
+                    print('break')
+
             if len(course_info[course]['Pre Req']) != 0 or len(course_info[course]['Not Simultaneous']) != 0 or len(course_info[course]['Post Req']) != 0:
                 for c in sorted_courses:
                     if c in course_info[course]['Pre Req']:
@@ -616,6 +620,8 @@ def generate_timetable(schedule):
                                         courses_taking.append(course)
         student_courses.setdefault(student, courses_taking)
     
+    with open('timetable.json', 'w') as out_file:
+     json.dump(timetable, out_file)
 
     # format table to correct list style
     formatted_timetable = {
