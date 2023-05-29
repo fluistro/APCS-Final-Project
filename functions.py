@@ -1002,14 +1002,14 @@ def print_timetable(timetable):
     s2C = [course_info[course_code]['course name'] for full_code in timetable["sem2"][2].keys() for course_code in full_code.split('*')]
     s2D = [course_info[course_code]['course name'] for full_code in timetable["sem2"][3].keys() for course_code in full_code.split('*')]
 
-    print("s1A: " + ", ".join(s1A))
-    print("s1B: " + ", ".join(s1B))
-    print("s1C: " + ", ".join(s1C))
-    print("s1D: " + ", ".join(s1D))
-    print("s2A: " + ", ".join(s2A))
-    print("s2B: " + ", ".join(s2B))
-    print("s2C: " + ", ".join(s2C))
-    print("s2D: " + ", ".join(s2D))
+    print("SEMESTER 1 A BLOCK:\n" + ", ".join(s1A) + "\n")
+    print("SEMESTER 1 B BLOCK:\n" + ", ".join(s1B) + "\n")
+    print("SEMESTER 1 C BLOCK:\n" + ", ".join(s1C) + "\n")
+    print("SEMESTER 1 D BLOCK:\n" + ", ".join(s1D) + "\n")
+    print("SEMESTER 2 A BLOCK:\n" + ", ".join(s2A) + "\n")
+    print("SEMESTER 2 B BLOCK:\n" + ", ".join(s2B) + "\n")
+    print("SEMESTER 2 C BLOCK:\n" + ", ".join(s2C) + "\n")
+    print("SEMESTER 2 D BLOCK:\n" + ", ".join(s2D) + "\n")
 
 
 
@@ -1075,7 +1075,8 @@ timetable = generate_timetable(course_schedule2)
 
 print_timetable(timetable)
 
-student_id = "1547"
+student_id = random.randint(1000, 1837)
+print(student_id)
 print(get_student_timetable(student_id, timetable))
 
 print(score(timetable))
