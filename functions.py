@@ -635,7 +635,7 @@ def generate_timetable(schedule):
 
         "outside_timetable": timetable['outside_timetable']           
     }
-    print(student_courses)
+
     return formatted_timetable, student_courses
 
 # finds the avaliable course in a semester and attempts to add student to the course
@@ -1075,15 +1075,15 @@ course_schedule2['sem2'] = {
     'D': course_schedule['sem2'][3]
 }
 
-timetable = generate_timetable(course_schedule2)
-#print(timetable)
+timetable, student_courses = generate_timetable(course_schedule2)
+print(student_courses)
 
-print_timetable(timetable)
+#print_timetable(timetable)
 
-student_id = "1547"
-print(get_student_timetable(student_id, timetable))
+#student_id = "1547"
+#print(get_student_timetable(student_id, timetable))
 
-print(score(timetable))
+#print(score(timetable))
 
 '''
 # generate initial guess
