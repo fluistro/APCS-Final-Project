@@ -1091,6 +1091,34 @@ def print_schedule(sem, block):
         print(print_line)
     print(len(course_schedule[sem][block]))
 
+def print_student(student_id):
+
+    course_name = []
+    spare_count = 0
+
+    for i in range (len(schedules[student_id])):
+        if schedules[student_id][i] is None:
+            schedules[student_id][i] = "Spare"
+            spare_count = spare_count + 1
+            course_name.append("")
+        else:
+            course_name.append(course_info[schedules[student_id][i]]['course name'])
+
+    print("Student id:  " + student_id)
+    print("Sem 1 Block A:   " + schedules[student_id][0] + "    "  + course_name[0])
+    print("Sem 1 Block B:   " + schedules[student_id][1] + "    "  + course_name[1])
+    print("Sem 1 Block C:   " + schedules[student_id][2] + "    "  + course_name[2])
+    print("Sem 1 Block D:   " + schedules[student_id][3] + "    "  + course_name[3])
+    print("Sem 2 Block A:   " + schedules[student_id][4] + "    "  + course_name[4])
+    print("Sem 2 Block B:   " + schedules[student_id][5] + "    "  + course_name[5])
+    print("Sem 2 Block C:   " + schedules[student_id][6] + "    "  + course_name[6])
+    print("Sem 2 Block D:   " + schedules[student_id][7] + "    "  + course_name[7])
+
+    if len(schedules[student_id]) > 8:
+        print("Outside Timetable:  " + schedules[student_id][8] + "    "  + course_name[8])
+
+    return spare_count
+
 s = generate_course_schedule()
 
 # create dictionary of dictionary version of course_schedule
@@ -1118,10 +1146,11 @@ timetable, schedules = generate_timetable(course_schedule2)
 
 print_timetable(timetable)
 
-student_id = str(random.randint(1000, 1837))
-print(student_id)
+#student_id = str(random.randint(1000, 1837))
+student_id = str(1200)
+print_student(student_id)
 
-print([course_info[course_code]["course name"] for course_code in schedules[student_id]])
+#print([course_info[course_code]["course name"] for course_code in schedules[student_id]])
 
 
 
