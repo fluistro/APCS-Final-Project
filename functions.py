@@ -888,31 +888,39 @@ def get_student_schedules(timetable):
 
 
 # return the proportion of students who received all of their desired courses
-def score(student_schedules):
+def score(timetable):
+
+    student_schedules = get_student_schedules(timetable)
 
     with open('student_requests.json', 'r') as f:
         student_requests = json.load(f)
 
-    total_students = 0
-    successful_students = 0
-    success = True
+    with open('student_alternates.json', 'r') as f:
+        student_alternates = json.load(f)
+
+    total_requests = 0
+    successful_requests = 0
+    successful_alternates = 0
 
     for student in student_requests:
+
         requested = student_requests[student]
         assigned = student_schedules[student]
+        alternates = student_alternates[student]
 
         for course in requested:
-            if course not in assigned:
-                success = False
-        
-        total_students += 1
 
-        if success:
-            successful_students += 1
-        
-        success = True
+            if course in alternates:
+                if course in assigned.split("*"):
+                    successful_alternates += 1
 
-    return successful_students / total_students
+            else:
+                if course in assigned.split("*"):
+                    successful_requests += 1
+
+            total_requests += 1
+
+    return (successful_requests + 0.5 * successful_alternates) / total_requests
 
 # make a small change to the timetable by moving around students. return a new valid timetable.
 # does not shuffle students in outside timetable courses.
@@ -1195,7 +1203,7 @@ print_student(student_id)
 
 
 
-'''
+
 # generate initial guess
 initial_timetable = generate_timetable(course_schedule2)
 final_timetable = initial_timetable
@@ -1245,4 +1253,3 @@ print(score(initial_timetable))
 print(final_timetable)
 print(score(final_timetable))
 
-'''
