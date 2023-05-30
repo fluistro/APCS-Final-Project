@@ -1,5 +1,6 @@
 import json
 import random
+import csv
 
 # make course_info json info global
 with open('courses.json') as f:
@@ -193,6 +194,7 @@ def generate_course_schedule():
                 course_schedule['sem' + rand_block[0]][letter_to_num(rand_block[1])].append(course_block)      # put this course into the randomized 
                 current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
                 all_courseblock_codes[course_block] = 8
+            current_used_blocks = []
 
         if not '*' in course_block:
             if course_info_modify[course_block]['Outside Timetable'] == True:
@@ -370,7 +372,8 @@ def generate_timetable(schedule):
         }
 
         num_courses = 0 # number of courses this student already have (used later to determine how many extra random courses needed)
-        courses_taking = [] # list of courses already taking 
+        
+        courses_taking = [None for _ in range(8)] # list of courses already taking, initilize as 8 so that courses can be inserted at certain blocks
 
         num_alt = 0 # track how many alt courses needed (not really used, but can be used to see how successful this schedule is?)
 
@@ -410,7 +413,7 @@ def generate_timetable(schedule):
                 if add_student('outside_timetable', course, timetable, schedule, student, blocks, False, False) != -1:
                     timetable = add_student('outside_timetable', course, timetable, schedule, student, blocks, False, True)
                     blocks['outside'].append(course)
-                    courses_taking.append(course)
+                    courses_taking = add_course_list('outside_timetable', 'none', course, courses_taking)
                     sorted_courses.remove(course)
                 else: 
                     sorted_courses.remove(course)
@@ -420,6 +423,8 @@ def generate_timetable(schedule):
             # compares the pre req requirments with the other courses in list if more than 2, cannot do (cannot take cs 11, 12 and ap cs in a year)
             # if 1 pre req, keeps track of it
             num_pre_req = 0
+           
+
             if len(course_info[course]['Pre Req']) != 0 or len(course_info[course]['Not Simultaneous']) != 0 or len(course_info[course]['Post Req']) != 0:
                 for c in sorted_courses:
                     if c in course_info[course]['Pre Req']:
@@ -459,24 +464,25 @@ def generate_timetable(schedule):
                         timetable = add_student('sem1', pre_req, timetable, schedule, student, blocks, False, True)
                         block_added = add_student('sem1', pre_req, timetable, schedule, student, blocks, True, False)
                         blocks['sem1'].append(block_added)   
-
+                        courses_taking  = add_course_list('sem1', block_added, pre_req, courses_taking)
+                        
                         # add this course (post req) in sem 2
                         timetable = add_student('sem2', course, timetable, schedule, student, blocks, False, True)
                         block_added = add_student('sem2', course, timetable, schedule, student, blocks, True, False)
                         blocks['sem2'].append(block_added)    
+                        courses_taking  = add_course_list('sem2', block_added, course, courses_taking)
                         
                         sorted_courses.remove(pre_req)
                         sorted_courses.remove(course)
-                        courses_taking.append(course)
-                        courses_taking.append(pre_req)
                         num_courses = num_courses + 2
                         continue
+
+                    # if cannot add both, check if can just add prereq in first sem
                     timetable = add_student('sem1', pre_req, timetable, schedule, student, blocks, False, True)
                     block_added = add_student('sem1', pre_req, timetable, schedule, student, blocks, True, False)
                     blocks['sem1'].append(block_added)    
                     sorted_courses.remove(pre_req)
-                    courses_taking.append(pre_req)
-                    # i = i - 1
+                    courses_taking  = add_course_list('sem1', block_added, pre_req, courses_taking)
                     num_courses = num_courses + 1
                     continue
 
@@ -485,9 +491,8 @@ def generate_timetable(schedule):
                     timetable = add_student ('sem2', pre_req, timetable, schedule, student, blocks, False, True)
                     block_added = add_student('sem2', pre_req, timetable, schedule, student, blocks, True, False)
                     blocks['sem2'].append(block_added)    
+                    courses_taking  = add_course_list('sem2', block_added, pre_req, courses_taking)  
                     sorted_courses.remove(pre_req)
-                    courses_taking.append(pre_req)
-                    # i = i - 1
                     num_courses = num_courses + 1
                     continue
 
@@ -508,14 +513,15 @@ def generate_timetable(schedule):
                         timetable = add_student('sem1', course, timetable, schedule, student, blocks, False, True)
                         block_added = add_student('sem1', course, timetable, schedule, student, blocks, True, False)
                         blocks['sem1'].append(block_added)    
-                        
+                        courses_taking  = add_course_list('sem1', block_added, course, courses_taking)
+
                         timetable = add_student('sem2', not_sim, timetable, schedule, student, blocks, False, True)
                         block_added = add_student('sem2', not_sim, timetable, schedule, student, blocks, True, False)
                         blocks['sem2'].append(block_added)    
                         sorted_courses.remove(not_sim)
                         sorted_courses.remove(course)  
-                        courses_taking.append(course)
-                        courses_taking.append(not_sim)
+                        courses_taking  = add_course_list('sem2', block_added, not_sim, courses_taking)
+                        
                         num_courses = num_courses + 2
                         continue
                 elif add_student('sem2', course, timetable, schedule, student, blocks, False, False) != -1:
@@ -523,14 +529,15 @@ def generate_timetable(schedule):
                         timetable = add_student('sem2', course, timetable, schedule, student, blocks, False, True)
                         block_added = add_student('sem2', course, timetable, schedule, student, blocks, True, False)
                         blocks['sem2'].append(block_added) 
+                        courses_taking  = add_course_list('sem2', block_added, course, courses_taking)
                         
                         timetable = add_student('sem1', not_sim, timetable, schedule, student, blocks, False, True)
                         block_added = add_student('sem1', not_sim, timetable, schedule, student, blocks, True, False)
                         blocks['sem1'].append(block_added) 
                         sorted_courses.remove(not_sim)
                         sorted_courses.remove(course)
-                        courses_taking.append(course)
-                        courses_taking.append(not_sim)
+                        courses_taking  = add_course_list('sem1', block_added, not_sim, courses_taking)
+
                         num_courses = num_courses + 2
                         continue
                 
@@ -546,13 +553,12 @@ def generate_timetable(schedule):
                     timetable = add_student('sem1', course, timetable, schedule, student, blocks, False, True)
                     block_added = add_student('sem1', course, timetable, schedule, student, blocks, True, False)
                     blocks['sem1'].append(block_added) 
+                    courses_taking  = add_course_list('sem1', block_added, course, courses_taking)
 
                     timetable = add_student('sem2', course, timetable, schedule, student, blocks, False, True)
                     block_added = add_student('sem2', course, timetable, schedule, student, blocks, True, False)
                     blocks['sem2'].append(block_added) 
-                
-                    courses_taking.append(course)
-                    courses_taking.append(course)
+                    courses_taking  = add_course_list('sem2', block_added, course, courses_taking)
                     sorted_courses.remove(course)
                
                     num_courses = num_courses + 2
@@ -561,7 +567,8 @@ def generate_timetable(schedule):
                 elif add_student('outside_timetable', course, timetable, schedule, student, blocks, False, False) != -1:
                     timetable = add_student('outside_timetable', course, timetable, schedule, student, blocks, False, True)
                     blocks['outside'].append(course)
-                    courses_taking.append(course)
+                    courses_taking  = add_course_list('outside_timetable', 'none', course, courses_taking)
+
                     continue
                     
                 else: 
@@ -576,7 +583,8 @@ def generate_timetable(schedule):
                 block_added = add_student('sem1', course, timetable, schedule, student, blocks, True, False)
                 blocks['sem1'].append(block_added) 
                 sorted_courses.remove(course)
-                courses_taking.append(course)
+                courses_taking  = add_course_list('sem1', block_added, course, courses_taking)
+
                 num_courses = num_courses + 1
                 continue
 
@@ -587,7 +595,8 @@ def generate_timetable(schedule):
                 blocks['sem2'].append(block_added) 
                 sorted_courses.remove(course)
                 num_courses = num_courses + 1
-                courses_taking.append(course)
+                courses_taking  = add_course_list('sem2', block_added, course, courses_taking)
+
                 continue
             else: # cannot add course
                 sorted_courses.remove(course)
@@ -598,33 +607,41 @@ def generate_timetable(schedule):
 
         # assign random course if the courses student assigned is not avaliable
         # assigns the next course and relatively not priorizted course (p > 20)
-            
+        
         for course in course_info:
-             
+            is_post_req = False
             if num_courses == 8:
                 break
+
+            
             if course not in courses_taking:
-                if int(course_info[course]['Priority']) > 20:
                     if course_info[course]['Outside Timetable'] == False:
                         if len(course_info[course]['Pre Req']) == 0:
                             if len(course_info[course]['Not Simultaneous']) == 0:
-                                # if len(course_info[course]['Simultaneous']) == 0:
-                                
+                                if course_info[course]['Base Terms/Year'] != '1' and course_info[course]['Covered Terms/Year'] != '1':
                                     if add_student('sem1', course, timetable, schedule, student, blocks, False, False) != -1:
                                     
                                         timetable = add_student('sem1', course, timetable, schedule, student, blocks, False, True)
                                         block_added = add_student('sem1', course, timetable, schedule, student, blocks, True, False)
                                         blocks['sem1'].append(block_added) 
+                                        
+                                        courses_taking  = add_course_list('sem1', block_added, course, courses_taking)
                                         num_courses = num_courses + 1
-                                        courses_taking.append(course)
                                     elif add_student('sem2', course, timetable, schedule, student, blocks, False, False) != -1:
                                         timetable = add_student('sem2', course, timetable, schedule, student, blocks, False, True)
                                         block_added = add_student('sem2', course, timetable, schedule, student, blocks, True, False)
                                         blocks['sem2'].append(block_added) 
+                                        
+                                        courses_taking  = add_course_list('sem2', block_added, course, courses_taking)
                                         num_courses = num_courses + 1
-                                        courses_taking.append(course)
+            
+        if iteration_count > 700:
+            print('')
+
         student_courses.setdefault(student, courses_taking)
     
+    with open('timetable.json', 'w') as out_file:
+     json.dump(timetable, out_file)
 
     # format table to correct list style
     formatted_timetable = {
@@ -644,9 +661,32 @@ def generate_timetable(schedule):
 
         "outside_timetable": timetable['outside_timetable']           
     }
-
+    print(student_courses)
     return formatted_timetable, student_courses
-
+def add_course_list (sem, block, course, list):
+    if sem == 'sem1':
+        if block == 'A':
+            list [0] = course
+        elif block == 'B':
+            list [1] = course
+        elif block == 'C':
+            list [2] = course
+        elif block == 'D':
+            list [3] = course
+    elif sem == 'sem2':
+        if block == 'A':
+            list [4] = course
+        elif block == 'B':
+            list [5] = course
+        elif block == 'C':
+            list [6] = course
+        elif block == 'D':
+            list[7] = course
+    elif sem == 'outside_timetable':
+        list.append(course)
+    
+    return list
+        
 # finds the avaliable course in a semester and attempts to add student to the course
 # if no avaliable course, return -1
 # if parameter is_find_block = true, returns the block this student is being added to
@@ -848,9 +888,7 @@ def get_student_schedules(timetable):
 
 
 # return the proportion of students who received all of their desired courses
-def score(timetable):
-
-    student_schedules = get_student_schedules(timetable)
+def score(student_schedules):
 
     with open('student_requests.json', 'r') as f:
         student_requests = json.load(f)
@@ -1015,15 +1053,38 @@ def print_timetable(timetable):
     s2B = [course_info[course_code]['course name'] for full_code in timetable["sem2"][1].keys() for course_code in full_code.split('*')]
     s2C = [course_info[course_code]['course name'] for full_code in timetable["sem2"][2].keys() for course_code in full_code.split('*')]
     s2D = [course_info[course_code]['course name'] for full_code in timetable["sem2"][3].keys() for course_code in full_code.split('*')]
+    outside = [course_info[course_code]['course name'] for course_code in timetable["outside_timetable"].keys()]
 
-    print("s1A: " + ", ".join(s1A))
-    print("s1B: " + ", ".join(s1B))
-    print("s1C: " + ", ".join(s1C))
-    print("s1D: " + ", ".join(s1D))
-    print("s2A: " + ", ".join(s2A))
-    print("s2B: " + ", ".join(s2B))
-    print("s2C: " + ", ".join(s2C))
-    print("s2D: " + ", ".join(s2D))
+    print("SEMESTER 1 A BLOCK:\n" + "\n".join(s1A) + "\n")
+    print("SEMESTER 1 B BLOCK:\n" + "\n".join(s1B) + "\n")
+    print("SEMESTER 1 C BLOCK:\n" + "\n".join(s1C) + "\n")
+    print("SEMESTER 1 D BLOCK:\n" + "\n".join(s1D) + "\n")
+    print("SEMESTER 2 A BLOCK:\n" + "\n".join(s2A) + "\n")
+    print("SEMESTER 2 B BLOCK:\n" + "\n".join(s2B) + "\n")
+    print("SEMESTER 2 C BLOCK:\n" + "\n".join(s2C) + "\n")
+    print("SEMESTER 2 D BLOCK:\n" + "\n".join(s2D) + "\n")
+    print("OUTSIDE TIMETABLE:\n" + "\n".join(outside) + "\n")
+
+    s1A.insert(0, "SEMESTER 1 A BLOCK")
+    s1B.insert(0, "SEMESTER 1 B BLOCK")
+    s1C.insert(0, "SEMESTER 1 C BLOCK")
+    s1D.insert(0, "SEMESTER 1 D BLOCK")
+    s2A.insert(0, "SEMESTER 2 A BLOCK")
+    s2B.insert(0, "SEMESTER 2 B BLOCK")
+    s2C.insert(0, "SEMESTER 2 C BLOCK")
+    s2D.insert(0, "SEMESTER 2 D BLOCK")
+    outside.insert(0, "OUTSIDE TIMETABLE")
+
+    data = [s1A, s1B, s1C, s1D, s2A, s2B, s2C, s2D, outside]
+
+    file = open('timetable.csv', 'w+', newline ='')
+ 
+    # writing the data into the file
+    with file:   
+        write = csv.writer(file)
+        write.writerows(data)
+
+    
 
 
 
@@ -1065,6 +1126,34 @@ def print_schedule(sem, block):
         print(print_line)
     print(len(course_schedule[sem][block]))
 
+def print_student(student_id):
+
+    course_name = []
+    spare_count = 0
+
+    for i in range (len(schedules[student_id])):
+        if schedules[student_id][i] is None:
+            schedules[student_id][i] = "Spare"
+            spare_count = spare_count + 1
+            course_name.append("")
+        else:
+            course_name.append(course_info[schedules[student_id][i]]['course name'])
+
+    print("Student id:  " + student_id)
+    print("Sem 1 Block A:   " + schedules[student_id][0] + "    "  + course_name[0])
+    print("Sem 1 Block B:   " + schedules[student_id][1] + "    "  + course_name[1])
+    print("Sem 1 Block C:   " + schedules[student_id][2] + "    "  + course_name[2])
+    print("Sem 1 Block D:   " + schedules[student_id][3] + "    "  + course_name[3])
+    print("Sem 2 Block A:   " + schedules[student_id][4] + "    "  + course_name[4])
+    print("Sem 2 Block B:   " + schedules[student_id][5] + "    "  + course_name[5])
+    print("Sem 2 Block C:   " + schedules[student_id][6] + "    "  + course_name[6])
+    print("Sem 2 Block D:   " + schedules[student_id][7] + "    "  + course_name[7])
+
+    if len(schedules[student_id]) > 8:
+        print("Outside Timetable:  " + schedules[student_id][8] + "    "  + course_name[8])
+
+    return spare_count
+
 s = generate_course_schedule()
 
 # create dictionary of dictionary version of course_schedule
@@ -1084,15 +1173,27 @@ course_schedule2['sem2'] = {
     'D': course_schedule['sem2'][3]
 }
 
-timetable, student_courses = generate_timetable(course_schedule2)
-#print(student_courses)
+with open('courses.json') as f:
+    course_info = json.load(f)
+
+timetable, schedules = generate_timetable(course_schedule2)
+#print(timetable)
 
 print_timetable(timetable)
 
-#student_id = "1547"
-#print(get_student_timetable(student_id, timetable))
+print("score: ")
+print(score(schedules))
 
-#print(score(timetable))
+#student_id = str(random.randint(1000, 1837))
+print("enter a student id to see their timetable: ")
+student_id = input()
+print_student(student_id)
+
+#print([course_info[course_code]["course name"] for course_code in schedules[student_id]])
+
+
+
+
 
 '''
 # generate initial guess

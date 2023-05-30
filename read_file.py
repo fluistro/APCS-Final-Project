@@ -31,6 +31,8 @@ with open('Course Sequencing Rules.csv', newline='') as csvfile:
 # dictionary
 course_info = {}
 student_requests = {}
+student_alternates = {}
+
 '''
 {1000: [course list]
  1001: []
@@ -346,6 +348,12 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
             else:
                 student_requests[current_student_id] = [row[0]]
 
+            if row[11] == "Y":
+                if current_student_id in student_alternates:
+                    student_alternates[current_student_id].append(row[0])
+                else:
+                    student_alternates[current_student_id] = [row[0]]
+
 
 # read Course Blocking Rules
 # need to read file twice, one time for sim, one time for not sim since not sim depends on the read info of sim
@@ -461,7 +469,8 @@ with open('Course Sequencing Rules.csv', 'r') as file:
                     str.strip()
 
                 # create key Post Req with value list post_req
-                course_info[id]["Post Req"].append(post_req)
+                for c in post_req:
+                    course_info[id]["Post Req"].append(c)
                 #print(course_info[id])
 
         # update pre req
@@ -531,9 +540,10 @@ course_info['MGRPR12--L']['Outside Timetable'] = True
 with open('courses.json', 'w') as out_file:
      json.dump(course_info, out_file)
 
-'''
+
 with open('student_requests.json', 'w') as out_file:
      json.dump(student_requests, out_file)
-'''
 
+with open('student_alternates.json', 'w') as out_file:
+     json.dump(student_alternates, out_file)
 
