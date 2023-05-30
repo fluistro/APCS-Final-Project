@@ -461,7 +461,8 @@ with open('Course Sequencing Rules.csv', 'r') as file:
                     str.strip()
 
                 # create key Post Req with value list post_req
-                course_info[id]["Post Req"].append(post_req)
+                for c in post_req:
+                    course_info[id]["Post Req"].append(c)
                 #print(course_info[id])
 
         # update pre req
