@@ -625,7 +625,7 @@ def generate_timetable(schedule):
                                         num_courses = num_courses + 1
             
         if iteration_count > 700:
-            print('')
+            pass
 
         student_courses.setdefault(student, courses_taking)
     
@@ -1121,7 +1121,13 @@ print_timetable(timetable)
 student_id = str(random.randint(1000, 1837))
 print(student_id)
 
-print([course_info[course_code]["course name"] for course_code in schedules[student_id]])
+
+for course_code in schedules[student_id]:
+    if course_code == None:
+        print('No course avaliable for this block')
+    else:
+        print([course_info[course_code]["course name"]])
+        
 
 
 

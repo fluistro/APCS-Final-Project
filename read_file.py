@@ -526,8 +526,6 @@ course_info['MCMCC12--L']['Outside Timetable'] = True
 course_info['YCPA-2AX-L']['Outside Timetable'] = True
 course_info['MGRPR12--L']['Outside Timetable'] = True
 
-# write course_info to txt file
-
 
 with open('courses.json', 'w') as out_file:
      json.dump(course_info, out_file)
