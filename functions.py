@@ -1,5 +1,6 @@
 import json
 import random
+import csv
 
 # make course_info json info global
 with open('courses.json') as f:
@@ -1041,15 +1042,38 @@ def print_timetable(timetable):
     s2B = [course_info[course_code]['course name'] for full_code in timetable["sem2"][1].keys() for course_code in full_code.split('*')]
     s2C = [course_info[course_code]['course name'] for full_code in timetable["sem2"][2].keys() for course_code in full_code.split('*')]
     s2D = [course_info[course_code]['course name'] for full_code in timetable["sem2"][3].keys() for course_code in full_code.split('*')]
+    outside = [course_info[course_code]['course name'] for course_code in timetable["outside_timetable"].keys()]
 
-    print("SEMESTER 1 A BLOCK:\n" + ", ".join(s1A) + "\n")
-    print("SEMESTER 1 B BLOCK:\n" + ", ".join(s1B) + "\n")
-    print("SEMESTER 1 C BLOCK:\n" + ", ".join(s1C) + "\n")
-    print("SEMESTER 1 D BLOCK:\n" + ", ".join(s1D) + "\n")
-    print("SEMESTER 2 A BLOCK:\n" + ", ".join(s2A) + "\n")
-    print("SEMESTER 2 B BLOCK:\n" + ", ".join(s2B) + "\n")
-    print("SEMESTER 2 C BLOCK:\n" + ", ".join(s2C) + "\n")
-    print("SEMESTER 2 D BLOCK:\n" + ", ".join(s2D) + "\n")
+    print("SEMESTER 1 A BLOCK:\n" + "\n".join(s1A) + "\n")
+    print("SEMESTER 1 B BLOCK:\n" + "\n".join(s1B) + "\n")
+    print("SEMESTER 1 C BLOCK:\n" + "\n".join(s1C) + "\n")
+    print("SEMESTER 1 D BLOCK:\n" + "\n".join(s1D) + "\n")
+    print("SEMESTER 2 A BLOCK:\n" + "\n".join(s2A) + "\n")
+    print("SEMESTER 2 B BLOCK:\n" + "\n".join(s2B) + "\n")
+    print("SEMESTER 2 C BLOCK:\n" + "\n".join(s2C) + "\n")
+    print("SEMESTER 2 D BLOCK:\n" + "\n".join(s2D) + "\n")
+    print("OUTSIDE TIMETABLE:\n" + "\n".join(outside) + "\n")
+
+    s1A.insert(0, "SEMESTER 1 A BLOCK")
+    s1B.insert(0, "SEMESTER 1 B BLOCK")
+    s1C.insert(0, "SEMESTER 1 C BLOCK")
+    s1D.insert(0, "SEMESTER 1 D BLOCK")
+    s2A.insert(0, "SEMESTER 2 A BLOCK")
+    s2B.insert(0, "SEMESTER 2 B BLOCK")
+    s2C.insert(0, "SEMESTER 2 C BLOCK")
+    s2D.insert(0, "SEMESTER 2 D BLOCK")
+    outside.insert(0, "OUTSIDE TIMETABLE")
+
+    data = [s1A, s1B, s1C, s1D, s2A, s2B, s2C, s2D, outside]
+
+    file = open('timetable.csv', 'w+', newline ='')
+ 
+    # writing the data into the file
+    with file:   
+        write = csv.writer(file)
+        write.writerows(data)
+
+    
 
 
 
@@ -1146,15 +1170,19 @@ timetable, schedules = generate_timetable(course_schedule2)
 
 print_timetable(timetable)
 
+print("score: ")
+print(score(schedules))
+
 #student_id = str(random.randint(1000, 1837))
-student_id = str(1114)
+print("enter a student id to see their timetable: ")
+student_id = input()
 print_student(student_id)
 
 #print([course_info[course_code]["course name"] for course_code in schedules[student_id]])
 
 
 
-print(score(schedules))
+
 
 '''
 # generate initial guess
