@@ -384,7 +384,7 @@ def generate_timetable(schedule):
         # create a dictionary 'course_name' : priority
         for course in not_sorted_courses:
             
-            priority = course_info[course].get("Priority") # not sure how to determine if course is alternate, once determined add 5 to nonalt courses to prioritize it
+            priority = int(course_info[course].get("Priority")) # not sure how to determine if course is alternate, once determined add 5 to nonalt courses to prioritize it
             
             course_priority.setdefault(course, priority)
 
