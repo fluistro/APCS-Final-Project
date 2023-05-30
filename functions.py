@@ -1147,7 +1147,7 @@ timetable, schedules = generate_timetable(course_schedule2)
 print_timetable(timetable)
 
 #student_id = str(random.randint(1000, 1837))
-student_id = str(1200)
+student_id = str(1114)
 print_student(student_id)
 
 #print([course_info[course_code]["course name"] for course_code in schedules[student_id]])
