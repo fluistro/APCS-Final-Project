@@ -182,8 +182,17 @@ def generate_course_schedule():
     for course_block in all_courseblock_codes:
         current_used_blocks = []                                            # to store all the blocks this course takes up
 
+        # deal with blocks with sections > 8
         if int(all_courseblock_codes[course_block]) > 8:
-            all_courseblock_codes[course_block] = 8
+            extra_sections = int(all_courseblock_codes[course_block]) - 8
+            current_used_blocks = []
+            for i in range(extra_sections):
+
+                # put the extra sections into course_schedule first
+                rand_block = return_rando_block(current_used_blocks).split(' ')                    # [semester#, block#]
+                course_schedule['sem' + rand_block[0]][letter_to_num(rand_block[1])].append(course_block)      # put this course into the randomized 
+                current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
+                all_courseblock_codes[course_block] = 8
 
         if not '*' in course_block:
             if course_info_modify[course_block]['Outside Timetable'] == True:
@@ -207,7 +216,7 @@ def generate_course_schedule():
 
         # the NORMAL courses
         for j in range(int(all_courseblock_codes[course_block])):                # goes through all available sections of this course
-            rand_block = return_rando_block(current_used_blocks).split(' ')                    # [semester#, block#]
+            rand_block = return_rando_block(current_used_blocks).split(' ')                                # [semester#, block#]
             course_schedule['sem' + rand_block[0]][letter_to_num(rand_block[1])].append(course_block)      # put this course into the randomized 
             current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
         
@@ -599,7 +608,7 @@ def generate_timetable(schedule):
                     if course_info[course]['Outside Timetable'] == False:
                         if len(course_info[course]['Pre Req']) == 0:
                             if len(course_info[course]['Not Simultaneous']) == 0:
-                                if len(course_info[course]['Simultaneous']) == 0:
+                                # if len(course_info[course]['Simultaneous']) == 0:
                                 
                                     if add_student('sem1', course, timetable, schedule, student, blocks, False, False) != -1:
                                     
@@ -1076,9 +1085,9 @@ course_schedule2['sem2'] = {
 }
 
 timetable, student_courses = generate_timetable(course_schedule2)
-print(student_courses)
+#print(student_courses)
 
-#print_timetable(timetable)
+print_timetable(timetable)
 
 #student_id = "1547"
 #print(get_student_timetable(student_id, timetable))
