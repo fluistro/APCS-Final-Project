@@ -183,8 +183,18 @@ def generate_course_schedule():
     for course_block in all_courseblock_codes:
         current_used_blocks = []                                            # to store all the blocks this course takes up
 
+        # deal with blocks with sections > 8
         if int(all_courseblock_codes[course_block]) > 8:
-            all_courseblock_codes[course_block] = 8
+            extra_sections = int(all_courseblock_codes[course_block]) - 8
+            current_used_blocks = []
+            for i in range(extra_sections):
+
+                # put the extra sections into course_schedule first
+                rand_block = return_rando_block(current_used_blocks).split(' ')                    # [semester#, block#]
+                course_schedule['sem' + rand_block[0]][letter_to_num(rand_block[1])].append(course_block)      # put this course into the randomized 
+                current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
+                all_courseblock_codes[course_block] = 8
+            current_used_blocks = []
 
         if not '*' in course_block:
             if course_info_modify[course_block]['Outside Timetable'] == True:
@@ -208,7 +218,7 @@ def generate_course_schedule():
 
         # the NORMAL courses
         for j in range(int(all_courseblock_codes[course_block])):                # goes through all available sections of this course
-            rand_block = return_rando_block(current_used_blocks).split(' ')                    # [semester#, block#]
+            rand_block = return_rando_block(current_used_blocks).split(' ')                                # [semester#, block#]
             course_schedule['sem' + rand_block[0]][letter_to_num(rand_block[1])].append(course_block)      # put this course into the randomized 
             current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
         
@@ -668,6 +678,7 @@ def generate_timetable(schedule):
 
         "outside_timetable": timetable['outside_timetable']           
     }
+    print(student_courses)
     return formatted_timetable, student_courses
 def add_course_list (sem, block, course, list):
     if sem == 'sem1':
@@ -894,31 +905,39 @@ def get_student_schedules(timetable):
 
 
 # return the proportion of students who received all of their desired courses
-def score(student_schedules):
+def score(timetable):
+
+    student_schedules = get_student_schedules(timetable)
 
     with open('student_requests.json', 'r') as f:
         student_requests = json.load(f)
 
-    total_students = 0
-    successful_students = 0
-    success = True
+    with open('student_alternates.json', 'r') as f:
+        student_alternates = json.load(f)
+
+    total_requests = 0
+    successful_requests = 0
+    successful_alternates = 0
 
     for student in student_requests:
+
         requested = student_requests[student]
         assigned = student_schedules[student]
+        alternates = student_alternates[student]
 
         for course in requested:
-            if course not in assigned:
-                success = False
-        
-        total_students += 1
 
-        if success:
-            successful_students += 1
-        
-        success = True
+            if course in alternates:
+                if course in assigned.split("*"):
+                    successful_alternates += 1
 
-    return successful_students / total_students
+            else:
+                if course in assigned.split("*"):
+                    successful_requests += 1
+
+            total_requests += 1
+
+    return (successful_requests + 0.5 * successful_alternates) / total_requests
 
 # make a small change to the timetable by moving around students. return a new valid timetable.
 # does not shuffle students in outside timetable courses.
@@ -1202,7 +1221,7 @@ while True:
 
 
 
-'''
+
 # generate initial guess
 initial_timetable = generate_timetable(course_schedule2)
 final_timetable = initial_timetable
@@ -1252,4 +1271,3 @@ print(score(initial_timetable))
 print(final_timetable)
 print(score(final_timetable))
 
-'''
