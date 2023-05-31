@@ -447,14 +447,13 @@ def generate_timetable(schedule):
                     if c in course_info[course]['Pre Req']:
                         num_pre_req = num_pre_req + 1
                         pre_req = c
+                        sorted_courses.remove(pre_req)
+                        sorted_courses.append(pre_req)
                     # checks if there are non sim courses and keeps track of it
                     if c in course_info[course]['Not Simultaneous']:
                         has_not_sim = True
                         not_sim = c
-                    if c in course_info[course]['Post Req']: # moves post req course to the end and go through other courses so will deal with pre req first
-                        sorted_courses.remove(course)
-                        sorted_courses.append(course)
-                        continue
+                
                 
                 
 
@@ -499,6 +498,7 @@ def generate_timetable(schedule):
                     block_added = add_student('sem1', pre_req, timetable, schedule, student, blocks, True, False)
                     blocks['sem1'].append(block_added)    
                     sorted_courses.remove(pre_req)
+                    sorted_courses.remove(course)
                     courses_taking  = add_course_list('sem1', block_added, pre_req, courses_taking)
                     num_courses = num_courses + 1
                     continue
@@ -510,6 +510,7 @@ def generate_timetable(schedule):
                     blocks['sem2'].append(block_added)    
                     courses_taking  = add_course_list('sem2', block_added, pre_req, courses_taking)  
                     sorted_courses.remove(pre_req)
+                    sorted_courses.remove(course)
                     num_courses = num_courses + 1
                     continue
 
@@ -1207,7 +1208,7 @@ timetable, schedules = generate_timetable(course_schedule2)
 print_timetable(timetable)
 
 print("score: ")
-print(score(schedules))
+# print(score(schedules))
 
 #student_id = str(random.randint(1000, 1837))
 while True:
