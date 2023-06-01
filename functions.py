@@ -1,6 +1,15 @@
 import json
 import random
 import csv
+import copy
+
+# import files
+
+with open('student_requests.json', 'r') as f:
+    student_requests = json.load(f)
+
+with open('student_alternates.json', 'r') as f:
+    student_alternates = json.load(f)
 
 # make course_info json info global
 with open('courses.json') as f:
@@ -292,17 +301,9 @@ code will run slower towards the end since students need to test more for which 
 """
 def generate_timetable(schedule):
     student_courses = {}
-    with open('courses.json') as f:
-        course_info = json.load(f)
-
-    with open('student_requests.json') as f:
-        student_request = json.load(f)
     
-    with open('student_alternates.json') as f:
-        student_alt = json.load(f)
-
     # randomize student order in student info json so that each run will generate different schedules
-    keys = list(student_request.keys())
+    keys = list(student_requests.keys())
     random.shuffle(keys)
 
     print(keys[-1])
@@ -312,7 +313,7 @@ def generate_timetable(schedule):
     print(keys[-5])
 
     # Create a new dictionary with shuffled keys
-    student_info = {key: student_request[key] for key in keys}
+    student_info = {key: student_requests[key] for key in keys}
 
     
 
@@ -401,8 +402,8 @@ def generate_timetable(schedule):
             priority = int(course_info[course].get("Priority")) # not sure how to determine if course is alternate, once determined add 5 to nonalt courses to prioritize it
             
 
-            if student in student_alt:
-                if course in student_alt[student]:
+            if student in student_alternates:
+                if course in student_alternates[student]:
                     course_priority.setdefault(course, 100)
                 else:
                     course_priority.setdefault(course, priority)
@@ -914,12 +915,6 @@ def score(timetable):
 
     student_schedules = get_student_schedules(timetable)
 
-    with open('student_requests.json', 'r') as f:
-        student_requests = json.load(f)
-
-    with open('student_alternates.json', 'r') as f:
-        student_alternates = json.load(f)
-
     total_requests = 0
     successful_requests = 0
     successful_alternates = 0
@@ -949,17 +944,20 @@ def score(timetable):
                         break
 
             total_requests += 1
-
-    print("total requests: " + str(total_requests))
+    #print("total requests: " + str(total_requests))
+    '''
     print("requests met: " + str(successful_requests))
-    print("alternates met: " + str(successful_alternates))
+    print("alternates met: " + str(successful_alternates))'''
+    print((successful_requests + 0.5 * successful_alternates) / total_requests)
     return (successful_requests + 0.5 * successful_alternates) / total_requests
 
 # make a small change to the timetable by moving around students. return a new valid timetable.
 # does not shuffle students in outside timetable courses.
-def shuffle_students(timetable):
+def shuffle_students(original_timetable):
+    
+    timetable = copy.deepcopy(original_timetable)
 
-    n = 50
+    n = 100
 
     # swap n pairs of students
     for i in range(n):
@@ -978,16 +976,27 @@ def shuffle_students(timetable):
 
         while True:
 
-            # get two different random courses in that timeslot
-            course1 = random.choice(timetable[semester][timeslot])
-            course2 = random.choice(timetable[semester][timeslot])
+            #print("shuffle_students loop")
 
-            if (course1 == course2):
+            # get two different random courses in that timeslot
+            course1 = random.choice(list(timetable[semester][timeslot].keys()))
+            course2 = random.choice(list(timetable[semester][timeslot].keys()))
+
+            if (course1 == course2) or len(timetable[semester][timeslot][course1]) == 0 or len(timetable[semester][timeslot][course2]) == 0:
                 continue
 
             # get one student from each course
-            student1 = random.choice(timetable[semester][timeslot][course1])
-            student2 = random.choice(timetable[semester][timeslot][course2])
+            
+            student1 = timetable[semester][timeslot][course1][0]
+            student2 = timetable[semester][timeslot][course2][0]
+            
+            for student in timetable[semester][timeslot][course1]:
+                if course1 not in student_requests[student]:
+                    student1 = student
+                    
+            for student in timetable[semester][timeslot][course2]:
+                if course2 not in student_requests[student]:
+                    student2 = student
 
             if (student1 == student2):
                 continue
@@ -1083,8 +1092,7 @@ def shuffle_courses(timetable):
 # prints the timetable in tabular form
 def print_timetable(timetable):
 
-    with open('courses.json') as f:
-        course_info = json.load(f)
+    
 
     s1A = [course_info[course_code]['course name'] for full_code in timetable["sem1"][0].keys() for course_code in full_code.split('*')]
     s1B = [course_info[course_code]['course name'] for full_code in timetable["sem1"][1].keys() for course_code in full_code.split('*')]
@@ -1144,8 +1152,6 @@ available_blocks = ['1 A', '1 B', '1 C', '1 D', '2 A', '2 B', '2 C', '2 D']
 
 
 #print(course_schedule)
-with open('student_requests.json') as f:
-        student_request = json.load(f)
 
 
 def print_schedule(sem, block):
@@ -1214,8 +1220,6 @@ course_schedule2['sem2'] = {
     'D': course_schedule['sem2'][3]
 }
 
-with open('courses.json') as f:
-    course_info = json.load(f)
 
 '''timetable, schedules = generate_timetable(course_schedule2)
 #print(timetable)
@@ -1240,11 +1244,32 @@ while True:
 
 # generate initial guess
 initial_timetable, initial_schedule = generate_timetable(course_schedule2)
-print(score(initial_timetable))
+score(initial_timetable)
 
 final_timetable = initial_timetable
 current_timetable = initial_timetable
 
+error = 1 / 4300
+
+for i in range(1):
+    
+    current_score = score(current_timetable)
+    print(current_score)
+    next_score = 0
+    
+    while next_score < current_score + error:
+        
+        #print("outer loop")
+    
+        next_timetable = shuffle_students(dict(current_timetable))
+        next_score = score(next_timetable)
+        
+    current_timetable = next_timetable
+    current_score = next_score
+        
+print(next_timetable)
+print(next_score)
+    
 
 '''# check 10 possible schedules
 for i in range(10):
@@ -1282,4 +1307,3 @@ for i in range(10):
     
 print(final_timetable)
 print(score(final_timetable))'''
-
