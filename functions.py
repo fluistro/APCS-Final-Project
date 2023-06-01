@@ -928,20 +928,31 @@ def score(timetable):
 
         requested = student_requests[student]
         assigned = student_schedules[student]
-        alternates = student_alternates[student]
+        
+        if student in student_alternates:
+            alternates = student_alternates[student]
+        else:
+            alternates = []
 
         for course in requested:
 
             if course in alternates:
-                if course in assigned.split("*"):
-                    successful_alternates += 1
+                for assigned_course in assigned:
+                    if course in assigned_course.split("*"):
+                        successful_alternates += 1
+                        break
 
             else:
-                if course in assigned.split("*"):
-                    successful_requests += 1
+                for assigned_course in assigned:
+                    if course in assigned_course.split("*"):
+                        successful_requests += 1
+                        break
 
             total_requests += 1
 
+    print("total requests: " + str(total_requests))
+    print("requests met: " + str(successful_requests))
+    print("alternates met: " + str(successful_alternates))
     return (successful_requests + 0.5 * successful_alternates) / total_requests
 
 # make a small change to the timetable by moving around students. return a new valid timetable.
@@ -1206,7 +1217,7 @@ course_schedule2['sem2'] = {
 with open('courses.json') as f:
     course_info = json.load(f)
 
-timetable, schedules = generate_timetable(course_schedule2)
+'''timetable, schedules = generate_timetable(course_schedule2)
 #print(timetable)
 
 print_timetable(timetable)
@@ -1220,7 +1231,7 @@ while True:
     student_id = input()
     print_student(student_id)
 
-#print([course_info[course_code]["course name"] for course_code in schedules[student_id]])
+#print([course_info[course_code]["course name"] for course_code in schedules[student_id]])'''
 
 
 
@@ -1228,12 +1239,14 @@ while True:
 
 
 # generate initial guess
-initial_timetable = generate_timetable(course_schedule2)
+initial_timetable, initial_schedule = generate_timetable(course_schedule2)
+print(score(initial_timetable))
+
 final_timetable = initial_timetable
 current_timetable = initial_timetable
 
 
-# check 10 possible schedules
+'''# check 10 possible schedules
 for i in range(10):
 
     # make 100 small changes to students, each of which is an improvement
@@ -1266,13 +1279,7 @@ for i in range(10):
 
     # make small change to course schedule, then repeat
     current_timetable = shuffle_courses(current_timetable)
-
-
-print(initial_timetable)
-
-
-
-print(score(initial_timetable))
+    
 print(final_timetable)
-print(score(final_timetable))
+print(score(final_timetable))'''
 
