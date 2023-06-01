@@ -662,8 +662,7 @@ def generate_timetable(schedule):
 
         student_courses.setdefault(student, courses_taking)
     
-    with open('timetable.json', 'w') as out_file:
-     json.dump(timetable, out_file)
+    
 
     # format table to correct list style
     formatted_timetable = {
@@ -683,7 +682,10 @@ def generate_timetable(schedule):
 
         "outside_timetable": timetable['outside_timetable']           
     }
-    print(student_courses)
+    
+    with open('timetable.json', 'w') as out_file:
+        json.dump(formatted_timetable, out_file)
+
     return formatted_timetable, student_courses
 def add_course_list (sem, block, course, list):
     if sem == 'sem1':
