@@ -101,15 +101,16 @@ The generated timetable should satisfy the requirements listed under COURSES.
 '''
 
 
-
-# modifies the course_schedule dictionary:
-# it ignores all courses with <=5 students requesting it
-# let X = the available number of section of a course, then this course code appears in the dictionary X times
-# its supposed to make sure that no 2 of the same courses appear in the same block in the same semester
-# all simultaneous courses are one element of the list, each course code in that simultaneous bunch is seperated with a '*'
-# rn as of May 26, it does not give a shit baout whether students would fill the course or not. its only going off of the available sections of each course
-# for band and PE: band 9 and band 10 are both in sem 1, and their corresponding PE class is in sem 2 of the same block
-# for Outside timetable courses they are all in 'OT' key of sem 1
+'''
+modifies the course_schedule dictionary:
+it ignores all courses with <=5 students requesting it
+let X = the available number of section of a course, then this course code appears in the dictionary X times
+its supposed to make sure that no 2 of the same courses appear in the same block in the same semester
+all simultaneous courses are one element of the list, each course code in that simultaneous bunch is seperated with a '*'
+rn as of May 26, it does not give a shit baout whether students would fill the course or not. its only going off of the available sections of each course
+for band and PE: band 9 and band 10 are both in sem 1, and their corresponding PE class is in sem 2 of the same block
+for Outside timetable courses they are all in 'OT' key of sem 1
+'''
 def generate_course_schedule():
 
     all_courseblock_codes = {}      # doesn't store OT courses
@@ -277,16 +278,18 @@ def letter_to_num(letter):
     else:
         return 3
     
-# takes roughly 20 seconds to generate schedule
-# generates a timetable with the schedule passed in
-# paramater must be formatted as a dictionary with key A,B,C,D therefore use course sequence 2
-# output schedule will have the same courses in each block as original passed in schedule but different order within blocks 
-# ie schedule passed in has order 1234 in block A, the returned scheudle might have 2431 in block A
-# all simultaneous courses are one element of the list, each course code in that simultaneous bunch is seperated with a '*'
-# not sim courses are counted as 2 courses one in sem 1 and one in sem 2
-# currently no way to determine order of two non simultaneous courses
-# doesn't care about if a class has only a small amount of students
-# code will run slower towards the end since students need to test more for which course they can take
+"""
+takes roughly 20 seconds to generate schedule
+generates a timetable with the schedule passed in
+paramater must be formatted as a dictionary with key A,B,C,D therefore use course sequence 2
+output schedule will have the same courses in each block as original passed in schedule but different order within blocks 
+ie schedule passed in has order 1234 in block A, the returned scheudle might have 2431 in block A
+all simultaneous courses are one element of the list, each course code in that simultaneous bunch is seperated with a '*'
+not sim courses are counted as 2 courses one in sem 1 and one in sem 2
+currently no way to determine order of two non simultaneous courses
+doesn't care about if a class has only a small amount of students
+code will run slower towards the end since students need to test more for which course they can take
+"""
 def generate_timetable(schedule):
     student_courses = {}
     with open('courses.json') as f:
@@ -705,15 +708,16 @@ def add_course_list (sem, block, course, list):
     
     return list
         
-# finds the avaliable course in a semester and attempts to add student to the course
-# if no avaliable course, return -1
-# if parameter is_find_block = true, returns the block this student is being added to
-# method ordered and the way it is called ensures that student will be only added at the right time
-# always use this method so that check if courses are avaliable first (!= -1)
-# if avaliable then add student or get block
-# be careful not to accidently add student two times since this method is used for multiple things
-# deals with simultaneous courses by replacing the timetable original timetable key that has * with the single course name being used (CS11*CS12  ---> CS11) and at the end of the method switch the keys back for both schedule and dictionary
-# if sim course, the order of the dictionary will change ([1, 2, CS11*CS12, 3, 4]  -----> [1, 2, 3, 4, CS11*CS12])
+"""
+finds the avaliable course in a semester and attempts to add student to the course
+if no avaliable course, return -1
+if parameter is_find_block = true, returns the block this student is being added to
+method ordered and the way it is called ensures that student will be only added at the right time
+always use this method so that check if courses are avaliable first (!= -1)
+if avaliable then add student or get block
+be careful not to accidently add student two times since this method is used for multiple things
+deals with simultaneous courses by replacing the timetable original timetable key that has * with the single course name being used (CS11*CS12  ---> CS11) and at the end of the method switch the keys back for both schedule and dictionary
+if sim course, the order of the dictionary will change ([1, 2, CS11*CS12, 3, 4]  -----> [1, 2, 3, 4, CS11*CS12])"""
 def add_student (sem, course, timetable, schedule, student, blocks, is_find_block, is_append):
     
     can_add = False # can this student be added (are they already taking this course and is max enrollment reached)
