@@ -1088,6 +1088,32 @@ def shuffle_courses(timetable):
 
     return timetable
 
+# return true if valid
+def is_timetable_valid(timetable, student_schedules):
+    return is_timetable_courses_valid(timetable) and is_timetable_students_valid(timetable)
+
+def is_timetable_courses_valid(timetable):
+    # max enrollment 
+    # not exceed sections 
+    # not sim & sim & linear
+
+def is_timetable_students_valid(timetable, student_schedules):
+    # for all courses in a students' timetable for all students
+    # for every course, check if it has pre req, then check if the prereq is before it
+    # check for <= 8 total ocurses
+    # for every not sim: check if in both sems
+    # same for linear
+
+    for student in student_schedules:
+        for course in student_schedules[student]:
+
+            # prereq
+            if len(course_info[course]['Pre Req']) > 0:
+                if course_info[course]['Pre Req'][0] in student_schedules[student]:
+                    if student_schedules[student].index(course_info[course]['Pre Req'][0]) < 4 and (student_schedules[student].index(course) >= 4 and student_schedules[student].index(course) <= 7):
+                        continue
+                    else: 
+                        return False
 
 # prints the timetable in tabular form
 def print_timetable(timetable):
@@ -1173,6 +1199,7 @@ def print_schedule(sem, block):
         print(print_line)
     print(len(course_schedule[sem][block]))
 
+
 def print_student(student_id):
 
     course_name = []
@@ -1221,7 +1248,7 @@ course_schedule2['sem2'] = {
 }
 
 
-'''timetable, schedules = generate_timetable(course_schedule2)
+timetable, schedules = generate_timetable(course_schedule2)
 #print(timetable)
 
 print_timetable(timetable)
@@ -1233,13 +1260,14 @@ print("score: ")
 while True:
     print("enter a student id to see their timetable: ")
     student_id = input()
-    print_student(student_id)
 
+    print_student(student_id)
+    break
 #print([course_info[course_code]["course name"] for course_code in schedules[student_id]])'''
 
 
 
-
+  
 
 
 # generate initial guess
