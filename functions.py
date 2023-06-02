@@ -1095,9 +1095,38 @@ def is_timetable_valid(timetable, student_schedules):
     return is_timetable_courses_valid(timetable) and is_timetable_students_valid(timetable)
 
 def is_timetable_courses_valid(timetable):
-    # max enrollment 
+    
+    for block in timetable:
+
+        if '*' in block:    # if its a sim block
+
+            all_courses_this_block = block.split('*')
+
+            # check that all courses in this block are simultaneous with the first course
+            for i in range(1, len(all_courses_this_block)):
+                if all_courses_this_block[i] not in course_info[all_courses_this_block[0]]["Simultaneous"]:
+                    print(all_courses_this_block[i] + " and " + all_courses_this_block[0] + " are not sim with each other")
+                    return False
+
+            max_capacity = course_info[all_courses_this_block[0]]["Max Enrollment"]
+        else:
+            max_capacity = course_info[block]["Max Enrollment"]
+
+        # check that all courses is below max enrollment
+        if len(timetable[block]) > max_capacity:
+            print(timetable[block] + " exceeds max capacity")
+            return False
+        
+        # 
+
+
+
+
     # not exceed sections 
-    # not sim & sim & linear
+
+
+    # not sim & sim & linear 
+
 
 def is_timetable_students_valid(timetable, student_schedules):
     # for all courses in a students' timetable for all students
