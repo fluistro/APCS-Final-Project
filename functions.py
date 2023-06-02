@@ -1091,9 +1091,13 @@ def shuffle_courses(timetable):
     return timetable
 
 # return true if valid
-def is_timetable_valid(timetable, student_schedules):
-    return is_timetable_courses_valid(timetable) and is_timetable_students_valid(timetable)
+def is_timetable_valid(timetable):
+    schedule = get_schedule()
+    return is_timetable_courses_valid(timetable, schedule) and is_timetable_students_valid(timetable, schedule)
 
+
+def get_schedule():
+    return 
 def is_timetable_courses_valid(timetable):
     
     for block in timetable:
@@ -1136,15 +1140,51 @@ def is_timetable_students_valid(timetable, student_schedules):
     # same for linear
 
     for student in student_schedules:
+        if len(student_schedules[student]) < 8:
+            return False
+
         for course in student_schedules[student]:
 
             # prereq
+           
             if len(course_info[course]['Pre Req']) > 0:
                 if course_info[course]['Pre Req'][0] in student_schedules[student]:
+                    p = course_info[course]['Pre Req'][0]
+                    # check in correct sem
                     if student_schedules[student].index(course_info[course]['Pre Req'][0]) < 4 and (student_schedules[student].index(course) >= 4 and student_schedules[student].index(course) <= 7):
-                        continue
+                        # check didn't have prereq
+                        if p in student_requests[student] and p not in student_schedules[student]:
+                            return False
                     else: 
                         return False
+            if len(course_info[course]['Not Simultaneous']) > 0:
+                ns = course_info[course]['Not Simultaneous'][0]
+                # check both not sim courses in sem1 and sem2 and same block
+                if student_schedules[student].index(course) < 4 and student_schedules[student].index(ns) == student_schedules[student].index(course) + 4:
+                    pass
+                elif student_schedules[student].index(ns) < 4 and student_schedules[student].index(course) == student_schedules[student].index(ns) + 4:
+                    pass
+                else:
+                    return False
+                
+            # linear course
+            if course_info[course]['Base Terms/Year'] == '1':
+                # check same course in both sem
+                try:
+                    second_occurrence = student_schedules[student](course, student_schedules[student].index(1) + 1)
+                except ValueError:
+                    second_occurrence = -1
+                if student_schedules[student].index(course) < 4 and second_occurrence > 4:
+                    pass
+                else: return False
+            
+            # check no repeated course
+            if course_info[course]['Base Terms/Year'] != '1':
+                if student_schedules[student].count(course) > 1:
+                    return False # multiple of the same course and not linear
+
+                    
+    return True
 
 # prints the timetable in tabular form
 def print_timetable(timetable):
