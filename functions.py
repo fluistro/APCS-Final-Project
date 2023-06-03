@@ -916,8 +916,17 @@ def score(timetable):
     student_schedules = get_student_schedules(timetable)
 
     total_requests = 0
+    total_alternates = 0
     successful_requests = 0
     successful_alternates = 0
+    
+    successful_students = 0
+    success1 = True
+    
+    successful_students_alternates = 0
+    success2 = True
+    
+    total_students = 0
 
     for student in student_requests:
 
@@ -932,24 +941,49 @@ def score(timetable):
         for course in requested:
 
             if course in alternates:
+                total_alternates += 1
                 for assigned_course in assigned:
                     if course in assigned_course.split("*"):
                         successful_alternates += 1
                         break
-
+            
+            # if not an alternate
             else:
+                total_requests += 1
                 for assigned_course in assigned:
                     if course in assigned_course.split("*"):
                         successful_requests += 1
                         break
-
-            total_requests += 1
+                    
+        for assigned_course in assigned:
+            if (assigned_course not in alternates) and (assigned_course in requested):
+                continue
+            success1 = False
+            if (assigned_course in alternates):
+                continue
+            success2 = False
+            
+        if len(assigned) < 8:
+            success1 = False
+            success2 = False   
+                    
+        if success1:
+            successful_students += 1
+        if success2:
+            successful_students_alternates += 1
+            
+        success1 = True
+        success2 = True
+        total_students += 1
+            
     #print("total requests: " + str(total_requests))
-    '''
-    print("requests met: " + str(successful_requests))
-    print("alternates met: " + str(successful_alternates))'''
-    print((successful_requests + 0.5 * successful_alternates) / total_requests)
-    return (successful_requests + 0.5 * successful_alternates) / total_requests
+    
+    print("# requested courses placed / # requested courses: " + str(successful_requests / total_requests))
+    print("# requested or alternate courses placed / # requested or alternate courses: " + str((successful_requests + successful_alternates) / (total_requests + total_alternates)))
+    print("percent students with 8/8 courses (requested only): " + str(successful_students / total_students))
+    print("percent students with 8/8 courses (requested or alternate): " + str(successful_students_alternates / total_students))
+    print("weighted score: " + str((successful_requests + 0.5 * successful_alternates) / (total_requests + total_alternates)))
+    return (successful_requests + 0.5 * successful_alternates) / (total_requests + total_alternates)
 
 # make a small change to the timetable by moving around students. return a new valid timetable.
 # does not shuffle students in outside timetable courses.
@@ -1245,30 +1279,6 @@ while True:
 # generate initial guess
 initial_timetable, initial_schedule = generate_timetable(course_schedule2)
 score(initial_timetable)
-
-final_timetable = initial_timetable
-current_timetable = initial_timetable
-
-error = 1 / 4300
-
-for i in range(1):
-    
-    current_score = score(current_timetable)
-    print(current_score)
-    next_score = 0
-    
-    while next_score < current_score + error:
-        
-        #print("outer loop")
-    
-        next_timetable = shuffle_students(dict(current_timetable))
-        next_score = score(next_timetable)
-        
-    current_timetable = next_timetable
-    current_score = next_score
-        
-print(next_timetable)
-print(next_score)
     
 
 '''# check 10 possible schedules
