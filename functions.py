@@ -662,8 +662,7 @@ def generate_timetable(schedule):
 
         student_courses.setdefault(student, courses_taking)
     
-    with open('timetable.json', 'w') as out_file:
-     json.dump(timetable, out_file)
+    
 
     # format table to correct list style
     formatted_timetable = {
@@ -683,7 +682,10 @@ def generate_timetable(schedule):
 
         "outside_timetable": timetable['outside_timetable']           
     }
-    print(student_courses)
+    
+    with open('timetable.json', 'w') as out_file:
+        json.dump(formatted_timetable, out_file)
+
     return formatted_timetable, student_courses
 def add_course_list (sem, block, course, list):
     if sem == 'sem1':
@@ -1122,6 +1124,101 @@ def shuffle_courses(timetable):
 
     return timetable
 
+# return true if valid
+def is_timetable_valid(timetable):
+    schedule = get_schedule()
+    return is_timetable_courses_valid(timetable, schedule) and is_timetable_students_valid(timetable, schedule)
+
+
+def get_schedule():
+    return 
+def is_timetable_courses_valid(timetable):
+    
+    for block in timetable:
+
+        if '*' in block:    # if its a sim block
+
+            all_courses_this_block = block.split('*')
+
+            # check that all courses in this block are simultaneous with the first course
+            for i in range(1, len(all_courses_this_block)):
+                if all_courses_this_block[i] not in course_info[all_courses_this_block[0]]["Simultaneous"]:
+                    print(all_courses_this_block[i] + " and " + all_courses_this_block[0] + " are not sim with each other")
+                    return False
+
+            max_capacity = course_info[all_courses_this_block[0]]["Max Enrollment"]
+        else:
+            max_capacity = course_info[block]["Max Enrollment"]
+
+        # check that all courses is below max enrollment
+        if len(timetable[block]) > max_capacity:
+            print(timetable[block] + " exceeds max capacity")
+            return False
+        
+        # 
+
+
+
+
+    # not exceed sections 
+
+
+    # not sim & sim & linear 
+
+
+def is_timetable_students_valid(timetable, student_schedules):
+    # for all courses in a students' timetable for all students
+    # for every course, check if it has pre req, then check if the prereq is before it
+    # check for <= 8 total ocurses
+    # for every not sim: check if in both sems
+    # same for linear
+
+    for student in student_schedules:
+        if len(student_schedules[student]) < 8:
+            return False
+
+        for course in student_schedules[student]:
+
+            # prereq
+           
+            if len(course_info[course]['Pre Req']) > 0:
+                if course_info[course]['Pre Req'][0] in student_schedules[student]:
+                    p = course_info[course]['Pre Req'][0]
+                    # check in correct sem
+                    if student_schedules[student].index(course_info[course]['Pre Req'][0]) < 4 and (student_schedules[student].index(course) >= 4 and student_schedules[student].index(course) <= 7):
+                        # check didn't have prereq
+                        if p in student_requests[student] and p not in student_schedules[student]:
+                            return False
+                    else: 
+                        return False
+            if len(course_info[course]['Not Simultaneous']) > 0:
+                ns = course_info[course]['Not Simultaneous'][0]
+                # check both not sim courses in sem1 and sem2 and same block
+                if student_schedules[student].index(course) < 4 and student_schedules[student].index(ns) == student_schedules[student].index(course) + 4:
+                    pass
+                elif student_schedules[student].index(ns) < 4 and student_schedules[student].index(course) == student_schedules[student].index(ns) + 4:
+                    pass
+                else:
+                    return False
+                
+            # linear course
+            if course_info[course]['Base Terms/Year'] == '1':
+                # check same course in both sem
+                try:
+                    second_occurrence = student_schedules[student](course, student_schedules[student].index(1) + 1)
+                except ValueError:
+                    second_occurrence = -1
+                if student_schedules[student].index(course) < 4 and second_occurrence > 4:
+                    pass
+                else: return False
+            
+            # check no repeated course
+            if course_info[course]['Base Terms/Year'] != '1':
+                if student_schedules[student].count(course) > 1:
+                    return False # multiple of the same course and not linear
+
+                    
+    return True
 
 # prints the timetable in tabular form
 def print_timetable(timetable):
@@ -1207,6 +1304,7 @@ def print_schedule(sem, block):
         print(print_line)
     print(len(course_schedule[sem][block]))
 
+
 def print_student(student_id):
 
     course_name = []
@@ -1255,7 +1353,7 @@ course_schedule2['sem2'] = {
 }
 
 
-'''timetable, schedules = generate_timetable(course_schedule2)
+timetable, schedules = generate_timetable(course_schedule2)
 #print(timetable)
 
 print_timetable(timetable)
@@ -1267,13 +1365,14 @@ print("score: ")
 while True:
     print("enter a student id to see their timetable: ")
     student_id = input()
-    print_student(student_id)
 
+    print_student(student_id)
+    break
 #print([course_info[course_code]["course name"] for course_code in schedules[student_id]])'''
 
 
 
-
+  
 
 
 # generate initial guess
