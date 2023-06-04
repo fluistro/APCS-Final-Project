@@ -915,6 +915,9 @@ def get_student_schedules(timetable):
 # return the proportion of students who received all of their desired courses
 def score(timetable):
 
+    if not is_timetable_valid(timetable):
+        return 0
+
     student_schedules = get_student_schedules(timetable)
 
     total_requests = 0
@@ -1353,7 +1356,7 @@ course_schedule2['sem2'] = {
 }
 
 
-timetable, schedules = generate_timetable(course_schedule2)
+'''timetable, schedules = generate_timetable(course_schedule2)
 #print(timetable)
 
 print_timetable(timetable)
@@ -1379,8 +1382,8 @@ while True:
 initial_timetable, initial_schedule = generate_timetable(course_schedule2)
 score(initial_timetable)
     
-
-'''# check 10 possible schedules
+'''
+# check 10 possible schedules
 for i in range(10):
 
     # make 100 small changes to students, each of which is an improvement
