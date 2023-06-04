@@ -908,8 +908,8 @@ def get_student_schedules(timetable):
 # return the proportion of students who received all of their desired courses
 def score(timetable):
 
-    if not is_timetable_valid(timetable):
-        return 0
+    """if not is_timetable_valid(timetable):
+        return 0"""
 
     student_schedules = get_student_schedules(timetable)
 
@@ -1343,8 +1343,8 @@ def get_course_schedule(timetable):
         for course in block:
             block[course].clear()
     
-    for course in schedule["outside timetable"]:
-        schedule["outside timetable"][course].clear()
+    for course in schedule["outside_timetable"]:
+        schedule["outside_timetable"][course].clear()
         
     return schedule
 
@@ -1385,17 +1385,20 @@ def cross(timetable_1, timetable_2):
         insert_student(new_timetable, student, dict_1[student])
     for student in dict_2:
         insert_student(new_timetable, student, dict_2[student])
+        
+    return new_timetable
 
 # inserts a student into an existing timetable
 def insert_student(timetable, student_id, student_schedule):
     
     for i in range(4):
-        timetable["sem1"][i][student_schedule[i]].append(student_id)
+        timetable["sem1"][i][student_schedule[i][0]].append(student_id)
     
     for i in range(4):
-        timetable["sem2"][i][student_schedule[i + 4]].append(student_id)
+        timetable["sem2"][i][student_schedule[i + 4][0]].append(student_id)
     
-    timetable["outside timetable"][student_schedule[8]].append(student_id)
+    for outside_timetable_course in student_schedule[8]:
+        timetable["outside_timetable"][outside_timetable_course].append(student_id)
     
 
 
@@ -1442,8 +1445,24 @@ while True:
 
 
 # generate initial guess
-initial_timetable, initial_schedule = generate_timetable(course_schedule2)
-score(initial_timetable)
+timetable_1, schedule_1 = generate_timetable(course_schedule2)
+score(timetable_1)
+
+timetable_2, schedule_2 = generate_timetable(course_schedule2)
+
+child_table = cross(timetable_1, timetable_2)
+score(child_table)
+
+
+
+
+# genetic alg
+
+'''gen_0 = [generate_timetable(course_schedule2) for i in range(10)]
+fitness_0 = [score(timetable) for timetable in gen_0]
+
+generations = [gen_0]'''
+
     
 '''
 # check 10 possible schedules
