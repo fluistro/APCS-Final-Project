@@ -1176,17 +1176,8 @@ def is_timetable_courses_valid(timetable):
             print(timetable[block] + " exceeds max capacity")
             return False
         
-        # 
-
-
-
-
-    # not exceed sections 
-
-
-    # not sim & sim & linear 
-
-
+    return True
+        
 def is_timetable_students_valid(timetable, student_schedules):
     # for all courses in a students' timetable for all students
     # for every course, check if it has pre req, then check if the prereq is before it
