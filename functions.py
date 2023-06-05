@@ -1132,6 +1132,7 @@ def is_timetable_valid(timetable):
 
 def get_schedule():
     return 
+
 def is_timetable_courses_valid(timetable):
     
     for block in timetable:
