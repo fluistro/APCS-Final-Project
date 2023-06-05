@@ -1413,6 +1413,31 @@ def insert_student(timetable, student_id, student_schedule):
         timetable["outside_timetable"][outside_timetable_course].append(student_id)
     
 
+# returns a random timetable from a list, with a higher chance of choosing timetables with higher scores
+def weighted_random_choice(timetables):
+
+    fitness = [score(timetable) for timetable in timetables]
+    total_score = 0
+
+    for x in fitness:
+        total_score += x
+
+    prob_dist = [x / total_score for x in fitness]
+    cumulative_dist = []
+    sum = 0
+
+    for i in range(len(prob_dist)):
+        sum += prob_dist[i]
+        cumulative_dist.append(sum)
+    
+    cumulative_dist.pop()
+    cumulative_dist.append(1.0)
+
+    rand = random.random()
+
+    for i in range(0, len(timetables)):
+        if rand < cumulative_dist[i]:
+            return timetables[i]
 
 s = generate_course_schedule()
 
@@ -1456,62 +1481,64 @@ while True:
   
 
 
-# generate initial guess
-timetable_1, schedule_1 = generate_timetable(course_schedule2)
-score(timetable_1)
 
-timetable_2, schedule_2 = generate_timetable(course_schedule2)
 
-child_table = cross(timetable_1, timetable_2)
-score(child_table)
 
-get_schedule(timetable_1)
 
-with open('old_sch.json', 'w') as out_file:
-    json.dump(schedule_1, out_file)
 
 # genetic alg
 
-'''gen_0 = [generate_timetable(course_schedule2) for i in range(10)]
-fitness_0 = [score(timetable) for timetable in gen_0]
+def get_next_gen(current_gen):
+    next_gen = []
 
-generations = [gen_0]'''
+    while len(next_gen) < len(current_gen):
 
-    
-'''
-# check 10 possible schedules
-for i in range(10):
+        parent_1 = weighted_random_choice(current_gen)
+        parent_2 = weighted_random_choice(current_gen)
 
-    # make 100 small changes to students, each of which is an improvement
-    for i in range(100):
+        if parent_1 == parent_2:
+            continue
 
-        current_score = score(current_timetable)
-        best_timetable = current_timetable
-        max_score = current_score
+        child = cross(parent_1, parent_2)
 
-        counter = 0
+        next_gen.append(child)
 
-        # generate 50 better timetables and choose the best one
-        while counter < 50:
+    return next_gen
 
-            new_timetable = shuffle_students(current_timetable)
-            new_score = score(new_timetable)
+        
 
-            if new_score > current_score:
+def get_best_timetable(timetables):
+    scores = [score(timetable) for timetable in timetables]
 
-                counter += 1
+    max_index = scores.index(max(scores))
 
-                if max_score < new_score:
-                    max_score = new_score
-                    best_timetable = new_timetable
+    return timetables[max_index]
 
-        current_timetable = best_timetable
 
-    if score(current_timetable) > score(final_timetable):
-        final_timetable = current_timetable
 
-    # make small change to course schedule, then repeat
-    current_timetable = shuffle_courses(current_timetable)
-    
-print(final_timetable)
-print(score(final_timetable))'''
+gen_0 = []
+for i in range(5):
+    timetable, schedule = generate_timetable(course_schedule2)
+    gen_0.append(timetable)
+
+generations = [gen_0]
+
+num_generations = 20
+
+for i in range(num_generations):
+    generations.append([])
+
+for i in range(1, 1 + num_generations):
+    generations[i] = get_next_gen(generations[i - 1])
+
+best_timetable = get_best_timetable(generations[num_generations])
+
+print("BEST TIMETABLE:")
+score(best_timetable)
+print(best_timetable)
+print()
+
+print("INITIAL TIMETABLES:")
+for timetable in generations[0]:
+    score(timetable)
+    print()
