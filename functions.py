@@ -1234,17 +1234,22 @@ def is_timetable_students_valid(timetable, student_schedules):
 
 def who_got_8_courses(schedule):
     ans = []
+    append = True
 
     for student in schedule:
         for course in schedule[student]:
 
             if course not in student_requests[student]:
-                continue
+                append = False
+                break
+
             if student in student_alternates:
                 if course in student_alternates[student]:
-                    continue
+                    append = False
+                    break
 
-        ans.append(student)
+        if append: ans.append(student)
+        append = True
 
 
     return ans
@@ -1456,7 +1461,7 @@ def weighted_random_choice(timetables):
         if rand < cumulative_dist[i]:
             return timetables[i]
 
-s = generate_course_schedule()
+generate_course_schedule()
 
 # create dictionary of dictionary version of course_schedule
 # generate_timetable needs to use dis one
@@ -1484,7 +1489,7 @@ course_schedule2['sem2'] = {
   
 
 
-
+timetable_1, schedule_1 = generate_timetable(course_schedule2)
 # timetable_2, schedule_2 = generate_timetable(course_schedule2)
 '''
 child_table = cross(timetable_1, timetable_2)
@@ -1495,17 +1500,26 @@ score(child_table)
 
 get_schedule(timetable_1)
 
+'''
 with open('old_sch.json', 'w') as out_file:
     json.dump(schedule_1, out_file)
+'''
+print(who_got_8_courses(schedule_1))
+while True:
+    print("enter a student id to see their timetable: ")
+    student_id = input()
+    if student_id == '-1':
+        break
+    print_student(student_id, schedule_1)
 
 # genetic alg
-
+'''
 def get_next_gen(current_gen):
     next_gen = []
 
     while len(next_gen) < len(current_gen):
 
-    
+'''
 '''
 # check 10 possible schedules
 for i in range(10):
