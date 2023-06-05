@@ -1130,8 +1130,28 @@ def is_timetable_valid(timetable):
     return is_timetable_courses_valid(timetable) and is_timetable_students_valid(timetable, schedule)
 
 
-def get_schedule():
-    return 
+def get_schedule(timetable):
+    schedule = {}
+
+    for i in range(1000, 1838):
+        schedule.setdefault(str(i), [])
+
+    for sem in timetable:
+
+        if sem == 'outside_timetable':
+            for course_name in timetable[sem]:
+                for student in timetable[sem][course_name]:
+                    schedule[student].append(course_name)
+        else:
+            for i in range(4):
+                for course_name in timetable[sem][i]:
+                    for student in timetable[sem][i][course_name]:
+                        schedule[student].append(course_name)
+    
+    with open('new_sch', 'w') as out_file:
+        json.dump(schedule, out_file)
+        
+    return schedule
 
 def is_timetable_courses_valid(timetable):
     
@@ -1454,8 +1474,10 @@ timetable_2, schedule_2 = generate_timetable(course_schedule2)
 child_table = cross(timetable_1, timetable_2)
 score(child_table)
 
+get_schedule(timetable_1)
 
-
+with open('old_sch.json', 'w') as out_file:
+    json.dump(schedule_1, out_file)
 
 # genetic alg
 
