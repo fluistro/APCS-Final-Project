@@ -1232,6 +1232,23 @@ def is_timetable_students_valid(timetable, student_schedules):
                     
     return True
 
+def who_got_8_courses(schedule):
+    ans = []
+
+    for student in schedule:
+        for course in schedule[student]:
+
+            if course not in student_requests[student]:
+                continue
+            if student in student_alternates:
+                if course in student_alternates[student]:
+                    continue
+
+        ans.append(student)
+
+
+    return ans
+
 # prints the timetable in tabular form
 def print_timetable(timetable):
 
@@ -1313,7 +1330,7 @@ def print_schedule(sem, block):
     print(len(course_schedule[sem][block]))
 
 
-def print_student(student_id):
+def print_student(student_id, schedules):
 
     course_name = []
     spare_count = 0
@@ -1434,22 +1451,8 @@ course_schedule2['sem2'] = {
 }
 
 
-'''timetable, schedules = generate_timetable(course_schedule2)
-#print(timetable)
 
-print_timetable(timetable)
 
-print("score: ")
-# print(score(schedules))
-
-#student_id = str(random.randint(1000, 1837))
-while True:
-    print("enter a student id to see their timetable: ")
-    student_id = input()
-
-    print_student(student_id)
-    break
-#print([course_info[course_code]["course name"] for course_code in schedules[student_id]])'''
 
 
 
@@ -1458,14 +1461,14 @@ while True:
 
 # generate initial guess
 timetable_1, schedule_1 = generate_timetable(course_schedule2)
-score(timetable_1)
+# score(timetable_1)
 
-timetable_2, schedule_2 = generate_timetable(course_schedule2)
-
+# timetable_2, schedule_2 = generate_timetable(course_schedule2)
+'''
 child_table = cross(timetable_1, timetable_2)
 score(child_table)
-
-get_schedule(timetable_1)
+'''
+#get_schedule(timetable_1)
 
 with open('old_sch.json', 'w') as out_file:
     json.dump(schedule_1, out_file)
@@ -1479,6 +1482,7 @@ generations = [gen_0]'''
 
     
 '''
+
 # check 10 possible schedules
 for i in range(10):
 
@@ -1515,3 +1519,14 @@ for i in range(10):
     
 print(final_timetable)
 print(score(final_timetable))'''
+
+print(who_got_8_courses(schedule_1))
+
+while True:
+    print("enter a student id to see their timetable: ")
+    student_id = input()
+
+    if student_id == '-1':
+        break
+
+    print_student(student_id, schedule_1)

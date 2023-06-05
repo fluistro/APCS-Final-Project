@@ -107,6 +107,7 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                 skip_header_line = False
                 continue
 
+            
             # if the course requested is NOT THERE!!!!
             if not row[0] in course_info:
                 if (row[0] == 'XLEAD09---'):
@@ -230,7 +231,6 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Term Blocking' : [],
                             'Outside Timetable' : False
                         }
-
                 if (row[0] == 'MIT--12---'):
                         # this course is not in the csv file
                         # guess of the specifications of this course: (based from website)
