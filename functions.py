@@ -320,7 +320,8 @@ def generate_timetable(schedule):
             student_schedule.append([])
 
         for alternate in alternates:
-            requests.remove(alternate)
+            if alternate in requests:
+                requests.remove(alternate)
 
         sorted_requests = sort_requests(requests, alternates)
 
@@ -510,7 +511,7 @@ def get_student_schedules(timetable):
 
 
 # return the proportion of students who received all of their desired courses
-def score(timetable):
+def score(timetable, to_print):
 
     """if not is_timetable_valid(timetable):
         return 0"""
@@ -584,11 +585,12 @@ def score(timetable):
             
     #print("total requests: " + str(total_requests))
     
-    print("# requested courses placed / # requested courses: " + str(successful_requests / total_requests))
-    print("# requested or alternate courses placed / # requested or alternate courses: " + str((successful_requests + successful_alternates) / (total_requests + total_alternates)))
-    print("percent students with 8/8 courses (requested only): " + str(successful_students / total_students))
-    print("percent students with 8/8 courses (requested or alternate): " + str(successful_students_alternates / total_students))
-    print("weighted score: " + str((successful_requests + 0.5 * successful_alternates) / (total_requests + total_alternates)))
+    if to_print:
+        print("# requested courses placed / # requested courses: " + str(successful_requests / total_requests))
+        print("# requested or alternate courses placed / # requested or alternate courses: " + str((successful_requests + successful_alternates) / (total_requests + total_alternates)))
+        print("percent students with 8/8 courses (requested only): " + str(successful_students / total_students))
+        print("percent students with 8/8 courses (requested or alternate): " + str(successful_students_alternates / total_students))
+        print("weighted score: " + str((successful_requests + 0.5 * successful_alternates) / (total_requests + total_alternates)))
     return (successful_requests + 0.5 * successful_alternates) / (total_requests + total_alternates)
 
 # make a small change to the timetable by moving around students. return a new valid timetable.
@@ -1041,10 +1043,12 @@ def cross(timetable_1, timetable_2):
 def insert_student(timetable, student_id, student_schedule):
     
     for i in range(4):
-        timetable["sem1"][i][student_schedule[i][0]].append(student_id)
+        if student_schedule[i]:
+            timetable["sem1"][i][student_schedule[i][0]].append(student_id)
     
     for i in range(4):
-        timetable["sem2"][i][student_schedule[i + 4][0]].append(student_id)
+        if student_schedule[i + 4]:
+            timetable["sem2"][i][student_schedule[i + 4][0]].append(student_id)
     
     for outside_timetable_course in student_schedule[8]:
         timetable["outside_timetable"][outside_timetable_course].append(student_id)
@@ -1053,7 +1057,7 @@ def insert_student(timetable, student_id, student_schedule):
 # returns a random timetable from a list, with a higher chance of choosing timetables with higher scores
 def weighted_random_choice(timetables):
 
-    fitness = [score(timetable) for timetable in timetables]
+    fitness = [score(timetable, False) for timetable in timetables]
     total_score = 0
 
     for x in fitness:
@@ -1081,7 +1085,7 @@ def get_best_students(timetable):
     
     student_schedules = get_student_schedules(timetable)
     best_students = []
-    success = True
+    num_missed = 0
     
     for student_id in student_requests:
         
@@ -1094,12 +1098,12 @@ def get_best_students(timetable):
                 
         for course in requested:
             if course not in assigned:
-                success = False
+                num_missed += 1
         
-        if success:
+        if num_missed <= 2:
             best_students.append(student_id)
         
-        success = True
+        num_missed = 1
         
     return best_students
                 
@@ -1124,7 +1128,66 @@ course_schedule2['sem2'] = {
     'D': course_schedule['sem2'][3]
 }
 
-timetable = generate_timetable(course_schedule2)
-print(timetable)
-score(timetable)
 # genetic algorithm
+
+def get_next_gen(current_gen):
+
+    next_gen = []
+    next_gen.append(get_best_timetable(current_gen))
+
+    for i in range(7):
+        next_gen.append(generate_timetable(course_schedule2))
+
+    while len(next_gen) < len(current_gen):
+
+        parent_1 = weighted_random_choice(current_gen)
+        parent_2 = weighted_random_choice(current_gen)
+
+        if parent_1 == parent_2:
+            continue
+
+        child = cross(parent_1, parent_2)
+
+        next_gen.append(child)
+
+    return next_gen
+
+
+
+def get_best_timetable(timetables):
+    scores = [score(timetable, False) for timetable in timetables]
+
+    max_index = scores.index(max(scores))
+
+    return timetables[max_index]
+
+gen_0 = []
+for i in range(20):
+    timetable = generate_timetable(course_schedule2)
+    gen_0.append(timetable)
+
+generations = [gen_0]
+
+print("INITIAL POPULATION CREATED")
+
+num_generations = 20
+
+for i in range(num_generations):
+    generations.append([])
+
+for i in range(1, 1 + num_generations):
+    generations[i] = get_next_gen(generations[i - 1])
+    print("GENERATION " + str(i) + ": score " + str(score(get_best_timetable(generations[i]), False)))
+    print()
+
+best_timetable = get_best_timetable(generations[num_generations])
+
+print("BEST TIMETABLE:")
+score(best_timetable, True)
+print(best_timetable)
+print()
+
+print("INITIAL TIMETABLES:")
+for timetable in generations[0]:
+    score(timetable, True)
+    print()
