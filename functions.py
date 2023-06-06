@@ -1133,12 +1133,17 @@ course_schedule2['sem2'] = {
 def get_next_gen(current_gen):
 
     next_gen = []
-    next_gen.append(get_best_timetable(current_gen))
+    gen_size = len(current_gen)
+
+    for i in range(3):
+        timetable = get_best_timetable(current_gen)
+        next_gen.append(timetable)
+        current_gen.remove(timetable)
 
     for i in range(7):
         next_gen.append(generate_timetable(course_schedule2))
 
-    while len(next_gen) < len(current_gen):
+    while len(next_gen) < gen_size:
 
         parent_1 = weighted_random_choice(current_gen)
         parent_2 = weighted_random_choice(current_gen)
@@ -1168,7 +1173,9 @@ for i in range(20):
 
 generations = [gen_0]
 
-print("INITIAL POPULATION CREATED")
+print("INITIAL POPULATION BEST TIMETABLE: ")
+score(get_best_timetable(gen_0), True)
+print()
 
 num_generations = 20
 
@@ -1177,17 +1184,18 @@ for i in range(num_generations):
 
 for i in range(1, 1 + num_generations):
     generations[i] = get_next_gen(generations[i - 1])
-    print("GENERATION " + str(i) + ": score " + str(score(get_best_timetable(generations[i]), False)))
+    print("GENERATION " + str(i) + " BEST TIMETABLE:")
+    score(get_best_timetable(generations[i]), True)
     print()
 
 best_timetable = get_best_timetable(generations[num_generations])
 
 print("BEST TIMETABLE:")
 score(best_timetable, True)
-print(best_timetable)
 print()
 
-print("INITIAL TIMETABLES:")
-for timetable in generations[0]:
-    score(timetable, True)
-    print()
+print("INITIAL BEST TIMETABLE:")
+score(get_best_timetable(gen_0), True)
+
+with open('best_timetable.json', 'w') as fp:
+    json.dump(best_timetable, fp)
