@@ -1403,7 +1403,18 @@ def cross(timetable_1, timetable_2):
     dict_1 = {}
     dict_2 = {}
     
-    for i in range(num_students):
+    best_students_1 = get_best_students(timetable_1)
+    for student in best_students_1:
+        student_ids.remove(student)
+        dict_1[student] = student_schedules_1[student]
+        
+    best_students_2 = get_best_students(timetable_2)
+    for student in best_students_2:
+        if student in student_ids:
+            student_ids.remove(student)
+            dict_2[student] = student_schedules_2[student]
+    
+    while len(dict_1) < num_students:
         student = random.choice(student_ids)
         student_ids.remove(student)
         dict_1[student] = student_schedules_1[student]
@@ -1461,6 +1472,35 @@ def weighted_random_choice(timetables):
         if rand < cumulative_dist[i]:
             return timetables[i]
 
+# returns a list of all students with all requested or alternate courses  
+def get_best_students(timetable):
+    
+    student_schedules = get_student_schedules(timetable)
+    best_students = []
+    success = True
+    
+    for student_id in student_requests:
+        
+        requested = student_requests[student_id]
+        assigned = []
+
+        for block in student_schedules[student_id]:
+            for course in block:
+                assigned = assigned + [x for x in course.split("*")]
+                
+        for course in requested:
+            if course not in assigned:
+                success = False
+        
+        if success:
+            best_students.append(student_id)
+        
+        success = True
+        
+    return best_students
+                
+
+
 generate_course_schedule()
 
 # create dictionary of dictionary version of course_schedule
@@ -1481,68 +1521,4 @@ course_schedule2['sem2'] = {
 }
 
 
-
-
-
-
-
-  
-
-
-timetable_1, schedule_1 = generate_timetable(course_schedule2)
-# timetable_2, schedule_2 = generate_timetable(course_schedule2)
-'''
-child_table = cross(timetable_1, timetable_2)
-score(child_table)
-'''
-#get_schedule(timetable_1)
-
-
-get_schedule(timetable_1)
-
-'''
-with open('old_sch.json', 'w') as out_file:
-    json.dump(schedule_1, out_file)
-'''
-print(who_got_8_courses(schedule_1))
-while True:
-    print("enter a student id to see their timetable: ")
-    student_id = input()
-    if student_id == '-1':
-        break
-    print_student(student_id, schedule_1)
-
-# genetic alg
-'''
-def get_next_gen(current_gen):
-    next_gen = []
-
-    while len(next_gen) < len(current_gen):
-
-'''
-'''
-# check 10 possible schedules
-for i in range(10):
-
-        child = cross(parent_1, parent_2)
-
-        next_gen.append(child)
-
-    return next_gen
-
-        
-
-def get_best_timetable(timetables):
-    scores = [score(timetable) for timetable in timetables]
-
-    max_index = scores.index(max(scores))
-
-    return timetables[max_index]
-
-
-
-    # make small change to course schedule, then repeat
-    current_timetable = shuffle_courses(current_timetable)
-    
-print(final_timetable)
-print(score(final_timetable))'''
+# genetic algorithm
