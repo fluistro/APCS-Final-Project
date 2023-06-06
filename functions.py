@@ -1177,7 +1177,7 @@ print("INITIAL POPULATION BEST TIMETABLE: ")
 score(get_best_timetable(gen_0), True)
 print()
 
-num_generations = 20
+num_generations = 6
 
 for i in range(num_generations):
     generations.append([])
@@ -1199,3 +1199,31 @@ score(get_best_timetable(gen_0), True)
 
 with open('best_timetable.json', 'w') as fp:
     json.dump(best_timetable, fp)
+
+# print students with 8/8 requested
+
+def print_perfect_students(timetable):
+    
+    print("8/8 students: ")
+    student_schedules = get_student_schedules(timetable)
+    success = True
+    
+    for student_id in student_requests:
+        
+        requested = student_requests[student_id]
+        assigned = []
+
+        for block in student_schedules[student_id]:
+            for course in block:
+                assigned = assigned + [x for x in course.split("*")]
+                
+        for course in requested:
+            if course not in assigned:
+                success = False
+
+        if success:
+            print(student_id + ": " + str(student_schedules[student_id]))
+
+        success = True
+
+print_perfect_students(best_timetable)
