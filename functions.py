@@ -121,6 +121,7 @@ for band and PE: band 9 and band 10 are both in sem 1, and their corresponding P
 for Outside timetable courses they are all in 'OT' key of sem 1
 '''
 def generate_course_schedule():
+    '''
     schedule = {
         'sem1': [
             # A 
@@ -162,8 +163,9 @@ def generate_course_schedule():
 
 
     }
-
     '''
+
+    
     all_courseblock_codes = {}      # doesn't store OT courses
     course_info_modify = course_info.copy()
 
@@ -274,7 +276,7 @@ def generate_course_schedule():
             course_schedule['sem' + rand_block[0]][letter_to_num(rand_block[1])].append(course_block)      # put this course into the randomized 
             current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
         
-'''
+
 
 '''
 timetable is a dictionary that adds students to schedule:
