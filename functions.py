@@ -860,6 +860,50 @@ def who_got_8_courses(schedule):
 
     return ans
 
+# takes in a timetable
+# if any block is over max capacity, remove the students who didn't request for it
+# if everyone in the overloaded block requested for that course, remove random student
+# remove until the count is below max capacity
+def remove_badstudents_from_overloaded_blocks(timetable):
+    for sem in timetable:
+
+        if sem == 'outside_timetable':
+            for course_block in timetable[sem]:
+                    while len(timetable[sem][course_block]) > int(course_info[course_block]['Max Enrollment']):
+                        print("removed randomly from outside timetable course: " + course_block)
+                        timetable[sem][course_block].pop(random.randint(0, len(timetable[sem][course_block])-1))
+        else:
+            for i in range(0, 4):
+                for course_block in timetable[sem][i]:
+                    courses = course_block.split('*')
+                    while len(timetable[sem][i][course_block]) > int(course_info[courses[0]]['Max Enrollment']):
+                        remove_a_student_from_this_block(sem, i, course_block, timetable)
+
+def remove_a_student_from_this_block(sem, block, course_block, timetable):
+
+    for student in timetable[sem][block][course_block]:
+
+        courses = course_block.split("*")
+
+        # remove people who just doesn't this course
+        if all(course not in student_requests[student] for course in courses):
+            print("removed: " + str(student) + " from " + sem + " block #" + str(block) + " course: " + course_block)
+            timetable[sem][block][course_block].remove(student)
+            return
+        
+        # next return people who has this course as alt
+        if student in student_alternates:
+            for course in courses:
+                if  course in student_alternates[student]:
+                    print("removed: " + str(student) + "from " + sem + " block #" + str(block) + " course: " + course_block)
+                    timetable[sem][block][course_block].remove(student)
+                    return
+    
+    # if everyone here is requested 8, remove random person
+    timetable[sem][block][course_block].pop(random.randint(0, len(timetable[sem][block][course_block])-1))
+    print("removed randomly from outside timetable course: " + course_block)
+
+
 # prints the timetable in tabular form
 def print_timetable(timetable):
 
@@ -1194,11 +1238,23 @@ print("BEST TIMETABLE:")
 score(best_timetable, True)
 print()
 
-print("INITIAL BEST TIMETABLE:")
-score(get_best_timetable(gen_0), True)
-
 with open('best_timetable.json', 'w') as fp:
     json.dump(best_timetable, fp)
+
+not_overloaded_best_timetable = best_timetable
+remove_badstudents_from_overloaded_blocks(not_overloaded_best_timetable)
+
+print("NOT OVERLOADED BEST TIMETABLE:")
+score(not_overloaded_best_timetable, True)
+print()
+
+with open('not_overlaaded_best_timetable.json', 'w') as fp:
+    json.dump(not_overloaded_best_timetable, fp)
+
+#print("INITIAL BEST TIMETABLE:")
+#score(get_best_timetable(gen_0), True)
+
+
 
 # print students with 8/8 requested
 
@@ -1227,3 +1283,4 @@ def print_perfect_students(timetable):
         success = True
 
 print_perfect_students(best_timetable)
+
