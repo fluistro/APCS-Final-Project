@@ -121,19 +121,17 @@ for band and PE: band 9 and band 10 are both in sem 1, and their corresponding P
 for Outside timetable courses they are all in 'OT' key of sem 1
 '''
 def generate_course_schedule():
-    '''
+    
     schedule = {
         'sem1': [
             # A 
             ["MEN--09---","MCMPR11W--","MFMP-10---","MCH--11---","MSS--09---","MPREC12H--","MEN--09---","MENST12---","MPH--12---","MCTWR10---","MPREC11---","MEPSS11---","MPHE-09---*MPHED10---","MNMD-11---","MPH--11---","MCMCL12---","MLTST10C--","MCLE-10---","MTEXP10D--*YMIS-1DD--*YMIS-2DD--","MEPSS11C--","MDNC-09F--*MDCF-10---*MDCF-11---*MDCF-12---","MAE--09---*MVAST10---", "MLFSC11---	","MFOOD11---*MFOOD12---","MSS--10---","MADW-09---*MWWK-10---*MWWK-11---*MWWK-12---","MEVSC12C--","MPREC12---","MACLV11G--*MACLV12G--","MSC--10---","MMACS11---*MMACS12---","MATPH12---","MMEDD10---*MMEDD11---*MMEDD12---"],
 
             # B
-            [
-                "MPREC11---","MEPSS11---","MSP--09---*MSP--10---","MPREC12---","MSC--09---","MCTWR10---","MSTAT12---","MENST12---","MFMP-10---","MLST-12---","MPH--11---","MSS--10---","MCMPS11---","MFMP-10C--","MCMCL12---","MATPH12---","MAC--11---","YESFL1CX--*YESFL0AX--","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MACLV11---*MACLV12---","YPA--1CX--*YPA--0CX--*MPHE-09Y--*YPA--2CX--","MCLE-10---","MFOOD11---*MFOOD12---","Eng 10 ELL/ISP","MFR--09---","MTAUT11---*MTAUT12---","MMA--09---","MMA--09C--","MFMP-10H--","MPHE-09G--*MPHED10G--","MSC--10---","MSC--09---","MCLE-10---","MMACS12---","MCH--12---","MCTWR11---"
-            ]
+            ["MPREC11---","MEPSS11---","MSP--09---*MSP--10---","MPREC12---","MSC--09---","MCTWR10---","MSTAT12---","MENST12---","MFMP-10---","MLST-12---","MPH--11---","MSS--10---","MCMPS11---","MFMP-10C--","MCMCL12---","MATPH12---","MAC--11---","YESFL1CX--*YESFL0AX--","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MACLV11---*MACLV12---","YPA--1CX--*YPA--0CX--*MPHE-09Y--*YPA--2CX--","MCLE-10---","MFOOD11---*MFOOD12---","Eng 10 ELL/ISP","MFR--09---","MTAUT11---*MTAUT12---","MMA--09---","MMA--09C--","MFMP-10H--","MPHE-09G--*MPHED10G--","MSC--10---","MSC--09---","MCLE-10---","MMACS12---","MCH--12---","MCTWR11---"],
 
             # C 
-            ["MMUGT10---*MIMG-12---*MIMG-11---","MPREC12---","MPHE-09B--*MPHED10B--","MLTST11---","MCMPR11W--","MSC--10---","MEVSC11---","MWH--12---","MBIT-11*MIT--11---","MPREC11H--","MENST12---","MPH--12---","MMA--09---","MEPSS11---","MPH--11---","MNMD-11---","MFMP-10C--","MATPH12---","AELC-12---","MCLE-10---","MNMD-10---","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MSS--09---","MSS--09C--","MVAPH10---*MVAPH11---*MVAPH12---","MCH--11---","MADFS09---*MFOOD10---","YESFL0AX-L","MFR--11---*MFR--12---","XLDCE09NM-","MMA--09C--","YPSYC1AX--","MPHE-09---*MPHED10---", "MWPM-10---", "MMACS11---","MCH--12---","MTEAR10---*MTROB11---*MTROB12---*MADER09---", "MLTST11C--",]
+            ["MMUGT10---*MIMG-12---*MIMG-11---","MPREC12---","MPHE-09B--*MPHED10B--","MLTST11---","MCMPR11W--","MSC--10---","MEVSC11---","MWH--12---","MBIT-11*MIT--11---","MPREC11H--","MENST12---","MPH--12---","MMA--09---","MEPSS11---","MPH--11---","MNMD-11---","MFMP-10C--","MATPH12---","AELC-12---","MCLE-10---","MNMD-10---","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MSS--09---","MSS--09C--","MVAPH10---*MVAPH11---*MVAPH12---","MCH--11---","MADFS09---*MFOOD10---","YESFL0AX-L","MFR--11---*MFR--12---","XLDCE09NM-","MMA--09C--","YPSYC1AX--","MPHE-09---*MPHED10---", "MWPM-10---", "MMACS11---","MCH--12---","MTEAR10---*MTROB11---*MTROB12---*MADER09---", "MLTST11C--"],
 
             # D 
             ["MPREC12---","MLST-12---","MEN--09---","MCMPR11---","MFMP-10---","MSC--09---","MSP--11---","MCMPS11---","APHM-12---","MENST12---","MFOM-11---","MLST-12---","MCH--11---","YLAW-2CX--","MPREC11---","MSC--10---","MATPH12---","MLTST10C--","MADEM10---","MEN--09---","MPHE-09B--*MPHED10B--","MSS--09C--","MVAST10---*MVAST11---*MVAST12---*MAE--09---","MLFSC11---","MADFS09---*MFOOD10---","MSS--10---","MFR--10---","XLDCB09M--*MTPOW10---","MEVSC12C--","MWPM-11---","YPSYC1AX--","MPHE-09G--*MPHED10G--","MSC--10---","MCLE-10---", "MCH--11---","MTEAR10---*MTROB11---*MTROB12---*MADER09---","MDRM-11---*MDRM-12---"]
@@ -155,17 +153,56 @@ def generate_course_schedule():
 
             # D
             [
-                "MPHE-09B--*MPHED10B--","MEN--09---","MMACS11---","MSC--10---","MSS--10---","MEVSC11---","MCLE-10---","MSS--10---","MSP--11---*MSP--12---","MCH--12---","MENST12---","MPH--12---","MCTWR10---","MPREC11---","MEPSS11---","MVAPH10---*MVAPH11---*MVAPH12---","MCTWR11---", "MPH--11---", "MATPH12---", "MCMPS11---", "MENT-12---", "MSS--09---", "MSS--10C--", "MAE--09---*MVAST10---", "MCH--11---", "MFR--11---*MFR--12---", "MTAUT11---*MTAUT12---", "MPREC12---", "MWPM-11---", "MPHE-09G--*MPHED10G--", "MADW-09---*MWWK-10---*MWWK-11---*MWWK-12---", "MMACS12--- AP", "MTDRF10---*MTDRF11---*MTDRF12---*MADD-09---", "MEN--09C--", "MENST12--Y"
+                "MPHE-09B--*MPHED10B--","MEN--09---","MMACS11---","MSC--10---","MSS--10---","MEVSC11---","MCLE-10---","MSS--10---","MSP--11---*MSP--12---","MCH--12---","MENST12---","MPH--12---","MCTWR10---","MPREC11---","MEPSS11---","MVAPH10---*MVAPH11---*MVAPH12---","MCTWR11---", "MPH--11---", "MATPH12---", "MCMPS11---", "MENT-12---", "MSS--09---", "MSS--10C--", "MAE--09---*MVAST10---", "MCH--11---", "MFR--11---*MFR--12---", "MTAUT11---*MTAUT12---", "MPREC12---", "MWPM-11---", "MPHE-09G--*MPHED10G--", "MADW-09---*MWWK-10---*MWWK-11---*MWWK-12---", "ACSC-2A---", "MTDRF10---*MTDRF11---*MTDRF12---*MADD-09---", "MEN--09C--", "MENST12--Y"
             ]
 
         ],
         'outside_timetable':[]
 
-
+        
     }
-    '''
-
     
+    for course in course_info:
+        counter = 0
+        section = int(course_info[course]['Sections'])
+        
+        for c in schedule['sem1'][0]:
+            if course in c:
+                counter += 1
+        for c in schedule['sem1'][1]:
+            if course in c:
+                counter += 1
+        for c in schedule['sem1'][2]:
+            if course in c:
+                counter += 1
+        for c in schedule['sem1'][3]:
+            if course in c:
+                counter += 1
+        for c in schedule['sem2'][0]:
+            if course in c:
+                counter += 1
+        for c in schedule['sem2'][1]:
+            if course in c:
+                counter += 1
+        for c in schedule['sem2'][2]:
+            if course in c:
+                counter += 1
+        for c in schedule['sem2'][3]:
+            if course in c:
+                counter += 1
+        if counter == 0:
+            if section != 0:
+                if course_info[course]['Outside Timetable'] == True:
+                    print (course, 'outside timetable')
+                else:
+                    print (course_info[course]['course name'])
+    
+    if counter != section:
+        print('*****************************************', 'course:', course, 'sections needed:', section, 'sections have:', counter)
+
+
+
+    '''
     all_courseblock_codes = {}      # doesn't store OT courses
     course_info_modify = course_info.copy()
 
@@ -277,7 +314,7 @@ def generate_course_schedule():
             current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
         
 
-
+'''
 '''
 timetable is a dictionary that adds students to schedule:
 
@@ -1253,7 +1290,7 @@ def get_best_timetable(timetables):
     max_index = scores.index(max(scores))
 
     return timetables[max_index]
-
+'''
 gen_0 = []
 for i in range(20):
     timetable = generate_timetable(course_schedule2)
@@ -1328,3 +1365,5 @@ def print_perfect_students(timetable):
 
 print_perfect_students(best_timetable)
 
+'''
+generate_course_schedule()
