@@ -125,35 +125,32 @@ def generate_course_schedule():
     schedule = {
         'sem1': [
             # A 
-            ["MEN--09---","MCMPR11W--","MFMP-10---","MCH--11---","MSS--09---","MPREC12H--","MEN--09---","MENST12---","MPH--12---","MCTWR10---","MPREC11---","MEPSS11---","MPHE-09---*MPHED10---","MNMD-11---","MPH--11---","MCMCL12---","MLTST10C--","MCLE-10---","MTEXP10D--*YMIS-1DD--*YMIS-2DD--","MEPSS11C--","MDNC-09F--*MDCF-10---*MDCF-11---*MDCF-12---","MAE--09---*MVAST10---", "MLFSC11---	","MFOOD11---*MFOOD12---","MSS--10---","MADW-09---*MWWK-10---*MWWK-11---*MWWK-12---","MEVSC12C--","MPREC12---","MACLV11G--*MACLV12G--","MSC--10---","MMACS11---*MMACS12---","MATPH12---","MMEDD10---*MMEDD11---*MMEDD12---"],
+            [ "MEN--09---","MWBDV10IT-*MADIT09---","MFMP-10---","MCH--11---","MSS--09---","MPREC12H--","MEN--09---","MENST12---","MPH--12---","MCTWR10---","MPREC11---","MEPSS11---","MPHE-09---*MPHED10---","MNMD-11---","MPH--11---","MCMCL12---","MCMPS10C--","MCLE-10---","MADGE09D--*MTEXP10D--*YMIS-1DD--*YMIS-2DD--","MEPSS11C--","MDNC-09F--*MDCF-10---*MDCF-11---*MDCF-12---","MAE--09---*MVAST10---", "MLFSC11---	","MFOOD11---*MFOOD12---","MSS--10---","MADW-09---*MWWK-10---*MWWK-11---*MWWK-12---","MEVSC12C--","MPREC12---","MACLV11G--*MACLV12G--","MSC--10---","MMACS11---*MMACS12---","MATPH12---","MMEDD10---*MMEDD11---*MMEDD12---", "MADGE09I--"],
 
             # B
             ["MPREC11---","MEPSS11---","MSP--09---*MSP--10---","MPREC12---","MSC--09---","MCTWR10---","MSTAT12---","MENST12---","MFMP-10---","MLST-12---","MPH--11---","MSS--10---","MCMPS11---","MFMP-10C--","MCMCL12---","MATPH12---","MAC--11---","YESFL1CX--*YESFL0AX--","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MACLV11---*MACLV12---","YPA--1CX--*YPA--0CX--*MPHE-09Y--*YPA--2CX--","MCLE-10---","MFOOD11---*MFOOD12---","Eng 10 ELL/ISP","MFR--09---","MTAUT11---*MTAUT12---","MMA--09---","MMA--09C--","MFMP-10H--","MPHE-09G--*MPHED10G--","MSC--10---","MSC--09---","MCLE-10---","MMACS12---","MCH--12---","MCTWR11---"],
 
             # C 
-            ["MMUGT10---*MIMG-12---*MIMG-11---","MPREC12---","MPHE-09B--*MPHED10B--","MLTST11---","MCMPR11W--","MSC--10---","MEVSC11---","MWH--12---","MBIT-11*MIT--11---","MPREC11H--","MENST12---","MPH--12---","MMA--09---","MEPSS11---","MPH--11---","MNMD-11---","MFMP-10C--","MATPH12---","AELC-12---","MCLE-10---","MNMD-10---","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MSS--09---","MSS--09C--","MVAPH10---*MVAPH11---*MVAPH12---","MCH--11---","MADFS09---*MFOOD10---","YESFL0AX-L","MFR--11---*MFR--12---","XLDCE09NM-","MMA--09C--","YPSYC1AX--","MPHE-09---*MPHED10---", "MWPM-10---", "MMACS11---","MCH--12---","MTEAR10---*MTROB11---*MTROB12---*MADER09---", "MLTST11C--"],
+            ["MMUGT10---*MIMG-12---*MIMG-11---","MPREC12---","MPHE-09B--*MPHED10B--","MLTST11---","MWBDV10IT-*MADIT09---","MSC--10---","MEVSC11---","MWH--12---","MBIT-11*MIT--11---","MPREC11H--","MENST12---","MPH--12---","MMA--09---","MEPSS11---","MPH--11---","MNMD-11---","MFMP-10C--","MATPH12---","AELC-12---","MCLE-10---","MNMD-10---","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MSS--09---","MSS--09C--","MVAPH10---*MVAPH11---*MVAPH12---","MCH--11---","MADFS09---*MFOOD10---","YESFL0AX-L","MFR--11---*MFR--12---","XLDCE09NM-","MMA--09C--","YPSYC1AX--","MPHE-09---*MPHED10---", "MWPM-10---", "MMACS11---","MCH--12---","MTEAR10---*MTROB11---*MTROB12---*MADER09---", "MLTST11C--"],
 
             # D 
-            ["MPREC12---","MLST-12---","MEN--09---","MCMPR11---","MFMP-10---","MSC--09---","MSP--11---","MCMPS11---","APHM-12---","MENST12---","MFOM-11---","MLST-12---","MCH--11---","YLAW-2CX--","MPREC11---","MSC--10---","MATPH12---","MLTST10C--","MADEM10---","MEN--09---","MPHE-09B--*MPHED10B--","MSS--09C--","MVAST10---*MVAST11---*MVAST12---*MAE--09---","MLFSC11---","MADFS09---*MFOOD10---","MSS--10---","MFR--10---","XLDCB09M--*MTPOW10---","MEVSC12C--","MWPM-11---","YPSYC1AX--","MPHE-09G--*MPHED10G--","MSC--10---","MCLE-10---", "MCH--11---","MTEAR10---*MTROB11---*MTROB12---*MADER09---","MDRM-11---*MDRM-12---"]
+            ["MPREC12---","MLST-12---","MEN--09---","MFMP-10---","MSC--09---","MSP--11---","MCMPS11---","APHM-12---","MENST12---","MFOM-11---","MLST-12---","MCH--11---","YLAW-2CX--","MPREC11---","MSC--10---","MATPH12---","MCMPS10C--","MADEM10---","MEN--09---","MPHE-09B--*MPHED10B--","MSS--09C--","MVAST10---*MVAST11---*MVAST12---*MAE--09---","MLFSC11---","MADFS09---*MFOOD10---","MSS--10---","MFR--10---","XLDCB09M--*MTPOW10---","MEVSC12C--","MWPM-11---","YPSYC1AX--","MPHE-09G--*MPHED10G--","MSC--10---","MCLE-10---", "MCH--11---","MTEAR10---*MTROB11---*MTROB12---*MADER09---","MDRM-11---*MDRM-12---"]
         ],
         'sem2': [
 
             # A
-            ["MCALC12---","MCMPS11---","MCMPR11W--","MMA--09---","MCH--11---","MEPSS11---","MCLE-10---","MSP--09---","MENST12---","MFMP-10---","MLST-12---","YLAW-2CX--","MWH--12---","MSC--10---","AELC-12---", "MENT-12---", "MFOM-11---","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MEPSS11C--", "MLFSC11---","MADFS09---*MFOOD10---","MCMCL12---", "MNMD-10---","XLDCB09M--*MTPOW10---","MPREC11---","MATPH12---","YPSYC1AX--","MPHE-09G--*MPHED10G--", "MSC--10---","MMACS11---*MMACS12---","MCH--12---","MTEAR10---*MTROB11---*MTROB12---*MADER09---","MEN--09C--"
-            ],
+            ["MCALC12---","MCMPS11---","MWBDV10IT-*MADIT09---","MMA--09---","MCH--11---","MEPSS11---","MCLE-10---","MSP--09---","MENST12---","MFMP-10---","MLST-12---","YLAW-2CX--","MWH--12---","MSC--10---","AELC-12---", "MENT-12---", "MFOM-11---","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MEPSS11C--", "MLFSC11---","MADFS09---*MFOOD10---","MCMCL12---", "MNMD-10---","XLDCB09M--*MTPOW10---","MPREC11---","MATPH12---","YPSYC1AX--","MPHE-09G--*MPHED10G--", "MSC--10---","MMACS11---*MMACS12---","MCH--12---","MTEAR10---*MTROB11---*MTROB12---*MADER09---","MEN--09C--",'MSC--10C--'],
 
 
             # B
-            ["ACAL-12---","MLST-12---","MEN--09E--","MCMPR11W--","MSC--09---","MSS--09---","MADEM10---","MSP--10---","MENST12---","MPH--12---","MCTWR10---","MPH--11---","MSS--10---", "MCLE-10---","MSC--09---C","MWH--12---","MSC--10---C","MAC--11---*MACC-12---","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MPHE-09B--*MPHED10B--","MDNC-09PT-*MDNTP10---*MDNTP11---*MDNTP12---","MLFSC11---","MFOOD11---*MFOOD12---","YESFL0AX-L","MFR--11---", "MTAUT11---*MTAUT12---","MPREC11---","MCH--12---","MFTCD11---*MFTCD12---","MSC--10---","MSTX-0A---*MSTX-1A---*MSTX-2A---","MCH--11---","MMEDD10---*MMEDD11---*MMEDD12---", "MDR--09---*MDRM-10---"],
+            ["MCMPR12W--*MCMPR11W--","ACAL-12---","MLST-12---","MEN--09E--","MWBDV10IT-*MADIT09---","MSC--09---","MSS--09---","MADEM10---","MSP--10---","MENST12---","MPH--12---","MCTWR10---","MPH--11---","MSS--10---", "MCLE-10---","MSC--09C--","MWH--12---","MSC--10C--","MAC--11---*MACC-12---","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MPHE-09B--*MPHED10B--","MDNC-09PT-*MDNTP10---*MDNTP11---*MDNTP12---","MLFSC11---","MFOOD11---*MFOOD12---","YESFL0AX-L","MFR--11---", "MTAUT11---*MTAUT12---","MPREC11---","MCH--12---","MFTCD11---*MFTCD12---","MSC--10---","MSTX-0A---*MSTX-1A---*MSTX-2A---","MCH--11---","MMEDD10---*MMEDD11---*MMEDD12---", "MDR--09---*MDRM-10---"],
 
             # C
-            [
-                "MIMG-11---*MIMG-12---*MMUGT10---*XBA--09G--", "MPHE-09---*MPHED10---", "MLTST11C--", "Dig Media 12", "MSC--10---", "MSS--10---", "MCH--11---", "MSS--09---", "MCLE-10---", "MPREC12---", "MCMPS11---", "MCALC12---", "MENST12---", "MMA--09---", "MLST-12---", "MPH--11---", "YLAW-2CX--", "MNMD-10---", "MSC--09---C", "MENST12C--", "MAC--11---", "MODED11---*MODED12---*YPR--0BX--", "MACLV11---*MACLV12---", "MSS--10C--", "MVAST10---*MVAST11---*MVAST12---*MAE--09---", "MLFSC11---", "MFOOD11---*MFOOD12---", "YESFL0AX-L", "MFR--09---", "MPREC11---", "MFMP-10---", "MSC--09---", "MADW-09---*MWWK-10---*MWWK-11---*MWWK-12---", "MPGEO12---", "MCH--12---","MEN--09---","MENST12--Y"
+            ["MIMG-11---*MIMG-12---*MMUGT10---*XBA--09G--", "MPHE-09---*MPHED10---", "MLTST11C--", "Dig Media 12", "MSC--10---", "MSS--10---", "MCH--11---", "MSS--09---", "MCLE-10---", "MPREC12---", "MCMPS11---", "MCALC12---", "MENST12---", "MMA--09---", "MLST-12---", "MPH--11---", "YLAW-2CX--", "MNMD-10---", "MSC--09C--", "MENST12C--", "MAC--11---", "MODED11---*MODED12---*YPR--0BX--", "MACLV11---*MACLV12---", "MSS--10C--", "MVAST10---*MVAST11---*MVAST12---*MAE--09---", "MLFSC11---", "MFOOD11---*MFOOD12---", "YESFL0AX-L", "MFR--09---", "MPREC11---", "MFMP-10---", "MSC--09---", "MADW-09---*MWWK-10---*MWWK-11---*MWWK-12---", "MPGEO12---", "MCH--12---","MEN--09---","MENST12--Y"
             ],
 
             # D
-            [
-                "MPHE-09B--*MPHED10B--","MEN--09---","MMACS11---","MSC--10---","MSS--10---","MEVSC11---","MCLE-10---","MSS--10---","MSP--11---*MSP--12---","MCH--12---","MENST12---","MPH--12---","MCTWR10---","MPREC11---","MEPSS11---","MVAPH10---*MVAPH11---*MVAPH12---","MCTWR11---", "MPH--11---", "MATPH12---", "MCMPS11---", "MENT-12---", "MSS--09---", "MSS--10C--", "MAE--09---*MVAST10---", "MCH--11---", "MFR--11---*MFR--12---", "MTAUT11---*MTAUT12---", "MPREC12---", "MWPM-11---", "MPHE-09G--*MPHED10G--", "MADW-09---*MWWK-10---*MWWK-11---*MWWK-12---", "ACSC-2A---", "MTDRF10---*MTDRF11---*MTDRF12---*MADD-09---", "MEN--09C--", "MENST12--Y"
+            ["MPHE-09B--*MPHED10B--","MEN--09---","MMACS11---","MSC--10---","MSS--10---","MEVSC11---","MCLE-10---","MSS--10---","MSP--11---*MSP--12---","MCH--12---","MENST12---","MPH--12---","MCTWR10---","MPREC11---","MEPSS11---","MVAPH10---*MVAPH11---*MVAPH12---","MCTWR11---", "MPH--11---", "MATPH12---", "MCMPS11---", "MENT-12---", "MSS--09---", "MSS--10C--", "MAE--09---*MVAST10---", "MCH--11---", "MFR--11---*MFR--12---", "MTAUT11---*MTAUT12---", "MPREC12---", "MWPM-11---", "MPHE-09G--*MPHED10G--", "MADW-09---*MWWK-10---*MWWK-11---*MWWK-12---", "ACSC-2A---", "MTDRF10---*MTDRF11---*MTDRF12---*MADD-09---", "MEN--09C--", "MENST12--Y"
             ]
 
         ],
@@ -193,14 +190,27 @@ def generate_course_schedule():
         if counter == 0:
             if section != 0:
                 if course_info[course]['Outside Timetable'] == True:
-                    print (course, 'outside timetable')
+                    pass
+                elif 'IEP MODIFIED' in course_info[course]['course name']:
+                    pass
+                elif 'LEARNING STRATEGIES'in course_info[course]['course name']:
+                    pass
+                elif len(course_info[course]['Students']) == 0:
+                    pass
                 else:
-                    print (course_info[course]['course name'])
+                    print (course_info[course]['course name'], course)
     
     if counter != section:
         print('*****************************************', 'course:', course, 'sections needed:', section, 'sections have:', counter)
 
-
+    print ('1 a', len(schedule['sem1'][0]))
+    print ('1 b', len(schedule['sem1'][1]))
+    print ('1 c', len(schedule['sem1'][2]))
+    print ('1 d', len(schedule['sem1'][3]))
+    print ('2 a', len(schedule['sem2'][0]))
+    print ('2 a', len(schedule['sem2'][1]))
+    print ('2 a', len(schedule['sem2'][2]))
+    print ('2 a', len(schedule['sem2'][3]))
 
     '''
     all_courseblock_codes = {}      # doesn't store OT courses
