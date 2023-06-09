@@ -15,7 +15,7 @@ with open('student_alternates.json', 'r') as f:
 with open('courses.json') as f:
         course_info = json.load(f)
 
-# returns a 2D list representing all courses that must be blocked simultaneously
+# returns a 2D list representing all courses that must be blocked (non)simultaneously
 def get_simultaneous_rules():
 
     simultaneous_rules = []
@@ -24,8 +24,9 @@ def get_simultaneous_rules():
 
         already_in_rules = False
 
-        if course_info[course]["Simultaneous"]:
-            sim_courses = [course] + [x for x in course_info[course]["Simultaneous"]]
+        if course_info[course]["Simultaneous"] or course_info[course]["Not Simultaneous"]:
+
+            sim_courses = [course] + [x for x in course_info[course]["Simultaneous"]] + [x for x in course_info[course]["Not Simultaneous"]]
 
             # check if course is already in the rules
             for rule in simultaneous_rules:
@@ -79,17 +80,18 @@ def generate_course_schedule():
 
     course_info_modify = copy.deepcopy(course_info)
 
+    already_checked = []
+
     
     # deal with courses with no simultaneous blocking
     for course in course_info:
 
+        if course in already_checked:
+            continue
+
         # outside timetable courses
         if course_info[course]['Outside Timetable'] == True:
             course_schedule[8].append(course)
-            continue
-
-        # skip if we have already looked at this course
-        if course_info_modify[course]['Sections'] == 0:
             continue
 
         list_of_sim_courses = []
@@ -100,6 +102,7 @@ def generate_course_schedule():
 
         # if no course is sim with this course
         if len(list_of_sim_courses) == 0:
+            already_checked.append(course)
             all_courseblock_codes[course] = course_info[course]['Sections']
             continue
         
@@ -110,7 +113,7 @@ def generate_course_schedule():
             max_simblock_sections = course_info[course]['Sections']
             for sim_course in list_of_sim_courses:
                 if int(course_info_modify[sim_course]['Sections']) < int(max_simblock_sections):
-                    max_simblock_sections = course_info_modify[sim_course]['Sections']
+                    max_simblock_sections = int(course_info_modify[sim_course]['Sections'])
 
             # generate a string, which is the course code of these simultaneous courses, sperated with a *
             cur_sim_courses_codes = course
@@ -120,60 +123,48 @@ def generate_course_schedule():
             # put the simultaneous blocks into all blocks
             all_courseblock_codes[cur_sim_courses_codes] = max_simblock_sections
 
-            # minus the used up sections of these courses
-            cur_sections = course_info_modify[course]['Sections']
-            new_sections = int(cur_sections) - int(max_simblock_sections)
-            course_info_modify[course]['Sections'] = new_sections               # the course itself
-            for sim_course in list_of_sim_courses:                              # the sim courses w/ tis course
-                cur_sections = course_info_modify[sim_course]['Sections']
-                new_sections = int(cur_sections) - int(max_simblock_sections)
-                course_info_modify[sim_course]['Sections'] = new_sections
-
-            # now deal with the possible extra available sections of the sim courses
-
-            # current course
-            if course_info_modify[course]['Sections'] == 0:
-                continue
-            else:
-                all_courseblock_codes[course] = course_info_modify[course]['Sections']
-
-            # all the sim courses
             for sim_course in list_of_sim_courses:
-                if course_info_modify[sim_course]['Sections'] == 0:
-                    continue
-                else:
-                    all_courseblock_codes[sim_course] = course_info_modify[sim_course]['Sections']
-                    course_info_modify[sim_course]['Sections'] = 0
+
+                already_checked.append(sim_course)
+                leftover = int(course_info[sim_course]["Sections"]) - max_simblock_sections
+                if leftover > 0:
+                    all_courseblock_codes[sim_course] = leftover
 
     for course_block in all_courseblock_codes:
         current_used_blocks = []                                            # to store all the blocks this course takes up
 
         # deal with blocks with sections > 8
-        if int(all_courseblock_codes[course_block]) > 8:
-            extra_sections = int(all_courseblock_codes[course_block]) - 8
+        if all_courseblock_codes[course_block] > 8:
+
+            extra_sections = all_courseblock_codes[course_block] - 8
             current_used_blocks = []
+
             for i in range(extra_sections):
 
                 # put the extra sections into course_schedule first
-                rand_block = return_rando_block(current_used_blocks).split(' ')                    # [semester#, block#]
-                course_schedule['sem' + rand_block[0]][letter_to_num(rand_block[1])].append(course_block)      # put this course into the randomized 
-                current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
+                rand_block = return_rando_block(current_used_blocks)
+                course_schedule[rand_block].append(course_block)
+                current_used_blocks.append(rand_block)
                 all_courseblock_codes[course_block] = 8
+
             current_used_blocks = []
 
+        # non simultaneous courses
         if not '*' in course_block:
             if course_info_modify[course_block]['Outside Timetable'] == True:
                 continue
 
-        # take care of stupid(not) BANDDDDD and PEEEEEEE
+        # deal with band and PE 9 and 10
 
         if 'MPHED10G-L' in course_block or 'MPHED10B-L' in course_block or 'MPHE-09B-L' in  course_block or 'MPHE-09G-L' in course_block:
             continue
+
         if 'XBA--09B-L' in course_block:
-            rand_block = return_rando_block(['2 A', '2 B', '2 C', '2 D' ]).split(' ') 
-            course_schedule['sem1'][letter_to_num(rand_block[1])].append(course_block)    # put band 9 into a sem 1 block
+            rand_block = random.randint(0, 3)
+            course_schedule[rand_block].append(course_block)    # put band 9 into a sem 1 block
             course_schedule['sem2'][letter_to_num(rand_block[1])].append('MPHE-09B-L')    # put boys pe in sem 2 same block
             course_schedule['sem2'][letter_to_num(rand_block[1])].append('MPHE-09G-L')    # girls ''
+            continue
         if 'MMUCB10--L' in course_block :
             rand_block = return_rando_block(['2 A', '2 B', '2 C', '2 D' ]).split(' ') 
             course_schedule['sem1'][letter_to_num(rand_block[1])].append(course_block)    # put band 10 into a sem 1 block
@@ -216,21 +207,19 @@ timetable is a dictionary that adds students to schedule:
 The timetable should meet all requirements under STUDENTS.
 '''
 
-# takes in a list of unvailable blocks, and spits out a random block among the available blocks
-def return_rando_block(not_these_blocks):
+# takes in a list of unvailable blocks, and spits out a random block (int 0-8) among the available blocks
+def return_rando_block(used_blocks):
 
     # initialize the blocks that have less than 42 blocks in them
-    current_available_blocks = ['1 A', '1 B', '1 C', '1 D', '2 A', '2 B', '2 C', '2 D']
+    current_available_blocks = [i for i in range(8)]
 
-    for blocks in not_these_blocks:
-        current_available_blocks.remove(blocks)
+    for block in used_blocks:
+        current_available_blocks.remove(block)
     
     if len(current_available_blocks) == 0:
         return -1
 
-    rand = random.randint(0, len(current_available_blocks)-1)
-
-    return current_available_blocks[rand]
+    return random.choice(current_available_blocks)
 
 
 def letter_to_num(letter):
@@ -244,7 +233,10 @@ def letter_to_num(letter):
         return 3
     
 """
-
+generates a timetable:
+[
+    {}
+]
 """
 def generate_timetable(schedule):
      
@@ -253,8 +245,6 @@ def generate_timetable(schedule):
     student_ids = [str(i) for i in range(1000, 1838)]
     random.shuffle(student_ids)
 
-    student_schedules = {}
-
     for student in student_ids:
 
         requests = student_requests[student]
@@ -262,28 +252,30 @@ def generate_timetable(schedule):
         if student in student_alternates:
             alternates = student_alternates[student]
 
-        student_schedule = []
-        for i in range(9):
-            student_schedule.append([])
-
         for alternate in alternates:
             if alternate in requests:
                 requests.remove(alternate)
 
-        sorted_requests = sort_requests(requests, alternates)
+        student_schedule = get_best_schedule(timetable, requests, alternates)
 
-        for request in sorted_requests:
-
-            if len(student_schedule) == 8:
-                break
-
-            add(timetable, student, student_schedule, request)
         
-        fill_random(timetable, student, student_schedule)
-
-        student_schedules[student] = student_schedule
 
     return timetable
+
+'''
+return a 2D list representing the best possible schedule for a student (may have spares, represented by ""):
+[
+sem1A course
+sem1B course
+...
+sem2D course
+[outside timetable courses]
+]
+'''
+def get_best_schedule(timetable, requests, alternates):
+    
+    schedule = ["" for i in range(8)]
+    schedule.append([])
 
 # fills any empty blocks with random courses
 def fill_random(timetable, student, student_schedule):
@@ -395,30 +387,11 @@ def sort_requests(requests, alternates):
 
 def schedule_to_empty_timetable(schedule):
 
-    timetable = {
-        "sem1":[{}, {}, {}, {}],
-        "sem2":[{}, {}, {}, {}],
-        "outside_timetable":{}
-    }
-
-    for course in schedule["sem1"]["A"]:
-        timetable["sem1"][0][course] = []
-    for course in schedule["sem1"]["B"]:
-        timetable["sem1"][1][course] = []
-    for course in schedule["sem1"]["C"]:
-        timetable["sem1"][2][course] = []
-    for course in schedule["sem1"]["D"]:
-        timetable["sem1"][3][course] = []
-    for course in schedule["sem2"]["A"]:
-        timetable["sem2"][0][course] = []
-    for course in schedule["sem2"]["B"]:
-        timetable["sem2"][1][course] = []
-    for course in schedule["sem2"]["C"]:
-        timetable["sem2"][2][course] = []
-    for course in schedule["sem2"]["D"]:
-        timetable["sem2"][3][course] = []
-    for course in schedule["sem1"]["OT"]:
-        timetable["outside_timetable"][course] = []
+    timetable = []
+    for i in range(9):
+        timetable.append({})
+        for course in schedule[i]:
+            timetable[i][course] = []
     
     return timetable
 
