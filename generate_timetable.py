@@ -14,6 +14,13 @@ with open('student_alternates.json', 'r') as f:
 # make course_info json info global
 with open('courses.json') as f:
         course_info = json.load(f)
+        
+# remove alternates from student_requests
+for student in student_requests:
+    if student in student_alternates:
+        requests = student_requests[student]
+        for alternate in student_alternates[student]:
+            requests.remove(alternate)
 
 # returns a 2D list representing all courses that must be blocked (non)simultaneously
 def get_simultaneous_rules():
@@ -51,6 +58,19 @@ def get_simultaneous_rules():
 
     return simultaneous_rules
 
+sim_rules = get_simultaneous_rules()
+
+def get_full_name(course):
+    
+    for rule in sim_rules:
+        if course in rule:
+            name = ""
+            for course in rule:
+                name += course + "*"
+            name = name[:-1]
+            return name
+    return course
+
 '''
 returns a list representing a master timetable:
 [
@@ -71,8 +91,6 @@ def generate_course_schedule():
     course_schedule = []
     for i in range(9):
         course_schedule.append([])
-
-    sim_rules = get_simultaneous_rules()
 
     # contains key as course codes, value is the corresponding number of sections left for that course / combination of courses:
     # if this block of course is simultaneous with another, they all appear with * seperating them
@@ -179,34 +197,6 @@ def generate_course_schedule():
             current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
         
 
-
-'''
-timetable is a dictionary that adds students to schedule:
-
-{
-
-"sem1": [
-            {"course1": [student1, student2, ...], 
-                "course2": [...], 
-                ...
-            } # block A
-            {...} # B
-            {...} # C
-            {...} # D
-        ]
-
-"sem2": [...] same format as sem1
-
-"outside_timetable": {"course1": [students]
-                      "course2": [...]
-                      ...
-                     }
-
-}
-
-The timetable should meet all requirements under STUDENTS.
-'''
-
 # takes in a list of unvailable blocks, and spits out a random block (int 0-8) among the available blocks
 def return_rando_block(used_blocks):
 
@@ -247,19 +237,18 @@ def generate_timetable(schedule):
 
     for student in student_ids:
 
-        requests = student_requests[student]
-        alternates = []
-        if student in student_alternates:
-            alternates = student_alternates[student]
+        student_schedule = get_best_schedule(timetable, student)
+        add_student(timetable, student, student_schedule)
 
-        for alternate in alternates:
-            if alternate in requests:
-                requests.remove(alternate)
+    return timetable
 
-        student_schedule = get_best_schedule(timetable, requests, alternates)
+def schedule_to_empty_timetable(schedule):
 
-        
-
+    timetable = []
+    for i in range(9):
+        timetable.append({})
+        for course in schedule[i]:
+            timetable[i][course] = []
     return timetable
 
 '''
@@ -272,128 +261,103 @@ sem2D course
 [outside timetable courses]
 ]
 '''
-def get_best_schedule(timetable, requests, alternates):
+def get_best_schedule(timetable, student):
     
-    schedule = ["" for i in range(8)]
-    schedule.append([])
-
-# fills any empty blocks with random courses
-def fill_random(timetable, student, student_schedule):
+    requests = student_requests[student]
+    alternates = []
+    if student_alternates[student]:
+        alternates = student_alternates[student]
     
-    free_blocks = [] # indices of free blocks
-
-    for i in range(0,8):
-        if not student_schedule[i]:
-            free_blocks.append(i)
-
-    for index in free_blocks:
-        block = get_block(index, timetable)
-        while True:
-            random_course = random.choice(list(block.keys()))
-            single_course = random_course.split("*")[0]
-            if len(block[random_course]) < int(course_info[single_course]["Max Enrollment"]) and not course_info[single_course]["Pre Req"] and not course_info[single_course]["Post Req"]:
-                block[random_course].append(student)
-                student_schedule[index].append(random_course)
-                return
-
-
-# attempts to give a requested course to a student
-def add(timetable, student, student_schedule, request):
+    empty_schedule = ["" for i in range(8)]
+    outside_timetable_courses = []
     
-    # automatically give the course if it's outside the timetable
-    if course_info[request]["Outside Timetable"]:
-        timetable["outside_timetable"][request].append(student)
-        student_schedule[8].append(request)
-        return
+    for course in requests + alternates:
+        if course_info[course]["Outside Timetable"]:
+            outside_timetable_courses.append(course)
     
-    free_blocks = [] # indices of free blocks
-    s1 = False
-    s2 = False
-
-    # course must be in s2
-    if course_info[request]["Pre Req"]:
-        for prerequisite in course_info[request]["Pre Req"]:
-            if prerequisite in student_requests[student]:
-                s2 = True
-                break
-
-    # course must be in s1
-    if course_info[request]["Post Req"]:
-        for postrequisite in course_info[request]["Post Req"]:
-            if postrequisite in student_requests[student]:
-                s1 = True
-                break
-
-    if s1:
-        for i in range(0,4):
-            if not student_schedule[i]:
-                free_blocks.append(i)
-    elif s2:
-        for i in range(4,8):
-            if not student_schedule[i]:
-                free_blocks.append(i)
-    else:
-        for i in range(0,8):
-            if not student_schedule[i]:
-                free_blocks.append(i)
-
-    random.shuffle(free_blocks)
-
-    # linear course
-    if course_info[request]["Base Terms/Year"] == "1":
-        for index in range(4):
-            if index in free_blocks and (index + 4) in free_blocks:
-                block_1 = get_block(index, timetable)
-                block_2 = get_block(index + 4, timetable)
-                if request in block_1 and request in block_2:
-                    if len(block_1[request]) < int(course_info[request]["Max Enrollment"]) and len(block_2[request]) < int(course_info[request]["Max Enrollment"]):
-                        block_1[request].append(student)
-                        block_2[request].append(student)
-                        student_schedule[index].append(request)
-                        student_schedule[index + 4].append(request)
-                        return
-        return
-                
+    empty_schedule.append(outside_timetable_courses)
     
-    for index in free_blocks:
-        block = get_block(index, timetable)
-        if request in block:
-            if len(block[request]) < int(course_info[request]["Max Enrollment"]):
-                block[request].append(student)
-                student_schedule[index].append(request)
-                return
+    '''
+    available is a 2D list of the requested/alternate courses available in various blocks:
+    [
+        [courses in sem1A]
+        [courses in sem1B]
+        ...
+    ]
+    does not use * names
+    '''
+    available = []
     
-def get_block(index, timetable):
-    if index <= 3:
-        return timetable["sem1"][index]
-    return timetable["sem2"][index - 4]
-
-def sort_requests(requests, alternates):
-
-    sorted_list = []
-
-    temp = {request : int(course_info[request]["Covered Terms/Year"]) for request in requests}
-    sorted_dict = dict(sorted(temp.items(), key=lambda x:x[1]))
-
-
-    for request in sorted_dict:
-        sorted_list.append(request)
-
-    for alternate in alternates:
-        sorted_list.append(alternate)
-
-    return sorted_list
-
-
-def schedule_to_empty_timetable(schedule):
-
-    timetable = []
-    for i in range(9):
-        timetable.append({})
-        for course in schedule[i]:
-            timetable[i][course] = []
+    for i in range(8):
+        available.append([])
+        for course in requests + alternates:
+            for c in timetable[i]:
+                if course in c:
+                    available[i].append(course)
     
-    return timetable
+    return best_schedule_recursive(timetable, available, requests, alternates, requests + alternates, empty_schedule, 0)
+
+def best_schedule_recursive(timetable, available, requests, alternates, to_be_added, current_schedule, current_index):
+    
+    # base cases
+    if (not to_be_added) or current_index > 7:
+        return current_schedule
+    
+    next_steps = []
+    for next_course_to_add in to_be_added:
+        
+        full_course_name = get_full_name(next_course_to_add)
+        
+        if next_course_to_add in available[current_index] and len(timetable[current_index][full_course_name]) <= course_info[next_course_to_add]["Max Enrollment"]:
+            
+            to_be_added_copy = copy.deepcopy(to_be_added)
+            to_be_added_copy.remove(next_course_to_add)
+            
+            current_schedule_copy = copy.deepcopy(current_schedule)
+            current_schedule_copy[current_index].append(next_course_to_add)
+            
+            next_steps.append(best_schedule_recursive(timetable, available, requests, alternates, to_be_added_copy, current_schedule_copy, current_index + 1))
+    
+    # no course is available this block
+    if not next_steps:
+        current_schedule[current_index].append("")
+        return best_schedule_recursive(timetable, available, requests, alternates, to_be_added, current_schedule, current_index + 1)
+    
+    # find the best schedule
+    
+    best_schedule = []
+    best_score = 0
+    
+    for next_schedule in next_steps:
+        score = score_student_schedule(requests, alternates, next_schedule)
+        if score > best_score:
+            best_schedule = next_schedule
+            
+    return best_schedule 
+    
+def score_student_schedule(requests, alternates, schedule):
+    
+    score = 0
+    
+    for i in range(8):
+        if schedule[i] in requests:
+            score += 1
+        elif schedule[i] in alternates:
+            score += 0.5
+    
+    return score
+            
+
+# adds a student (schedule already made) to the timetable
+def add_student(timetable, id, schedule):
+    
+    for i in range(8):
+        if schedule[i] != "":
+            timetable[i][get_full_name(schedule[i])].append(id)
+            
+    for outside_timetable_course in schedule[8]:
+        timetable[8][get_full_name(outside_timetable_course)].append(id)
+
 
 '''
 returns a dictionary from a timetable:
