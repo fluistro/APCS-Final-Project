@@ -158,7 +158,7 @@ def generate_course_schedule():
 
         
     }
-    
+    """    
 
     for course in course_info:
         counter = 0
@@ -201,7 +201,7 @@ def generate_course_schedule():
     print ('2 b', len(schedule['sem2'][1]))
     print ('2 c', len(schedule['sem2'][2]))
     print ('2 d', len(schedule['sem2'][3]))
-
+    """
     '''
     all_courseblock_codes = {}      # doesn't store OT courses
     course_info_modify = course_info.copy()
