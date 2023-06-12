@@ -116,6 +116,9 @@ def generate_course_schedule():
             if course in rule:
                 list_of_sim_courses = rule
                 break
+            
+        for x in list_of_sim_courses:
+            already_checked.append(x)
 
         # if no course is simultaneous with this course
         if len(list_of_sim_courses) == 0:
@@ -145,7 +148,7 @@ def generate_course_schedule():
             leftovers = {} # for if any of the courses have more sections than the others
 
             # get the maximum amount of simultaneous blocks that can appear
-            max_simblock_sections = min([course_info[x]['Sections']] for x in list_of_sim_courses)
+            max_simblock_sections = min([course_info[x]['Sections']] for x in list_of_sim_courses)[0]
             
             sem_1 = False
             sem_2 = False
@@ -170,12 +173,19 @@ def generate_course_schedule():
             for course_with_leftover_sections in leftovers:
                 blocks = rand_blocks(leftovers[course_with_leftover_sections], sem_1, sem_2, linear)
                 add_course_to_master(course_schedule, course_with_leftover_sections, blocks)
+                
+    return course_schedule
 
 # returns a list of indices representing random timeslots to place a course in
 # note: no linear courses have sequencing rules
 def rand_blocks(sections, sem_1, sem_2, linear):
     
+    if sections > 8:
+        sections = 8
+    
     num_list = [i for i in range(0, 8)]
+    sem_1_list = [i for i in range(0, 4)]
+    sem_2_list = [i for i in range(4, 8)]
     random_blocks = []
     
     # linear courses appear [sections] times in each semester
@@ -183,13 +193,13 @@ def rand_blocks(sections, sem_1, sem_2, linear):
         
         for i in range(sections):
         
-            x = random.randint(0, 3)
+            x = random.choice(sem_1_list)
             random_blocks.append(x)
-            num_list.remove(x)
+            sem_1_list.remove(x)
             
-            x = random.randint(4, 7)
+            x = random.choice(sem_2_list)
             random_blocks.append(x)
-            num_list.remove(x)
+            sem_2_list.remove(x)
             
         return random_blocks
     
@@ -384,4 +394,6 @@ def get_student_schedules(timetable):
             student_schedules[student][8].append(course)
 
     return student_schedules
+
+schedule = generate_course_schedule()
 
