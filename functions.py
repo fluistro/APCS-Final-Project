@@ -187,6 +187,7 @@ def generate_course_schedule():
         for c in schedule['sem2'][3]:
             if course in c:
                 counter += 1
+        '''
         if counter == 0:
             if section != 0:
                 if course_info[course]['Outside Timetable'] == True:
@@ -199,9 +200,10 @@ def generate_course_schedule():
                     pass
                 else:
                     print (course_info[course]['course name'], course)
-    
-    if counter != section:
-        print('*****************************************', 'course:', course, 'sections needed:', section, 'sections have:', counter)
+        '''
+        if counter != section:
+            if len(course_info[course]['Students']) > 5:
+              print( 'course:', course, course_info[course]['course name'], 'sections needed:', section, 'sections have:', counter)
 
     print ('1 a', len(schedule['sem1'][0]))
     print ('1 b', len(schedule['sem1'][1]))
