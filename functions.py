@@ -158,6 +158,10 @@ def generate_course_schedule():
 
         
     }
+
+    with open('master_schedule.json', 'w') as fp:
+        json.dump(schedule, fp)
+
     """    
 
     for course in course_info:
@@ -1233,7 +1237,7 @@ def get_best_students(timetable):
     return best_students
                 
 
-
+'''
 generate_course_schedule()
 
 # create dictionary of dictionary version of course_schedule
@@ -1290,7 +1294,7 @@ def get_best_timetable(timetables):
     max_index = scores.index(max(scores))
 
     return timetables[max_index]
-'''
+
 gen_0 = []
 for i in range(20):
     timetable = generate_timetable(course_schedule2)
@@ -1363,7 +1367,12 @@ def print_perfect_students(timetable):
 
         success = True
 
-print_perfect_students(best_timetable)
+#generate_course_schedule()
+
+
+#print_perfect_students(best_timetable)
+
+
+
 
 '''
-generate_course_schedule()
