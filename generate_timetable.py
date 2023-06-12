@@ -11,6 +11,9 @@ with open('student_requests.json', 'r') as f:
 with open('student_alternates.json', 'r') as f:
     student_alternates = json.load(f)
 
+with open('master_schedule.json', 'r') as f:
+    master_schedule = json.load(f)
+
 # make course_info json info global
 with open('courses.json') as f:
         course_info = json.load(f)
@@ -421,6 +424,7 @@ def add_student(timetable, id, schedule):
 
 
 schedule = generate_course_schedule()
+print(schedule)
 
 timetable = schedule_to_empty_timetable(schedule)
 
