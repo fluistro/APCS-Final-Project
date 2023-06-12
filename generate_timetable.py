@@ -11,9 +11,6 @@ with open('student_requests.json', 'r') as f:
 with open('student_alternates.json', 'r') as f:
     student_alternates = json.load(f)
 
-with open('master_schedule.json', 'r') as f:
-    master_schedule = json.load(f)
-
 # make course_info json info global
 with open('courses.json') as f:
         course_info = json.load(f)
@@ -423,20 +420,19 @@ def add_student(timetable, id, schedule):
 
 
 
-schedule = generate_course_schedule()
-print(schedule)
+'''schedule = generate_course_schedule()
 
 timetable = schedule_to_empty_timetable(schedule)
 
 ids = [i for i in range(1000, 1838)]
-randomized_ids = random.shuffle(ids)
+random.shuffle(ids)
 
-for i in randomized_ids:
+for i in ids:
     add_student(timetable, i, get_best_schedule(timetable, str(i)))
     print(i)
 
 with open('recursion_timetable.json', 'w') as out_file:
-    json.dump(timetable, out_file)
+    json.dump(timetable, out_file)'''
 
 '''
 returns a dictionary from a timetable:
@@ -457,11 +453,11 @@ def get_student_schedules(timetable):
         block = timetable[i]
         for course in block:
             for student in block[course]:
-                student_schedules[student][i].append(course)
+                student_schedules[str(student)][i].append(course)
 
-    for course in timetable["outside_timetable"]:
-        for student in timetable["outside_timetable"][course]:
-            student_schedules[student][8].append(course)
+    for course in timetable[8]:
+        for student in timetable[8][course]:
+            student_schedules[str(student)][8].append(course)
 
     return student_schedules
 
@@ -543,4 +539,17 @@ def score(timetable, to_print):
         print("weighted score: " + str((successful_requests + 0.5 * successful_alternates) / (total_requests)))
     return (successful_requests + 0.5 * successful_alternates) / (total_requests)
 
-score(timetable, True)
+with open('recursion_timetable.json', 'r') as f:
+    timetable = json.load(f)
+
+student_schedules = get_student_schedules(timetable)
+
+for student in student_schedules:
+
+    counter = 0
+    
+    for i in range(0, 8):
+        if student_schedules[student][i]:
+            counter += 1
+
+    print(counter)
