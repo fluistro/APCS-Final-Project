@@ -87,16 +87,14 @@ returns a list representing a master timetable:
 '''
 def generate_course_schedule():
 
-    # course_schedule only stores the courses, it doesn't give a shit about students
+    # course_schedule only stores the courses
     course_schedule = []
     for i in range(9):
         course_schedule.append([])
 
-    # contains key as course codes, value is the corresponding number of sections left for that course / combination of courses:
-    # if this block of course is simultaneous with another, they all appear with * seperating them
+    # {course_code: num_sections}
+    # groups of simultaneous or not-simultaneous courses appear together with a * separating the course codes
     all_courseblock_codes = {}      # doesn't store OT courses
-
-    course_info_modify = copy.deepcopy(course_info)
 
     already_checked = []
 
@@ -107,7 +105,7 @@ def generate_course_schedule():
         if course in already_checked:
             continue
 
-        # outside timetable courses
+        # auto assign outside timetable courses, no need to check anything further
         if course_info[course]['Outside Timetable'] == True:
             course_schedule[8].append(course)
             continue
@@ -117,111 +115,106 @@ def generate_course_schedule():
         for rule in sim_rules:
             if course in rule:
                 list_of_sim_courses = rule
+                break
 
-        # if no course is sim with this course
+        # if no course is simultaneous with this course
         if len(list_of_sim_courses) == 0:
+            
             already_checked.append(course)
             all_courseblock_codes[course] = course_info[course]['Sections']
+            sem_1 = False
+            sem_2 = False
+            linear = False
+            
+            if course_info[course]['Pre Req']:
+                sem_1 = True
+            if course_info[course]['Post Req']:
+                sem_2 = True
+            if course_info[course]['Base Terms/Year'] == 1:
+                linear = True
+            
+            blocks = rand_blocks(course_info[course]['Sections'], sem_1, sem_2, linear)
+            add_course_to_master(course_schedule, course, blocks)
+            
             continue
         
         # if there are courses sim with this one
         else:
 
-            # count the maximum amount of simultaneous blocks that can appear
-            max_simblock_sections = course_info[course]['Sections']
+            full_sim_name = get_full_name(course) # names of all (non)simultaneous courses, separated by a *
+            leftovers = {} # for if any of the courses have more sections than the others
+
+            # get the maximum amount of simultaneous blocks that can appear
+            max_simblock_sections = min([course_info[x]['Sections']] for x in list_of_sim_courses)
+            
+            sem_1 = False
+            sem_2 = False
+            linear = False
+            
             for sim_course in list_of_sim_courses:
-                if int(course_info_modify[sim_course]['Sections']) < int(max_simblock_sections):
-                    max_simblock_sections = int(course_info_modify[sim_course]['Sections'])
+                
+                if course_info[sim_course]['Pre Req']:
+                    sem_1 = True
+                if course_info[sim_course]['Post Req']:
+                    sem_2 = True
+                if course_info[sim_course]['Base Terms/Year'] == 1:
+                    linear = True
+                    
+                leftover_sections = course_info[sim_course]['Sections'] - max_simblock_sections
+                if leftover_sections > 0:
+                    leftovers[sim_course] = leftover_sections
+            
+            blocks = rand_blocks(max_simblock_sections, sem_1, sem_2, linear)
+            add_course_to_master(course_schedule, full_sim_name, blocks)
 
-            # generate a string, which is the course code of these simultaneous courses, sperated with a *
-            cur_sim_courses_codes = course
-            for sim_course in list_of_sim_courses:
-                cur_sim_courses_codes = cur_sim_courses_codes + "*" + sim_course
+            for course_with_leftover_sections in leftovers:
+                blocks = rand_blocks(leftovers[course_with_leftover_sections], sem_1, sem_2, linear)
+                add_course_to_master(course_schedule, course_with_leftover_sections, blocks)
 
-            # put the simultaneous blocks into all blocks
-            all_courseblock_codes[cur_sim_courses_codes] = max_simblock_sections
-
-            for sim_course in list_of_sim_courses:
-
-                already_checked.append(sim_course)
-                leftover = int(course_info[sim_course]["Sections"]) - max_simblock_sections
-                if leftover > 0:
-                    all_courseblock_codes[sim_course] = leftover
-
-    for course_block in all_courseblock_codes:
-        current_used_blocks = []                                            # to store all the blocks this course takes up
-
-        # deal with blocks with sections > 8
-        if all_courseblock_codes[course_block] > 8:
-
-            extra_sections = all_courseblock_codes[course_block] - 8
-            current_used_blocks = []
-
-            for i in range(extra_sections):
-
-                # put the extra sections into course_schedule first
-                rand_block = return_rando_block(current_used_blocks)
-                course_schedule[rand_block].append(course_block)
-                current_used_blocks.append(rand_block)
-                all_courseblock_codes[course_block] = 8
-
-            current_used_blocks = []
-
-        # non simultaneous courses
-        if not '*' in course_block:
-            if course_info_modify[course_block]['Outside Timetable'] == True:
-                continue
-
-        # deal with band and PE 9 and 10
-
-        if 'MPHED10G-L' in course_block or 'MPHED10B-L' in course_block or 'MPHE-09B-L' in  course_block or 'MPHE-09G-L' in course_block:
-            continue
-
-        if 'XBA--09B-L' in course_block:
-            rand_block = random.randint(0, 3)
-            course_schedule[rand_block].append(course_block)    # put band 9 into a sem 1 block
-            course_schedule['sem2'][letter_to_num(rand_block[1])].append('MPHE-09B-L')    # put boys pe in sem 2 same block
-            course_schedule['sem2'][letter_to_num(rand_block[1])].append('MPHE-09G-L')    # girls ''
-            continue
-        if 'MMUCB10--L' in course_block :
-            rand_block = return_rando_block(['2 A', '2 B', '2 C', '2 D' ]).split(' ') 
-            course_schedule['sem1'][letter_to_num(rand_block[1])].append(course_block)    # put band 10 into a sem 1 block
-            course_schedule['sem2'][letter_to_num(rand_block[1])].append('MPHED10B-L')
-            course_schedule['sem2'][letter_to_num(rand_block[1])].append('MPHED10G-L')
-            continue
-
-        # the NORMAL courses
-        for j in range(int(all_courseblock_codes[course_block])):                # goes through all available sections of this course
-            rand_block = return_rando_block(current_used_blocks).split(' ')                                # [semester#, block#]
-            course_schedule['sem' + rand_block[0]][letter_to_num(rand_block[1])].append(course_block)      # put this course into the randomized 
-            current_used_blocks.append(rand_block[0] + ' ' + rand_block[1])
+# returns a list of indices representing random timeslots to place a course in
+# note: no linear courses have sequencing rules
+def rand_blocks(sections, sem_1, sem_2, linear):
+    
+    num_list = [i for i in range(0, 8)]
+    random_blocks = []
+    
+    # linear courses appear [sections] times in each semester
+    if linear:
         
-
-# takes in a list of unvailable blocks, and spits out a random block (int 0-8) among the available blocks
-def return_rando_block(used_blocks):
-
-    # initialize the blocks that have less than 42 blocks in them
-    current_available_blocks = [i for i in range(8)]
-
-    for block in used_blocks:
-        current_available_blocks.remove(block)
+        for i in range(sections):
+        
+            x = random.randint(0, 3)
+            random_blocks.append(x)
+            num_list.remove(x)
+            
+            x = random.randint(4, 7)
+            random_blocks.append(x)
+            num_list.remove(x)
+            
+        return random_blocks
     
-    if len(current_available_blocks) == 0:
-        return -1
-
-    return random.choice(current_available_blocks)
-
-
-def letter_to_num(letter):
-    if letter == 'A':
-        return 0
-    elif letter == 'B':
-        return 1
-    elif letter == 'C':
-        return 2
-    else:
-        return 3
+    # courses with prerequisites/postrequisites must run at least once in semester 2/1
+    # linear courses must appear in both
+    if sem_1:
+        x = random.randint(0, 3)
+        random_blocks.append(x)
+        num_list.remove(x)
+    if sem_2:
+        x = random.randint(4, 7)
+        random_blocks.append(x)
+        num_list.remove(x)
     
+    while len(random_blocks) < sections:
+        x = random.choice(num_list)
+        random_blocks.append(x)
+        num_list.remove(x)
+        
+    return random_blocks
+
+def add_course_to_master(master_timetable, course_id, blocks):
+    for block in blocks:
+        master_timetable[block].append(course_id)
+
 """
 generates a timetable:
 [
