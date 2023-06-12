@@ -70,12 +70,12 @@ while True:
 
     course_info[id] = {
         'course name': name,
-        'Base Terms/Year': base_terms,
-        'Covered Terms/Year': covered_terms,
-        'Max Enrollment': max_enrollment,
+        'Base Terms/Year': int(base_terms),
+        'Covered Terms/Year': int(covered_terms),
+        'Max Enrollment': int(max_enrollment),
         'PPC': ppc,
-        'Priority': priority,
-        'Sections': sections,
+        'Priority': int(priority),
+        'Sections': int(sections),
         'Students': [],
         'Pre Req' : [],
         'Post Req': [],
@@ -341,18 +341,18 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Outside Timetable' : False
                         }
             
-            course_info[row[0]]['Students'].append(current_student_id)
+            course_info[row[0]]['Students'].append(int(current_student_id))
 
-            if current_student_id in student_requests:
-                student_requests[current_student_id].append(row[0])
+            if int(current_student_id) in student_requests:
+                student_requests[int(current_student_id)].append(row[0])
             else:
-                student_requests[current_student_id] = [row[0]]
+                student_requests[int(current_student_id)] = [row[0]]
 
             if row[11] == "Y":
-                if current_student_id in student_alternates:
-                    student_alternates[current_student_id].append(row[0])
+                if int(current_student_id) in student_alternates:
+                    student_alternates[int(current_student_id)].append(row[0])
                 else:
-                    student_alternates[current_student_id] = [row[0]]
+                    student_alternates[int(current_student_id)] = [row[0]]
 
 
 # read Course Blocking Rules
