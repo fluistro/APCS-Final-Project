@@ -122,8 +122,7 @@ for Outside timetable courses they are all in 'OT' key of sem 1
 '''
 def generate_course_schedule():
     
-    schedule = {
-        'sem1': [
+    schedule = [
             # A 
             ["MCMPS10---", "XBA--09B-L*MPHE-09--L*MMUCB10--L*XBA--09C-L*MPHE-09B-L*MPHED10--L*MPHE-09G-L","MMA--09H--","MLTST12---","MCSTU10---*MDCOM11C--*MDMD-12D--","MEN--09---","MWBDV10IT-*MADIT09---","MFMP-10---","MCH--11---","MSS--09---","MPREC12H--","MEN--09---","MENST12---","MPH--12---","MCTWR10---","MPREC11---","MEPSS11---","MPHE-09---*MPHED10---","MNMD-11---","MPH--11---","MCMCL12---","MCMPS10C--","MCLE-10---","MADGE09D--*MTEXP10D--*YMIS-1DD--*YMIS-2DD--","MEPSS11C--","MDNC-09F--*MDCF-10---*MDCF-11---*MDCF-12---","MAE--09---*MVAST10---", "MLFSC11---	","MFOOD11---*MFOOD12---","MSS--10---","MADW-09---*MWWK-10---*MWWK-11---*MWWK-12---","MEVSC12C--","MPREC12---","MACLV11G--*MACLV12G--","MSC--10---","MMACS11---*MMACS12---","MATPH12---","MMEDD10---*MMEDD11---*MMEDD12---", "MADGE09I--"],
 
@@ -134,9 +133,7 @@ def generate_course_schedule():
             ["MCMPR12W--", "MMUGT10---*MIMG-12---*MIMG-11---","MPREC12---","MPHE-09B--*MPHED10B--","MLTST11---","MWBDV10IT-*MADIT09---","MSC--10---","MEVSC11---","MWH--12---","MBIT-11*MIT--11---","MPREC11H--","MENST12---","MPH--12---","MMA--09---","MEPSS11---","MPH--11---","MNMD-11---","MFMP-10C--","MATPH12---","AELC-12---","MCLE-10---","MNMD-10---","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MSS--09---","MSS--09C--","MVAPH10---*MVAPH11---*MVAPH12---","MCH--11---","MADFS09---*MFOOD10---","YESFL0AX-L","MFR--11---*MFR--12---","XLDCE09NM-","MMA--09C--","YPSYC1AX--","MPHE-09---*MPHED10---", "MWPM-10---", "MMACS11---","MCH--12---","MTEAR10---*MTROB11---*MTROB12---*MADER09---", "MLTST11C--"],
 
             # D 
-            ["MCTWR11---", "XLEAD09---", "MSPLG10--L","MPREC12---","MLST-12---","MEN--09---","MFMP-10---","MSC--09---","MSP--11---","MCMPS11---","APHM-12---","MENFP12---","MFOM-11---","MLST-12---","MCH--11---","YLAW-2CX--","MPREC11---","MSC--10---","MATPH12---","MCMPS10C--","MADEM10---","MEN--09---","MPHE-09B--*MPHED10B--","MSS--09C--","MVAST10---*MVAST11---*MVAST12---*MAE--09---","MLFSC11---","MADFS09---*MFOOD10---","MSS--10---","MFR--10---","XLDCB09M--*MTPOW10---","MEVSC12C--","MWPM-11---","YPSYC1AX--","MPHE-09G--*MPHED10G--","MCLE-10---", "MCH--11---","MTEAR10---*MTROB11---*MTROB12---*MADER09---","MDRM-11---*MDRM-12---", "MWPM-11---", "MWWK-12---","YPSYC1AX--"]
-        ],
-        'sem2': [
+            ["MCTWR11---", "XLEAD09---", "MSPLG10--L","MPREC12---","MLST-12---","MEN--09---","MFMP-10---","MSC--09---","MSP--11---","MCMPS11---","APHM-12---","MENFP12---","MFOM-11---","MLST-12---","MCH--11---","YLAW-2CX--","MPREC11---","MSC--10---","MATPH12---","MCMPS10C--","MADEM10---","MEN--09---","MPHE-09B--*MPHED10B--","MSS--09C--","MVAST10---*MVAST11---*MVAST12---*MAE--09---","MLFSC11---","MADFS09---*MFOOD10---","MSS--10---","MFR--10---","XLDCB09M--*MTPOW10---","MEVSC12C--","MWPM-11---","YPSYC1AX--","MPHE-09G--*MPHED10G--","MCLE-10---", "MCH--11---","MTEAR10---*MTROB11---*MTROB12---*MADER09---","MDRM-11---*MDRM-12---", "MWPM-11---", "MWWK-12---","YPSYC1AX--"],
 
             # A
             ["MENT-12---", "XBA--09B-L*MPHE-09--L*MMUCB10--L*XBA--09C-L*MPHE-09B-L*MPHED10--L*MPHE-09G-L","MMAP-11---","MINST12C--","MECOM12---","MDNC-09H--*MDNCN11---*MDNCN12---*MIDS-0B---","MCALC12---","MCMPS11---","MWBDV10IT-*MADIT09---","MMA--09---","MCH--11---","MEPSS11---","MSP--09---","MENFP12---","MFMP-10---","MLST-12---","YLAW-2CX--","MWH--12---","MSC--10---","AELC-12---", "MENT-12---", "MFOM-11---","MADD-09---*MTDRF11---*MTDRF12---*MTDRF10---","MEPSS11C--", "MLFSC11---","MADFS09---*MFOOD10---","MCMCL12---", "MNMD-10---","XLDCB09M--*MTPOW10---","MPREC11---","MATPH12---","YPSYC1AX--","MPHE-09G--*MPHED10G--", "MSC--10---","MMACS11---*MMACS12---","MCH--12---","MTEAR10---*MTROB11---*MTROB12---*MADER09---","MEN--09C--",'MSC--10C--', "MPH--12---"],
@@ -151,13 +148,12 @@ def generate_course_schedule():
 
             # D
             ["MSPLG11---","MSTX-0AI--*MSTX-1AI--*MSTX-2AI--","MINST12C--","MENFP12--Y","MPHE-09B--*MPHED10B--","MEN--09---","MMACS11---","MSC--10---","MSS--10---","MEVSC11---","MCLE-10---","MSS--10---","MSP--11---*MSP--12---","MCH--12---","MENFP12---","MPH--12---","MCTWR10---","MPREC11---","MEPSS11---","MVAPH10---*MVAPH11---*MVAPH12---","MCTWR11---", "MPH--11---", "MATPH12---", "MCMPS11---", "MENT-12---", "MSS--09---", "MSS--10C--", "MAE--09---*MVAST10---", "MCH--11---", "MFR--11---*MFR--12---", "MTAUT11---*MTAUT12---*MTEAD12---", "MPREC12---", "MWPM-11---", "MPHE-09G--*MPHED10G--", "MADW-09---*MWWK-10---*MWWK-11---*MWWK-12---", "ACSC-2A---", "MTDRF10---*MTDRF11---*MTDRF12---*MADD-09---", "MEN--09C--", "MENST12--Y"
-            ]
+            ],
 
-        ],
-        'outside_timetable':["MCMCC11--L", "MCMCC12--L", "MDNC-09C-L", "MDNC-09M-L", "MDNC-10--L", "MDNC-11--L", "MDNC-12--L", "MDNCM10--L", "MDNCM11--L", "MDNCM12--L", "MGMT-12L--", "MGRPR11--L", "MGRPR12--L", "MIDS-0C---", "MIMJB11--L", "MIMJB12--L", "MMUCC10--L", "MMUJB10--L", "MMUOR10S-L", "MMUOR11S-L", "MMUOR12S-L", "MWEX-2A--L", "MWEX-2B--L", "XBA--09J-L", "XC---09--L", "XLDCB09S-L", "YCPA-0AX-L", "YCPA-0AXE-", "YCPA-1AX-L", "YCPA-1AXE-", "YCPA-2AX-L", "YCPA-2AXE-", "YED--0BX-L", "YED--1EX-L", "YED--2DX-L", "YED--2FX-L"]
+            ["MCMCC11--L", "MCMCC12--L", "MDNC-09C-L", "MDNC-09M-L", "MDNC-10--L", "MDNC-11--L", "MDNC-12--L", "MDNCM10--L", "MDNCM11--L", "MDNCM12--L", "MGMT-12L--", "MGRPR11--L", "MGRPR12--L", "MIDS-0C---", "MIMJB11--L", "MIMJB12--L", "MMUCC10--L", "MMUJB10--L", "MMUOR10S-L", "MMUOR11S-L", "MMUOR12S-L", "MWEX-2A--L", "MWEX-2B--L", "XBA--09J-L", "XC---09--L", "XLDCB09S-L", "YCPA-0AX-L", "YCPA-0AXE-", "YCPA-1AX-L", "YCPA-1AXE-", "YCPA-2AX-L", "YCPA-2AXE-", "YED--0BX-L", "YED--1EX-L", "YED--2DX-L", "YED--2FX-L"]
 
         
-    }
+    ]
 
     with open('master_schedule.json', 'w') as fp:
         json.dump(schedule, fp)
@@ -1376,3 +1372,5 @@ def print_perfect_students(timetable):
 
 
 '''
+
+generate_course_schedule()
