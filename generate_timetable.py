@@ -268,7 +268,7 @@ def get_best_schedule(timetable, student):
     
     requests = student_requests[student]
     alternates = []
-    if student_alternates[student]:
+    if student in student_alternates:
         alternates = student_alternates[student]
     
     empty_schedule = ["" for i in range(8)]
@@ -310,6 +310,8 @@ def best_schedule_recursive(timetable, available, requests, alternates, to_be_ad
     for next_course_to_add in to_be_added:
         
         full_course_name = get_full_name(next_course_to_add)
+        if full_course_name not in timetable[current_index]:
+            full_course_name = next_course_to_add
         
         if next_course_to_add in available[current_index] and len(timetable[current_index][full_course_name]) <= course_info[next_course_to_add]["Max Enrollment"]:
             
@@ -317,13 +319,13 @@ def best_schedule_recursive(timetable, available, requests, alternates, to_be_ad
             to_be_added_copy.remove(next_course_to_add)
             
             current_schedule_copy = copy.deepcopy(current_schedule)
-            current_schedule_copy[current_index].append(next_course_to_add)
+            current_schedule_copy[current_index] = next_course_to_add
             
             next_steps.append(best_schedule_recursive(timetable, available, requests, alternates, to_be_added_copy, current_schedule_copy, current_index + 1))
     
     # no course is available this block
     if not next_steps:
-        current_schedule[current_index].append("")
+        current_schedule[current_index] = ""
         return best_schedule_recursive(timetable, available, requests, alternates, to_be_added, current_schedule, current_index + 1)
     
     # find the best schedule
@@ -397,3 +399,7 @@ def get_student_schedules(timetable):
 
 schedule = generate_course_schedule()
 
+timetable = schedule_to_empty_timetable(schedule)
+
+for i in range(1000, 1838):
+    print(str(i) + " " + str(get_best_schedule(timetable, str(i))))
