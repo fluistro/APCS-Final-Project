@@ -114,11 +114,11 @@ def score(timetable, to_print):
         
     
     if to_print:
-        print("# requested courses placed / # requested courses: " + str(successful_requests / total_requests))
-        print("# requested or alternate courses placed / # requested or alternate courses: " + str((successful_requests + successful_alternates) / (total_requests + total_alternates)))
-        print("percent students with 8/8 courses (requested only): " + str(successful_students / total_students))
-        print("percent students with 8/8 courses (requested or alternate): " + str(successful_students_alternates / total_students))
-        print("weighted score: " + str((successful_requests + 0.5 * successful_alternates) / (total_requests)))
+        print("# requested courses placed / # requested courses: " + str(successful_requests / total_requests * 100) + "%")
+        print("# requested or alternate courses placed / # requested or alternate courses: " + str((successful_requests + successful_alternates) / (total_requests + total_alternates) * 100) + "%")
+        print("percent students with 8/8 courses (requested only): " + str(successful_students / total_students * 100) + "%")
+        print("percent students with 8/8 courses (requested or alternate): " + str(successful_students_alternates / total_students * 100) + "%")
+        print("weighted score: " + str((successful_requests + 0.5 * successful_alternates) / (total_requests) * 100) + "%")
     return (successful_requests + 0.5 * successful_alternates) / (total_requests)
 
 with open('recursion_timetable_not_overloaded.json', 'r') as f:
