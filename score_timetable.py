@@ -199,7 +199,7 @@ def print_schedule():
 
 #score(timetable, True)
 
-student = "1002"
+student = "1565"
 
 print("STUDENT ID: " + student)
 print()
@@ -234,3 +234,5 @@ for course in schedule:
     print(course)
 
 score(timetable, True)
+
+print_schedule()
