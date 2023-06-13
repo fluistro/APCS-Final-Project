@@ -164,7 +164,7 @@ def generate_course_schedule():
                 courses.append(course)
 
             for i in courses:
-                if i not in course_info:
+                if course_info[i]["Base Terms/Year"] == 1:
                     print(i)
 
                 '''                
