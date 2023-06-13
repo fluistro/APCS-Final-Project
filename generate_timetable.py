@@ -280,7 +280,12 @@ def get_best_schedule(timetable, student):
     
     empty_schedule.append(outside_timetable_courses)
     
-    '''
+    available = get_available_blocks(timetable, requests, alternates)
+    
+    
+    return best_schedule_recursive(timetable, available, requests, alternates, requests + alternates, empty_schedule, [i for i in range(0, 8)])
+
+'''
     available is a 2D list of the requested/alternate courses available in various blocks:
     [
         [courses in sem1A]
@@ -288,7 +293,8 @@ def get_best_schedule(timetable, student):
         ...
     ]
     does not use * names
-    '''
+'''
+def get_available_blocks(timetable, requests, alternates):
     available = []
     
     for i in range(8):
@@ -322,8 +328,8 @@ def get_best_schedule(timetable, student):
             for c in timetable[i]:
                 if course in c:
                     available[i].append(course)
-    
-    return best_schedule_recursive(timetable, available, requests, alternates, requests + alternates, empty_schedule, [i for i in range(0, 8)])
+                    
+    return available
 
 def best_schedule_recursive(timetable, available, requests, alternates, to_be_added, current_schedule, indices_to_add):
     
@@ -333,7 +339,8 @@ def best_schedule_recursive(timetable, available, requests, alternates, to_be_ad
     
     current_index = indices_to_add[0]
     
-    next_steps = []
+    next_steps = [] # list of all schedules that can be made by building on current_schedule
+    
     for next_course_to_add in to_be_added:
 
         full_course_name = get_full_name(next_course_to_add)
@@ -344,10 +351,10 @@ def best_schedule_recursive(timetable, available, requests, alternates, to_be_ad
         # (this should only run when current_index is in semester 1)
         if course_info[next_course_to_add]["Base Terms/Year"] == 1 and current_index in [0, 1, 2, 3]:
 
-            if next_course_to_add in available[current_index] and len(timetable[current_index][full_course_name]) <= course_info[next_course_to_add]["Max Enrollment"]:
+            if next_course_to_add in available[current_index]:
 
                 for i in [4, 5, 6, 7]:
-                    if next_course_to_add in available[i] and len(timetable[i][full_course_name]) <= course_info[next_course_to_add]["Max Enrollment"]:
+                    if next_course_to_add in available[i]:
 
                         indices_to_add_copy = [] # remove indices where the linear course is going
 
@@ -364,7 +371,7 @@ def best_schedule_recursive(timetable, available, requests, alternates, to_be_ad
 
                         next_steps.append(best_schedule_recursive(timetable, available, requests, alternates, to_be_added_copy, current_schedule_copy, indices_to_add_copy))
         
-        if next_course_to_add in available[current_index] and len(timetable[current_index][full_course_name]) <= course_info[next_course_to_add]["Max Enrollment"]:
+        if next_course_to_add in available[current_index]:
             
             to_be_added_copy = copy.deepcopy(to_be_added)
             to_be_added_copy.remove(next_course_to_add)
@@ -376,8 +383,9 @@ def best_schedule_recursive(timetable, available, requests, alternates, to_be_ad
     
     # no course is available this block
     if not next_steps:
-        current_schedule[current_index] = ""
-        return best_schedule_recursive(timetable, available, requests, alternates, to_be_added, current_schedule, indices_to_add[1:])
+        current_schedule_copy = copy.deepcopy(current_schedule)
+        current_schedule_copy[current_index] = ""
+        return best_schedule_recursive(timetable, available, requests, alternates, to_be_added, current_schedule_copy, indices_to_add[1:])
     
     # find the best schedule
     
@@ -386,9 +394,10 @@ def best_schedule_recursive(timetable, available, requests, alternates, to_be_ad
     
     for next_schedule in next_steps:
         score = score_student_schedule(requests, alternates, next_schedule)
-        if score > best_score:
-            best_schedule = next_schedule
-            
+        if score >= best_score:
+            best_score = score
+            best_schedule = copy.deepcopy(next_schedule)
+    
     return best_schedule 
     
 def score_student_schedule(requests, alternates, schedule):
@@ -399,7 +408,7 @@ def score_student_schedule(requests, alternates, schedule):
         if schedule[i] in requests:
             score += 1
         elif schedule[i] in alternates:
-            score += 0.5
+            score += 0.1
     
     return score
             
@@ -417,22 +426,29 @@ def add_student(timetable, id, schedule):
     for outside_timetable_course in schedule[8]:
         timetable[8][get_full_name(outside_timetable_course)].append(id)
 
+'''with open('master_schedule.json', 'r') as f:
+    schedule = json.load(f)
 
-
-
-'''schedule = generate_course_schedule()
+for block in schedule:
+    for i in range(len(block)):
+        block[i] = get_full_name(block[i].split("*")[0])
 
 timetable = schedule_to_empty_timetable(schedule)
 
 ids = [i for i in range(1000, 1838)]
-random.shuffle(ids)
+counter = 0
 
 for i in ids:
     add_student(timetable, i, get_best_schedule(timetable, str(i)))
-    print(i)
+    counter += 1
+    if counter % 10 == 0:
+        print(counter)
 
 with open('recursion_timetable.json', 'w') as out_file:
     json.dump(timetable, out_file)'''
+    
+    
+
 
 '''
 returns a dictionary from a timetable:
@@ -471,65 +487,56 @@ def score(timetable, to_print):
     successful_alternates = 0
     
     successful_students = 0
-    success1 = True
+    student_is_successful = True
     
     successful_students_alternates = 0
-    success2 = True
+    student_is_successful_with_alternates = True
     
     total_students = 0
 
-    for student in student_requests:
-
-        requested = student_requests[student]
-        assigned = []
+    for student in student_schedules:
         
-        for block in student_schedules[student]:
-            for course in block:
-                assigned.append(course)
-        
+        requests = student_requests[student]
+        alternates = []
         if student in student_alternates:
             alternates = student_alternates[student]
-        else:
-            alternates = []
-
-        for course in alternates:
-
-            total_alternates += 1
-            for assigned_course in assigned:
-                if course in assigned_course.split("*"):
+            
+        total_requests += len(requests)
+        total_alternates += len(alternates)
+            
+        # go through each block in the student's schedule
+        for i in range(8):
+            
+            block = student_schedules[student][i]
+            
+            # spare
+            if not block:
+                student_is_successful = False
+                student_is_successful_with_alternates = False
+                continue
+            
+            # alternate, not requested
+            for alternate in alternates:
+                if alternate in block[0]:
+                    student_is_successful = False
                     successful_alternates += 1
                     break
             
-        # if not an alternate
-        for course in requested:
-            total_requests += 1
-            for assigned_course in assigned:
-                if course in assigned_course.split("*"):
+            for request in requests:
+                if request in block[0]:
                     successful_requests += 1
                     break
                     
-        for assigned_course in assigned:
-            if (assigned_course not in alternates) and (assigned_course in requested):
-                continue
-            success1 = False
-            if (assigned_course in alternates):
-                continue
-            success2 = False
-            
-        if len(assigned) < 8:
-            success1 = False
-            success2 = False   
-                    
-        if success1:
+        if student_is_successful:
             successful_students += 1
-        if success2:
+        if student_is_successful_with_alternates:
             successful_students_alternates += 1
             
-        success1 = True
-        success2 = True
+        student_is_successful = True
+        student_is_successful_with_alternates = True
         total_students += 1
-            
-    #print("total requests: " + str(total_requests))
+        
+        
     
     if to_print:
         print("# requested courses placed / # requested courses: " + str(successful_requests / total_requests))
@@ -542,14 +549,53 @@ def score(timetable, to_print):
 with open('recursion_timetable.json', 'r') as f:
     timetable = json.load(f)
 
-student_schedules = get_student_schedules(timetable)
+'''student_schedules = get_student_schedules(timetable)
+
+print(get_best_schedule(timetable, "1001"))
+
+students_with_spares = 0
+student_list = []
 
 for student in student_schedules:
+    for i in range(8):
+        if not student_schedules[student][i]:
+            students_with_spares += 1
+            student_list.append(student)
+            break
+        
+print(students_with_spares)
 
-    counter = 0
+student = "1001"
+
+
+
+# print requests
+print("REQUESTS")
+for request in student_requests[student]:
+    print(course_info[request]["course name"])
     
-    for i in range(0, 8):
-        if student_schedules[student][i]:
-            counter += 1
+print()
+print("SCHEDULE")
 
-    print(counter)
+schedule = student_schedules[student]
+
+for x in range(8):
+    if schedule[x]:
+        print(str(x) + ": " + course_info[schedule[x][0].split("*")[0]]["course name"])
+    else:
+        print(str(x) + ": Spare")
+        
+        
+requests = student_requests[student]
+alternates = []
+if student in student_alternates:
+    alternates = student_alternates[student]
+    
+available_blocks = get_available_blocks(timetable, requests, alternates)
+
+print()
+
+for block in available_blocks:
+    print([course_info[course]["course name"] for course in block])'''
+    
+score(timetable, True)
