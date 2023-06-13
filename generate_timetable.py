@@ -351,10 +351,10 @@ def best_schedule_recursive(timetable, available, requests, alternates, to_be_ad
         # (this should only run when current_index is in semester 1)
         if course_info[next_course_to_add]["Base Terms/Year"] == 1 and current_index in [0, 1, 2, 3]:
 
-            if next_course_to_add in available[current_index]:
+            if next_course_to_add in available[current_index] and len(timetable[current_index][full_course_name]) <= course_info[next_course_to_add]["Max Enrollment"]:
 
                 for i in [4, 5, 6, 7]:
-                    if next_course_to_add in available[i]:
+                    if next_course_to_add in available[i] and len(timetable[i][full_course_name]) <= course_info[next_course_to_add]["Max Enrollment"]:
 
                         indices_to_add_copy = [] # remove indices where the linear course is going
 
@@ -371,7 +371,7 @@ def best_schedule_recursive(timetable, available, requests, alternates, to_be_ad
 
                         next_steps.append(best_schedule_recursive(timetable, available, requests, alternates, to_be_added_copy, current_schedule_copy, indices_to_add_copy))
         
-        if next_course_to_add in available[current_index]:
+        if next_course_to_add in available[current_index] and len(timetable[current_index][full_course_name]) <= course_info[next_course_to_add]["Max Enrollment"]:
             
             to_be_added_copy = copy.deepcopy(to_be_added)
             to_be_added_copy.remove(next_course_to_add)
@@ -426,7 +426,7 @@ def add_student(timetable, id, schedule):
     for outside_timetable_course in schedule[8]:
         timetable[8][get_full_name(outside_timetable_course)].append(id)
 
-'''with open('master_schedule.json', 'r') as f:
+with open('master_schedule.json', 'r') as f:
     schedule = json.load(f)
 
 for block in schedule:
@@ -444,8 +444,8 @@ for i in ids:
     if counter % 10 == 0:
         print(counter)
 
-with open('recursion_timetable.json', 'w') as out_file:
-    json.dump(timetable, out_file)'''
+with open('recursion_timetable_not_overloaded.json', 'w') as out_file:
+    json.dump(timetable, out_file)
     
     
 
@@ -546,7 +546,7 @@ def score(timetable, to_print):
         print("weighted score: " + str((successful_requests + 0.5 * successful_alternates) / (total_requests)))
     return (successful_requests + 0.5 * successful_alternates) / (total_requests)
 
-with open('recursion_timetable.json', 'r') as f:
+with open('recursion_timetable_not_overloaded.json', 'r') as f:
     timetable = json.load(f)
 
 '''student_schedules = get_student_schedules(timetable)
