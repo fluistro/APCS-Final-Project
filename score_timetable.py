@@ -125,55 +125,6 @@ with open('recursion_timetable_not_overloaded.json', 'r') as f:
     timetable = json.load(f)
 
 student_schedules = get_student_schedules(timetable)
-
-'''
-
-print(get_best_schedule(timetable, "1001"))
-
-students_with_spares = 0
-student_list = []
-
-for student in student_schedules:
-    for i in range(8):
-        if not student_schedules[student][i]:
-            students_with_spares += 1
-            student_list.append(student)
-            break
-        
-print(students_with_spares)
-
-student = "1001"
-
-
-
-# print requests
-print("REQUESTS")
-for request in student_requests[student]:
-    print(course_info[request]["course name"])
-    
-print()
-print("SCHEDULE")
-
-schedule = student_schedules[student]
-
-for x in range(8):
-    if schedule[x]:
-        print(str(x) + ": " + course_info[schedule[x][0].split("*")[0]]["course name"])
-    else:
-        print(str(x) + ": Spare")
-        
-        
-requests = student_requests[student]
-alternates = []
-if student in student_alternates:
-    alternates = student_alternates[student]
-    
-available_blocks = get_available_blocks(timetable, requests, alternates)
-
-print()
-
-for block in available_blocks:
-    print([course_info[course]["course name"] for course in block])'''
     
 def print_course_names(course_list):
     names = [course_info[course_code]['course name'] for full_code in course_list for course_code in full_code.split('*')]
@@ -197,42 +148,39 @@ def print_schedule():
     print("SEMESTER 2 D BLOCK:")
     print_course_names(timetable[7].keys())
 
-#score(timetable, True)
+def print_student_info(student):
 
-student = "1565"
+    print("STUDENT ID: " + student)
+    print()
 
-print("STUDENT ID: " + student)
-print()
+    # print requests
+    print("REQUESTS")
+    for request in student_requests[student]:
+        print(course_info[request]["course name"])
+    print()
 
-# print requests
-print("REQUESTS")
-for request in student_requests[student]:
-    print(course_info[request]["course name"])
-print()
+    # print alternates
+    print("ALTERNATES")
+    if student in student_alternates:
+        for alternate in student_alternates[student]:
+            print(course_info[alternate]["course name"])
+    else:
+        print("NONE")
+    print()
 
-# print alternates
-print("ALTERNATES")
-if student in student_alternates:
-    for alternate in student_alternates[student]:
-        print(course_info[alternate]["course name"])
-else:
-    print("NONE")
-print()
+    # print schedule
 
-# print schedule
+    schedule = []
 
-schedule = []
+    for i in range(8):
+        try:
+            schedule.append(course_info[student_schedules[student][i][0].split("*")[0]]["course name"])
+        except:
+            schedule.append("SPARE")
 
-for i in range(8):
-    try:
-        schedule.append(course_info[student_schedules[student][i][0].split("*")[0]]["course name"])
-    except:
-        schedule.append("SPARE")
+    print("SCHEDULE")
+    for course in schedule:
+        print(course)
 
-print("SCHEDULE")
-for course in schedule:
-    print(course)
-
-score(timetable, True)
-
-print_schedule()
+        
+print_student_info("1527")

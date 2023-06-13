@@ -282,8 +282,10 @@ def get_best_schedule(timetable, student):
     
     available = get_available_blocks(timetable, requests, alternates)
     
-    
-    return best_schedule_recursive(timetable, available, requests, alternates, requests + alternates, empty_schedule, [i for i in range(0, 8)])
+    indices = [i for i in range(0, 8)]
+    random.shuffle(indices)
+
+    return best_schedule_recursive(timetable, available, requests, alternates, requests + alternates, empty_schedule, indices)
 
 '''
     available is a 2D list of the requested/alternate courses available in various blocks:
@@ -441,6 +443,8 @@ def add_student(timetable, id, schedule):
     for outside_timetable_course in schedule[8]:
         timetable[8][get_full_name(outside_timetable_course)].append(id)
 
+# creating master schedule
+
 with open('master_schedule.json', 'r') as f:
     schedule = json.load(f)
 
@@ -448,18 +452,24 @@ for block in schedule:
     for i in range(len(block)):
         block[i] = get_full_name(block[i].split("*")[0])
 
-timetable = schedule_to_empty_timetable(schedule)
+# generate a bunch of timetables
 
-ids = [i for i in range(1000, 1838)]
-counter = 0
+timetables = []
 
-for i in ids:
-    add_student(timetable, i, get_best_schedule(timetable, str(i)))
-    counter += 1
-    if counter % 10 == 0:
-        print(counter)
+for x in range(10):
 
-with open('recursion_timetable_not_overloaded.json', 'w') as out_file:
+    timetable = schedule_to_empty_timetable(schedule)
+
+    ids = [i for i in range(1000, 1838)]
+    random.shuffle(ids)
+    for i in ids:
+        add_student(timetable, i, get_best_schedule(timetable, str(i)))
+
+    timetables.append(timetable)
+
+    print(str(x + 1) + " TIMETABLE(S) GENERATED")
+
+with open('timetable_list.json', 'w') as out_file:
     json.dump(timetable, out_file)
     
     
