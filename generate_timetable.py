@@ -287,7 +287,7 @@ def add_student(timetable, id, schedule):
                 timetable[i][schedule[i]].append(id)
             
     for outside_timetable_course in schedule[8]:
-        timetable[8][get_full_name(outside_timetable_course)].append(id)
+        timetable[8][outside_timetable_course].append(id)
 
 '''
 a list representing a master timetable:
@@ -309,27 +309,22 @@ with open('master_schedule.json', 'r') as f:
 
 for block in schedule:
     for i in range(len(block)):
-        block[i] = get_full_name(block[i].split("*")[0])
+        if "*" in block[i]:
+            block[i] = get_full_name(block[i].split("*")[0])
 
-# generate a bunch of timetables
+# generate timetable
 
-timetables = []
+timetable = schedule_to_empty_timetable(schedule)
 
-for x in range(10):
+ids = [i for i in range(1000, 1838)]
+random.shuffle(ids)
+counter = 0
 
-    timetable = schedule_to_empty_timetable(schedule)
+for i in ids:
+    add_student(timetable, i, get_best_schedule(timetable, str(i)))
+    counter += 1
+    if counter % 10 == 0:
+        print(str(counter) + " students placed")
 
-    for i in range(8):
-        print(len(timetable[i]))
-
-    ids = [i for i in range(1000, 1838)]
-    random.shuffle(ids)
-    for i in ids:
-        add_student(timetable, i, get_best_schedule(timetable, str(i)))
-
-    timetables.append(timetable)
-
-    print(str(x + 1) + " TIMETABLE(S) GENERATED")
-
-with open('timetable_list.json', 'w') as out_file:
+with open('final_timetable.json', 'w') as out_file:
     json.dump(timetable, out_file)

@@ -22,7 +22,7 @@ for student in student_requests:
         for alternate in student_alternates[student]:
             requests.remove(alternate)
 
-with open('recursion_timetable_not_overloaded.json', 'r') as f:
+with open('final_timetable.json', 'r') as f:
     timetable = json.load(f)
 
 
@@ -199,17 +199,17 @@ def get_metrics():
     print("number of requested or alternate courses placed/number of requested or alternate courses: " + str(total_requests_or_alts_met / total_requests_or_alts))
     print()
 
-    print("NO ALTERNATES: ")
-    print("8/8: " + str(eight_req / 838))
-    print("7/8: " + str(seven_req / 838))
-    print("6/8: " + str(six_req / 838))
+    print("NO ALTERNATES")
+    print("  8/8: " + str(eight_req / 838))
+    print("  7/8: " + str(seven_req / 838))
+    print("  6/8: " + str(six_req / 838))
     print("TOTAL: " + str((six_req + seven_req + eight_req) / 838))
     print()
 
-    print("WITH ALTERNATES: ")
-    print("8/8: " + str(eight_alt / 838))
-    print("7/8: " + str(seven_alt / 838))
-    print("6/8: " + str(six_alt / 838))
+    print("WITH ALTERNATES")
+    print("  8/8: " + str(eight_alt / 838))
+    print("  7/8: " + str(seven_alt / 838))
+    print("  6/8: " + str(six_alt / 838))
     print("TOTAL: " + str((six_alt + seven_alt + eight_alt) / 838))
     print()
 
