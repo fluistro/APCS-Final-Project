@@ -130,7 +130,7 @@ def print_course_names(course_list):
     names = [course_info[course_code]['course name'] for full_code in course_list for course_code in full_code.split('*')]
     print("\n".join(names) + "\n")
 
-def print_schedule():
+def print_schedule_course_names():
     print("SEMESTER 1 A BLOCK:")
     print_course_names(timetable[0].keys())
     print("SEMESTER 1 B BLOCK:")
@@ -147,6 +147,16 @@ def print_schedule():
     print_course_names(timetable[6].keys())
     print("SEMESTER 2 D BLOCK:")
     print_course_names(timetable[7].keys())
+
+def print_schedule_num_blocks():
+    print("SEMESTER 1 A BLOCK: " + str(len(timetable[0])) + " courses")
+    print("SEMESTER 1 B BLOCK: " + str(len(timetable[1])) + " courses")
+    print("SEMESTER 1 C BLOCK: " + str(len(timetable[2])) + " courses")
+    print("SEMESTER 1 D BLOCK: " + str(len(timetable[3])) + " courses")
+    print("SEMESTER 2 A BLOCK: " + str(len(timetable[4])) + " courses")
+    print("SEMESTER 2 B BLOCK: " + str(len(timetable[5])) + " courses")
+    print("SEMESTER 2 C BLOCK: " + str(len(timetable[6])) + " courses")
+    print("SEMESTER 2 D BLOCK: " + str(len(timetable[7])) + " courses")
 
 def print_student_info(student):
 
@@ -182,5 +192,92 @@ def print_student_info(student):
     for course in schedule:
         print(course)
 
+def get_student_success(id):
+
+    student_schedule = student_schedules[id]
+    num_requests_met = 0
+    num_alts_met = 0
+
+    for i in range(8):
+
+        if not student_schedule[i]:
+            continue
+
+        course = student_schedule[i][0]
+
+        for request in student_requests[id]:
+            if request in course:
+                num_requests_met += 1
+                break
         
-print_student_info("1527")
+        if id in student_alternates:
+            for alt in student_alternates[id]:
+                if alt in course:
+                    num_alts_met += 1
+                    break
+    
+    return num_requests_met, num_alts_met + num_requests_met
+
+def get_metrics():
+
+    # numbers of students with a specific number of courses placed, with or without alts
+    six_req = 0
+    seven_req = 0
+    eight_req = 0
+    six_alt = 0
+    seven_alt = 0
+    eight_alt = 0
+
+    total_requests = 0
+    total_requests_or_alts = 0
+
+    total_requests_met = 0
+    total_requests_or_alts_met = 0
+
+    for i in range(1000, 1838):
+
+        requests_met, total_met = get_student_success(str(i))
+
+        if total_met == 6:
+            six_alt += 1
+        elif total_met == 7:
+            seven_alt += 1
+        elif total_met == 8:
+            eight_alt += 1
+
+        if requests_met == 6:
+            six_req += 1
+        elif requests_met == 7:
+            seven_req += 1
+        elif requests_met == 8:
+            eight_req += 1
+
+        total_requests += len(student_requests[str(i)])
+        total_requests_or_alts += len(student_requests[str(i)])
+        if i in student_alternates:
+            total_requests_or_alts += len(student_alternates[str(i)])
+
+        total_requests_met += requests_met
+        total_requests_or_alts_met += total_met
+
+    print("number of requested courses placed/number of requested courses: " + str(total_requests_met / total_requests))
+    print("number of requested or alternate courses placed/number of requested or alternate courses: " + str(total_requests_or_alts_met / total_requests_or_alts))
+    print()
+
+    print("NO ALTERNATES: ")
+    print("8/8: " + str(eight_req / 838))
+    print("7/8: " + str(seven_req / 838))
+    print("6/8: " + str(six_req / 838))
+    print("TOTAL: " + str((six_req + seven_req + eight_req) / 838))
+    print()
+
+    print("WITH ALTERNATES: ")
+    print("8/8: " + str(eight_alt / 838))
+    print("7/8: " + str(seven_alt / 838))
+    print("6/8: " + str(six_alt / 838))
+    print("TOTAL: " + str((six_alt + seven_alt + eight_alt) / 838))
+    print()
+
+    print("students with 0-5/8 courses (requested or alternate): " + str(1 - (six_alt + seven_alt + eight_alt) / 838))
+
+get_metrics()
