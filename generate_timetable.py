@@ -71,160 +71,6 @@ def get_full_name(course):
             return name
     return course
 
-'''
-returns a list representing a master timetable:
-[
-    [sem1A courses]
-    [sem1B courses]
-    [sem1C courses]
-    [sem1D courses]
-    [sem2A courses]
-    [sem2B courses]
-    [sem2C courses]
-    [sem2D courses]
-    [outside timetable courses]
-]
-'''
-def generate_course_schedule():
-
-    # course_schedule only stores the courses
-    course_schedule = []
-    for i in range(9):
-        course_schedule.append([])
-
-    # {course_code: num_sections}
-    # groups of simultaneous or not-simultaneous courses appear together with a * separating the course codes
-    all_courseblock_codes = {}      # doesn't store OT courses
-
-    already_checked = []
-
-    
-    # deal with courses with no simultaneous blocking
-    for course in course_info:
-
-        if course in already_checked:
-            continue
-
-        # auto assign outside timetable courses, no need to check anything further
-        if course_info[course]['Outside Timetable'] == True:
-            course_schedule[8].append(get_full_name(course))
-            continue
-
-        list_of_sim_courses = []
-
-        for rule in sim_rules:
-            if course in rule:
-                list_of_sim_courses = rule
-                break
-            
-        for x in list_of_sim_courses:
-            already_checked.append(x)
-
-        # if no course is simultaneous with this course
-        if len(list_of_sim_courses) == 0:
-            
-            already_checked.append(course)
-            all_courseblock_codes[course] = course_info[course]['Sections']
-            sem_1 = False
-            sem_2 = False
-            linear = False
-            
-            if course_info[course]['Pre Req']:
-                sem_1 = True
-            if course_info[course]['Post Req']:
-                sem_2 = True
-            if course_info[course]['Base Terms/Year'] == 1:
-                linear = True
-            
-            blocks = rand_blocks(course_info[course]['Sections'], sem_1, sem_2, linear)
-            add_course_to_master(course_schedule, course, blocks)
-            
-            continue
-        
-        # if there are courses sim with this one
-        else:
-
-            full_sim_name = get_full_name(course) # names of all (non)simultaneous courses, separated by a *
-            leftovers = {} # for if any of the courses have more sections than the others
-
-            # get the maximum amount of simultaneous blocks that can appear
-            max_simblock_sections = min([course_info[x]['Sections']] for x in list_of_sim_courses)[0]
-            
-            sem_1 = False
-            sem_2 = False
-            linear = False
-            
-            for sim_course in list_of_sim_courses:
-                
-                if course_info[sim_course]['Pre Req']:
-                    sem_1 = True
-                if course_info[sim_course]['Post Req']:
-                    sem_2 = True
-                if course_info[sim_course]['Base Terms/Year'] == 1:
-                    linear = True
-                    
-                leftover_sections = course_info[sim_course]['Sections'] - max_simblock_sections
-                if leftover_sections > 0:
-                    leftovers[sim_course] = leftover_sections
-            
-            blocks = rand_blocks(max_simblock_sections, sem_1, sem_2, linear)
-            add_course_to_master(course_schedule, full_sim_name, blocks)
-
-            for course_with_leftover_sections in leftovers:
-                blocks = rand_blocks(leftovers[course_with_leftover_sections], sem_1, sem_2, linear)
-                add_course_to_master(course_schedule, course_with_leftover_sections, blocks)
-                
-    return course_schedule
-
-# returns a list of indices representing random timeslots to place a course in
-# note: no linear courses have sequencing rules
-def rand_blocks(sections, sem_1, sem_2, linear):
-    
-    if sections > 8:
-        sections = 8
-    
-    num_list = [i for i in range(0, 8)]
-    sem_1_list = [i for i in range(0, 4)]
-    sem_2_list = [i for i in range(4, 8)]
-    random_blocks = []
-    
-    # linear courses appear [sections] times in each semester
-    if linear:
-        
-        for i in range(sections):
-        
-            x = random.choice(sem_1_list)
-            random_blocks.append(x)
-            sem_1_list.remove(x)
-            
-            x = random.choice(sem_2_list)
-            random_blocks.append(x)
-            sem_2_list.remove(x)
-            
-        return random_blocks
-    
-    # courses with prerequisites/postrequisites must run at least once in semester 2/1
-    # linear courses must appear in both
-    if sem_1:
-        x = random.randint(0, 3)
-        random_blocks.append(x)
-        num_list.remove(x)
-    if sem_2:
-        x = random.randint(4, 7)
-        random_blocks.append(x)
-        num_list.remove(x)
-    
-    while len(random_blocks) < sections:
-        x = random.choice(num_list)
-        random_blocks.append(x)
-        num_list.remove(x)
-        
-    return random_blocks
-
-def add_course_to_master(master_timetable, course_id, blocks):
-    for block in blocks:
-        master_timetable[block].append(course_id)
-
 """
 generates a timetable:
 [
@@ -443,17 +289,27 @@ def add_student(timetable, id, schedule):
     for outside_timetable_course in schedule[8]:
         timetable[8][get_full_name(outside_timetable_course)].append(id)
 
-# creating master schedule
+'''
+a list representing a master timetable:
+[
+    [sem1A courses]
+    [sem1B courses]
+    [sem1C courses]
+    [sem1D courses]
+    [sem2A courses]
+    [sem2B courses]
+    [sem2C courses]
+    [sem2D courses]
+    [outside timetable courses]
+]
+'''
 
 with open('master_schedule.json', 'r') as f:
     schedule = json.load(f)
 
-'''for block in schedule:
+for block in schedule:
     for i in range(len(block)):
-        block[i] = get_full_name(block[i].split("*")[0])'''
-
-for course in schedule[3]:
-    print(course)
+        block[i] = get_full_name(block[i].split("*")[0])
 
 # generate a bunch of timetables
 
@@ -477,7 +333,3 @@ for x in range(10):
 
 with open('timetable_list.json', 'w') as out_file:
     json.dump(timetable, out_file)
-    
-    
-
-
