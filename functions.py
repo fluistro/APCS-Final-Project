@@ -169,21 +169,21 @@ def generate_course_schedule():
                     looked.append(i)
                     print(i)
                     if i in schedule[0]:
-                        print('1 a')
+                        print('1 a ' + str(schedule[0].count(i)))
                     if i in schedule[1]:
-                        print('1 b')
+                        print('1 b ' + str(schedule[1].count(i)))
                     if i in schedule[2]:
-                        print('1 c')
+                        print('1 c ' + str(schedule[2].count(i)))
                     if i in schedule[3]:
-                        print('1 d')
+                        print('1 d ' + str(schedule[3].count(i)))
                     if i in schedule[4]:
-                        print('2 a')
+                        print('2 a ' + str(schedule[4].count(i)))
                     if i in schedule[5]:
-                        print('2 b')
+                        print('2 b ' + str(schedule[5].count(i)))
                     if i in schedule[6]:
-                        print('2 c')
+                        print('2 c ' + str(schedule[6].count(i)))
                     if i in schedule[7]:
-                        print('2 d')
+                        print('2 d ' + str(schedule[7].count(i)))
                     print()
     '''                
     if len(course_info[courses[i]]['Pre Req']) != 0:
