@@ -258,6 +258,8 @@ def best_schedule_recursive(timetable, available, requests, alternates, to_be_ad
     for next_schedule in next_steps:
         score = score_student_schedule(requests, alternates, next_schedule)
         if score >= best_score:
+            if score == 8:
+                return next_schedule
             best_score = score
             best_schedule = copy.deepcopy(next_schedule)
     
