@@ -157,9 +157,6 @@ def generate_course_schedule():
 
     ]
 
-    for course in ft:
-        if len(ft[course]) <= 10:
-            print(course)
     '''
     looked = []
     for block in range(0,8):
