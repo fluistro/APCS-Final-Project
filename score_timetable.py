@@ -22,7 +22,7 @@ for student in student_requests:
         for alternate in student_alternates[student]:
             requests.remove(alternate)
 
-with open('recursion_timetable_not_overloaded.json', 'r') as f:
+with open('final_timetable.json', 'r') as f:
     timetable = json.load(f)
 
 
