@@ -22,7 +22,8 @@ for student in student_requests:
         for alternate in student_alternates[student]:
             requests.remove(alternate)
 
-
+with open('recursion_timetable_not_overloaded.json', 'r') as f:
+    timetable = json.load(f)
 
 
 '''
@@ -33,7 +34,7 @@ returns a dictionary from a timetable:
     ...
 }
 '''
-def get_student_schedules(timetable):
+def get_student_schedules():
 
     student_schedules = {}
 
@@ -52,79 +53,9 @@ def get_student_schedules(timetable):
 
     return student_schedules
 
-def score(timetable, to_print):
 
-    student_schedules = get_student_schedules(timetable)
 
-    total_requests = 0
-    total_alternates = 0
-    successful_requests = 0
-    successful_alternates = 0
-    
-    successful_students = 0
-    student_is_successful = True
-    
-    successful_students_alternates = 0
-    student_is_successful_with_alternates = True
-    
-    total_students = 0
-
-    for student in student_schedules:
-        
-        requests = student_requests[student]
-        alternates = []
-        if student in student_alternates:
-            alternates = student_alternates[student]
-            
-        total_requests += len(requests)
-        total_alternates += len(alternates)
-            
-        # go through each block in the student's schedule
-        for i in range(8):
-            
-            block = student_schedules[student][i]
-            
-            # spare
-            if not block:
-                student_is_successful = False
-                student_is_successful_with_alternates = False
-                continue
-            
-            # alternate, not requested
-            for alternate in alternates:
-                if alternate in block[0]:
-                    student_is_successful = False
-                    successful_alternates += 1
-                    break
-            
-            for request in requests:
-                if request in block[0]:
-                    successful_requests += 1
-                    break
-                    
-        if student_is_successful:
-            successful_students += 1
-        if student_is_successful_with_alternates:
-            successful_students_alternates += 1
-            
-        student_is_successful = True
-        student_is_successful_with_alternates = True
-        total_students += 1
-        
-        
-    
-    if to_print:
-        print("# requested courses placed / # requested courses: " + str(successful_requests / total_requests * 100) + "%")
-        print("# requested or alternate courses placed / # requested or alternate courses: " + str((successful_requests + successful_alternates) / (total_requests + total_alternates) * 100) + "%")
-        print("percent students with 8/8 courses (requested only): " + str(successful_students / total_students * 100) + "%")
-        print("percent students with 8/8 courses (requested or alternate): " + str(successful_students_alternates / total_students * 100) + "%")
-        print("weighted score: " + str((successful_requests + 0.5 * successful_alternates) / (total_requests) * 100) + "%")
-    return (successful_requests + 0.5 * successful_alternates) / (total_requests)
-
-with open('recursion_timetable_not_overloaded.json', 'r') as f:
-    timetable = json.load(f)
-
-student_schedules = get_student_schedules(timetable)
+student_schedules = get_student_schedules()
     
 def print_course_names(course_list):
     names = [course_info[course_code]['course name'] for full_code in course_list for course_code in full_code.split('*')]
@@ -200,6 +131,7 @@ def get_student_success(id):
 
     for i in range(8):
 
+        # they have a spare this block
         if not student_schedule[i]:
             continue
 
@@ -219,6 +151,9 @@ def get_student_success(id):
     return num_requests_met, num_alts_met + num_requests_met
 
 def get_metrics():
+
+    print_schedule_num_blocks()
+    print()
 
     # numbers of students with a specific number of courses placed, with or without alts
     six_req = 0
@@ -254,7 +189,7 @@ def get_metrics():
 
         total_requests += len(student_requests[str(i)])
         total_requests_or_alts += len(student_requests[str(i)])
-        if i in student_alternates:
+        if str(i) in student_alternates:
             total_requests_or_alts += len(student_alternates[str(i)])
 
         total_requests_met += requests_met
