@@ -448,9 +448,12 @@ def add_student(timetable, id, schedule):
 with open('master_schedule.json', 'r') as f:
     schedule = json.load(f)
 
-for block in schedule:
+'''for block in schedule:
     for i in range(len(block)):
-        block[i] = get_full_name(block[i].split("*")[0])
+        block[i] = get_full_name(block[i].split("*")[0])'''
+
+for course in schedule[3]:
+    print(course)
 
 # generate a bunch of timetables
 
@@ -459,6 +462,9 @@ timetables = []
 for x in range(10):
 
     timetable = schedule_to_empty_timetable(schedule)
+
+    for i in range(8):
+        print(len(timetable[i]))
 
     ids = [i for i in range(1000, 1838)]
     random.shuffle(ids)
