@@ -15,6 +15,9 @@ with open('student_alternates.json', 'r') as f:
 with open('courses.json') as f:
         course_info = json.load(f)
 
+with open('final_timetable.json') as f:
+        ft = json.load(f)
+
 '''
 Requirements for a valid timetable:
 
@@ -154,25 +157,9 @@ def generate_course_schedule():
 
     ]
 
-    course_info_copy = copy.deepcopy(course_info)
-    for block in schedule:
-        for c in block:
-
-            courses = []
-
-            if '*' in c:
-                courses = c.split('*')
-            else:
-                courses.append(c)
-        
-            for course in courses:
-                if course in course_info_copy:
-                    course_info_copy.pop(course)
-
-    for code in list(course_info_copy.keys()):
-        if (len(course_info[code]['Students']) >= 5):
-            print(course_info[code]['course name'])
-
+    for course in ft:
+        if len(ft[course]) <= 10:
+            print(course)
     '''
     looked = []
     for block in range(0,8):
@@ -218,7 +205,7 @@ def generate_course_schedule():
         if pre_req not in schedule[0] and pre_req not in schedule[1] and pre_req not in schedule[2] and pre_req not in schedule[3]:
             print("block: " + str(block) + " " + str(courses))
     '''
-
+    '''
     print ('1 a', len(schedule[0]))
     print ('1 b', len(schedule[1]))
     print ('1 c', len(schedule[2]))
@@ -227,7 +214,9 @@ def generate_course_schedule():
     print ('2 b', len(schedule[5]))
     print ('2 c', len(schedule[6]))
     print ('2 d', len(schedule[7]))
-    
+    with open('master_schedule.json', 'w') as fp:
+        json.dump(schedule, fp)
+    '''
     '''
     for block in range(len(schedule)):
         for course in schedule[block]:
@@ -245,8 +234,7 @@ def generate_course_schedule():
 
     ''' 
 
-    with open('master_schedule.json', 'w') as fp:
-        json.dump(schedule, fp)
+
         
     """    
 
