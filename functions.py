@@ -152,8 +152,9 @@ def generate_course_schedule():
             ["MCMCC11--L", "MCMCC12--L", "MDNC-09C-L", "MDNC-09M-L", "MDNC-10--L", "MDNC-11--L", "MDNC-12--L", "MDNCM10--L", "MDNCM11--L", "MDNCM12--L", "MGMT-12L--", "MGRPR11--L", "MGRPR12--L", "MIDS-0C---", "MIMJB11--L", "MIMJB12--L", "MMUCC10--L", "MMUJB10--L", "MMUOR10S-L", "MMUOR11S-L", "MMUOR12S-L", "MWEX-2A--L", "MWEX-2B--L", "XBA--09J-L", "XC---09--L", "XLDCB09S-L", "YCPA-0AX-L", "YCPA-0AXE-", "YCPA-1AX-L", "YCPA-1AXE-", "YCPA-2AX-L", "YCPA-2AXE-", "YED--0BX-L", "YED--1EX-L", "YED--2DX-L", "YED--2FX-L"]
 
     ]
-    '''
-    for block in [0,1,2,3]:
+
+    looked = []
+    for block in range(0,8):
         for course in schedule[block]:
 
             courses = []
@@ -164,9 +165,26 @@ def generate_course_schedule():
                 courses.append(course)
 
             for i in courses:
-                if course_info[i]["Base Terms/Year"] == 1:
+                if schedule[block].count(i) > 1 and i not in looked:
+                    looked.append(i)
                     print(i)
-    '''
+                    if i in schedule[0]:
+                        print('1 a')
+                    if i in schedule[1]:
+                        print('1 b')
+                    if i in schedule[2]:
+                        print('1 c')
+                    if i in schedule[3]:
+                        print('1 d')
+                    if i in schedule[4]:
+                        print('2 a')
+                    if i in schedule[5]:
+                        print('2 b')
+                    if i in schedule[6]:
+                        print('2 c')
+                    if i in schedule[7]:
+                        print('2 d')
+                    print()
     '''                
     if len(course_info[courses[i]]['Pre Req']) != 0:
 
