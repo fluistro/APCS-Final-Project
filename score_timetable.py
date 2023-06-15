@@ -172,18 +172,39 @@ def get_metrics():
 
         requests_met, total_met = get_student_success(str(i))
 
-        if total_met == 6:
+        num_requests = 0
+        num_requests_and_alts = 0
+
+        for x in student_requests[str(i)]:
+            if not course_info[x]["Outside Timetable"]:
+                num_requests += 1
+                num_requests_and_alts += 1
+
+        if str(i) in student_alternates:
+            for x in student_alternates[str(i)]:
+                if not course_info[x]["Outside Timetable"]:
+                    num_requests_and_alts += 1
+
+        if num_requests > 8:
+            num_requests = 8
+        if num_requests_and_alts > 8:
+            num_requests_and_alts = 8
+
+        total_missed = num_requests_and_alts - total_met
+        requests_missed = num_requests - requests_met
+
+        if total_missed == 2:
             six_alt += 1
-        elif total_met == 7:
+        elif total_missed == 1:
             seven_alt += 1
-        elif total_met == 8:
+        elif total_missed == 0:
             eight_alt += 1
 
-        if requests_met == 6:
+        if requests_missed == 2:
             six_req += 1
-        elif requests_met == 7:
+        elif requests_missed == 1:
             seven_req += 1
-        elif requests_met == 8:
+        elif requests_missed == 0:
             eight_req += 1
 
         total_requests += len(student_requests[str(i)])
@@ -199,20 +220,20 @@ def get_metrics():
     print()
 
     print("NO ALTERNATES")
-    print("  8/8: " + str(eight_req / 838 * 100) + "%")
-    print("  7/8: " + str(seven_req / 838 * 100) + "%")
-    print("  6/8: " + str(six_req / 838 * 100) + "%")
+    print("0 missed: " + str(eight_req / 838 * 100) + "%")
+    print("1 missed: " + str(seven_req / 838 * 100) + "%")
+    print("2 missed: " + str(six_req / 838 * 100) + "%")
     print("TOTAL: " + str((six_req + seven_req + eight_req) / 838 * 100) + "%")
     print()
 
     print("WITH ALTERNATES")
-    print("  8/8: " + str(eight_alt / 838 * 100) + "%")
-    print("  7/8: " + str(seven_alt / 838 * 100) + "%")
-    print("  6/8: " + str(six_alt / 838 * 100) + "%")
+    print("0 missed: " + str(eight_alt / 838 * 100) + "%")
+    print("1 missed: " + str(seven_alt / 838 * 100) + "%")
+    print("2 missed: " + str(six_alt / 838 * 100) + "%")
     print("TOTAL: " + str((six_alt + seven_alt + eight_alt) / 838 * 100) + "%")
     print()
 
-    print("students with 0-5/8 courses (requested or alternate): " + str((1 - (six_alt + seven_alt + eight_alt) / 838) * 100) + "%")
+    print("students with >3 courses missed (requested or alternate): " + str((1 - (six_alt + seven_alt + eight_alt) / 838) * 100) + "%")
 
 '''times_courses_missed = {} # course_name : times_missed
 
