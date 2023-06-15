@@ -417,6 +417,20 @@ timetable is a dictionary that adds students to schedule:
 The timetable should meet all requirements under STUDENTS.
 '''
 
+def read_new_course_sections():
+
+    updated_sections = {}
+
+    with open('Updated Course Information.csv', newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+
+        for row in spamreader:
+            if row[1] in course_info:
+                updated_sections[row[1]] = row[13]
+            else:
+                print(row[1])
+    return updated_sections
+
 # takes in a list of unvailable blocks, and spits out a random block among the available blocks
 def return_rando_block(not_these_blocks):
 
@@ -1448,4 +1462,6 @@ def print_perfect_students(timetable):
 
 '''
 
-generate_course_schedule()
+#generate_course_schedule()
+us = read_new_course_sections()
+print(us)
