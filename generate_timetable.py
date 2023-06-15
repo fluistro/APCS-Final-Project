@@ -314,7 +314,11 @@ for block in schedule:
         if "*" in block[i]:
             block[i] = get_full_name(block[i].split("*")[0])
 
-# generate timetable
+# generate timetables
+
+timetable_list = []
+
+#for x in range(10):
 
 timetable = schedule_to_empty_timetable(schedule)
 
@@ -326,7 +330,7 @@ for i in ids:
     add_student(timetable, i, get_best_schedule(timetable, str(i)))
     counter += 1
     if counter % 10 == 0:
-        print(str(counter) + " students placed")
+        print(str(counter) + " students added")
 
 with open('final_timetable.json', 'w') as out_file:
     json.dump(timetable, out_file)

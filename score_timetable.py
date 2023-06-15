@@ -25,7 +25,6 @@ for student in student_requests:
 with open('final_timetable.json', 'r') as f:
     timetable = json.load(f)
 
-
 '''
 returns a dictionary from a timetable:
 {
@@ -195,24 +194,61 @@ def get_metrics():
         total_requests_met += requests_met
         total_requests_or_alts_met += total_met
 
-    print("number of requested courses placed/number of requested courses: " + str(total_requests_met / total_requests))
-    print("number of requested or alternate courses placed/number of requested or alternate courses: " + str(total_requests_or_alts_met / total_requests_or_alts))
+    print("number of requested courses placed/number of requested courses: " + str(total_requests_met / total_requests * 100) + "%")
+    print("number of requested or alternate courses placed/number of requested or alternate courses: " + str(total_requests_or_alts_met / total_requests_or_alts * 100) + "%")
     print()
 
     print("NO ALTERNATES")
-    print("  8/8: " + str(eight_req / 838))
-    print("  7/8: " + str(seven_req / 838))
-    print("  6/8: " + str(six_req / 838))
-    print("TOTAL: " + str((six_req + seven_req + eight_req) / 838))
+    print("  8/8: " + str(eight_req / 838 * 100) + "%")
+    print("  7/8: " + str(seven_req / 838 * 100) + "%")
+    print("  6/8: " + str(six_req / 838 * 100) + "%")
+    print("TOTAL: " + str((six_req + seven_req + eight_req) / 838 * 100) + "%")
     print()
 
     print("WITH ALTERNATES")
-    print("  8/8: " + str(eight_alt / 838))
-    print("  7/8: " + str(seven_alt / 838))
-    print("  6/8: " + str(six_alt / 838))
-    print("TOTAL: " + str((six_alt + seven_alt + eight_alt) / 838))
+    print("  8/8: " + str(eight_alt / 838 * 100) + "%")
+    print("  7/8: " + str(seven_alt / 838 * 100) + "%")
+    print("  6/8: " + str(six_alt / 838 * 100) + "%")
+    print("TOTAL: " + str((six_alt + seven_alt + eight_alt) / 838 * 100) + "%")
     print()
 
-    print("students with 0-5/8 courses (requested or alternate): " + str(1 - (six_alt + seven_alt + eight_alt) / 838))
+    print("students with 0-5/8 courses (requested or alternate): " + str((1 - (six_alt + seven_alt + eight_alt) / 838) * 100) + "%")
+
+'''times_courses_missed = {} # course_name : times_missed
+
+def get_missed_courses(id):
+    
+    reqs_and_alts = student_requests[id]
+    if id in student_alternates:
+        reqs_and_alts += student_alternates[id]
+        
+    assigned_courses = []
+    
+    for x in student_schedules[id]:
+        if x:
+            assigned_courses += x[0].split("*")
+    
+    for x in reqs_and_alts:
+        if x not in assigned_courses:
+            
+            course_name = course_info[x]["course name"]
+            if course_name not in times_courses_missed:
+                times_courses_missed[course_name] = 1
+            else:
+                times_courses_missed[course_name] = times_courses_missed[course_name] + 1
+                
+for i in range(1000, 1838):
+    get_missed_courses(str(i))
+
+sorted_missed = dict(sorted(times_courses_missed.items(), key=lambda x:x[1], reverse=True))
+
+def get_course_code(name):
+    for course in course_info:
+        if name == course_info[course]["course name"]:
+            return course
+
+for x in sorted_missed:
+    course_code = get_course_code(x)
+    print(x + ": " + str(len(course_info[course_code]["Students"])) + " students requested; " + str(course_info[course_code]["Sections"]) + " sections; " + str(course_info[course_code]["Max Enrollment"]) + " students per section")'''
 
 get_metrics()
