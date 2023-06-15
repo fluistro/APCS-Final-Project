@@ -527,6 +527,16 @@ def fill_random(timetable, student, student_schedule):
                 student_schedule[index].append(random_course)
                 return
 
+def check_sections (schedule, section_list):
+    sections = 0
+
+
+    for course in section_list:
+        for block in schedule:
+            if course in block:
+                sections += 1
+        if sections != int(section_list[course]):
+            print(course, 'section required:', sections, 'section have:', section_list[course])
 
 # attempts to give a requested course to a student
 def add(timetable, student, student_schedule, request):
@@ -1463,5 +1473,6 @@ def print_perfect_students(timetable):
 '''
 
 #generate_course_schedule()
+schedule = []
 us = read_new_course_sections()
-print(us)
+check_sections(schedule, us)
