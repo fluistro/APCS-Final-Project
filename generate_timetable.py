@@ -328,10 +328,9 @@ counter = 0
 
 for i in ids:
     add_student(timetable, i, get_best_schedule(timetable, str(i)))
-        
-    #timetable_list.append(timetable)
-    
-    #print(str(x) + " timetables generated")
+    counter += 1
+    if counter % 10 == 0:
+        print(str(counter) + " students added")
 
 with open('final_timetable.json', 'w') as out_file:
     json.dump(timetable, out_file)
