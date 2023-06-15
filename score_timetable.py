@@ -25,7 +25,6 @@ for student in student_requests:
 with open('final_timetable.json', 'r') as f:
     timetable = json.load(f)
 
-
 '''
 returns a dictionary from a timetable:
 {
@@ -215,4 +214,35 @@ def get_metrics():
 
     print("students with 0-5/8 courses (requested or alternate): " + str(1 - (six_alt + seven_alt + eight_alt) / 838))
 
+'''times_courses_missed = {} # course_name : times_missed
+
+def get_missed_courses(id):
+    
+    reqs_and_alts = student_requests[id]
+    if id in student_alternates:
+        reqs_and_alts += student_alternates[id]
+        
+    assigned_courses = []
+    
+    for x in student_schedules[id]:
+        if x:
+            assigned_courses += x[0].split("*")
+    
+    for x in reqs_and_alts:
+        if x not in assigned_courses:
+            
+            course_name = course_info[x]["course name"]
+            if course_name not in times_courses_missed:
+                times_courses_missed[course_name] = 1
+            else:
+                times_courses_missed[course_name] = times_courses_missed[course_name] + 1
+                
+for i in range(1000, 1838):
+    get_missed_courses(str(i))
+
+sorted_missed = dict(sorted(times_courses_missed.items(), key=lambda x:x[1], reverse=True))'''
+
+'''for x in sorted_missed:
+    print(x + ": " + str(times_courses_missed[x]))'''
+    
 get_metrics()
