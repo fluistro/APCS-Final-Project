@@ -31,8 +31,6 @@ with open('Course Sequencing Rules.csv', newline='') as csvfile:
 # dictionary
 course_info = {}
 student_requests = {}
-student_alternates = {}
-
 '''
 {1000: [course list]
  1001: []
@@ -70,12 +68,12 @@ while True:
 
     course_info[id] = {
         'course name': name,
-        'Base Terms/Year': int(base_terms),
-        'Covered Terms/Year': int(covered_terms),
-        'Max Enrollment': int(max_enrollment),
+        'Base Terms/Year': base_terms,
+        'Covered Terms/Year': covered_terms,
+        'Max Enrollment': max_enrollment,
         'PPC': ppc,
-        'Priority': int(priority),
-        'Sections': int(sections),
+        'Priority': priority,
+        'Sections': sections,
         'Students': [],
         'Pre Req' : [],
         'Post Req': [],
@@ -107,7 +105,6 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                 skip_header_line = False
                 continue
 
-            
             # if the course requested is NOT THERE!!!!
             if not row[0] in course_info:
                 if (row[0] == 'XLEAD09---'):
@@ -231,6 +228,7 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Term Blocking' : [],
                             'Outside Timetable' : False
                         }
+
                 if (row[0] == 'MIT--12---'):
                         # this course is not in the csv file
                         # guess of the specifications of this course: (based from website)
@@ -341,18 +339,12 @@ with open('Cleaned Student Requests.csv', newline='') as csvfile:
                             'Outside Timetable' : False
                         }
             
-            course_info[row[0]]['Students'].append(int(current_student_id))
+            course_info[row[0]]['Students'].append(current_student_id)
 
-            if int(current_student_id) in student_requests:
-                student_requests[int(current_student_id)].append(row[0])
+            if current_student_id in student_requests:
+                student_requests[current_student_id].append(row[0])
             else:
-                student_requests[int(current_student_id)] = [row[0]]
-
-            if row[11] == "Y":
-                if int(current_student_id) in student_alternates:
-                    student_alternates[int(current_student_id)].append(row[0])
-                else:
-                    student_alternates[int(current_student_id)] = [row[0]]
+                student_requests[current_student_id] = [row[0]]
 
 
 # read Course Blocking Rules
@@ -538,10 +530,9 @@ course_info['MGRPR12--L']['Outside Timetable'] = True
 with open('courses.json', 'w') as out_file:
      json.dump(course_info, out_file)
 
-
+'''
 with open('student_requests.json', 'w') as out_file:
      json.dump(student_requests, out_file)
+'''
 
-with open('student_alternates.json', 'w') as out_file:
-     json.dump(student_alternates, out_file)
 
