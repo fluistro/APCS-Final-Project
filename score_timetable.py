@@ -96,16 +96,16 @@ def print_student_info(student):
     # print requests
     print("REQUESTS")
     for request in student_requests[student]:
-        print(course_info[request]["course name"])
+        print("  " + course_info[request]["course name"])
     print()
 
     # print alternates
     print("ALTERNATES")
     if student in student_alternates:
         for alternate in student_alternates[student]:
-            print(course_info[alternate]["course name"])
+            print("  " + course_info[alternate]["course name"])
     else:
-        print("NONE")
+        print("  NONE")
     print()
 
     # print schedule
@@ -114,13 +114,26 @@ def print_student_info(student):
 
     for i in range(8):
         try:
-            schedule.append(course_info[student_schedules[student][i][0].split("*")[0]]["course name"])
+            schedule.append(student_schedules[student][i][0].split("*")[0])
         except:
             schedule.append("SPARE")
 
+
+    print("0: completely not requested")
+    print("1: requested as alternate")
+    print("2: requested as top 8")
     print("SCHEDULE")
     for course in schedule:
-        print(course)
+        score = '0'
+        if student in student_alternates and course in student_alternates[student]:
+            score = '1'
+        elif course in student_requests[student]:
+            score = '2'
+
+        if course == "SPARE":
+            print("  SPARE")
+        else:
+            print("  " + score + " " + course_info[course]['course name'])
 
 def get_student_success(id):
 
@@ -273,3 +286,10 @@ for x in sorted_missed:
     print(x + ": " + str(len(course_info[course_code]["Students"])) + " students requested; " + str(course_info[course_code]["Sections"]) + " sections; " + str(course_info[course_code]["Max Enrollment"]) + " students per section")'''
 
 get_metrics()
+while True:
+    print()
+    print("Enter Student ID: ")
+    id = input()
+    if id == '-1':
+        break
+    print_student_info(id)
