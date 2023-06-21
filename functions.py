@@ -162,7 +162,7 @@ def generate_course_schedule():
     check_sections (schedule, us)
 
     
-    with open('master_schedule', 'w') as fp:
+    with open('master_schedule.json', 'w') as fp:
         json.dump(schedule, fp)
     
 
